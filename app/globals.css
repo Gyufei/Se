@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --black-bg: #12021D;
+  --black: #2A1C34;
+  --green: #AAED4A;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --black-bg: #12021D;
+    --black: #2A1C34;
+    --green: #AAED4A;
+  }
+}
+
+body {
+  font-family: var(--font-space-grotesk);
+  background-color: var(--black-bg);
+}
+
+@layer base {
+  input[type="text"]:not(:disabled) {
+    @apply !bg-transparent;
+  }
+
+  input,
+  .no-outline {
+    @apply outline-none focus:outline-none focus-visible:outline-none;
+  }
+}
+
+@layer components {
+}
+
+@layer utilities {
+  .no-scroll-bar::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+}
+
+img {
+  -webkit-user-drag: none; /* Safari 和 Chrome */
+  -moz-user-drag: none; /* Firefox */
+  -ms-user-drag: none; /* IE/Edge */
+  user-drag: none;
+}
