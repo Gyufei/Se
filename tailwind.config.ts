@@ -12,14 +12,14 @@ export default {
     },
     extend: {
       colors: {
-        "black-bg" : "var(--black-bg)",
-        "black": "var(--black)",
-        "green": "var(--green)",
-      }
+        "black-bg": "var(--black-bg)",
+        black: "var(--black)",
+        green: "var(--green)",
+      },
     },
   },
   plugins: [
     /* eslint-disable */
-    require("tailwindcss-animate")
+    require("tailwindcss-animate"),
   ],
 } satisfies Config;

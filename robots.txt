@@ -1,0 +1,4 @@
+Sitemap: https://tessera.com/sitemap.xml
+
+User-agent: *
+Disallow: /api

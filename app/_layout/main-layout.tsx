@@ -6,9 +6,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen overflow-hidden">
+    <main>
       <HeaderBar />
-      <div className="h-[calc(100vh-64px)]">{children}</div>
-    </div>
+      {children}
+    </main>
   );
 }
