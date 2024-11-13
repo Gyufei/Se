@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils/common";
 
-export function NFTPrice() {
+export default function NFTPrice() {
   const price = 2000;
   const raePrice = 400;
   const raePriceChangePercent = 0.2;
