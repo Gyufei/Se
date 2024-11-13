@@ -5,8 +5,8 @@ export default function DescContent() {
 
   return (
     <div className="flex flex-col mt-10">
-      <div className="text-lg text-white">{descTitle}</div>
-      <div className="text-white text-xs mt-5 opacity-80">{desc}</div>
+      <div className="text-lg text-white font-medium">{descTitle}</div>
+      <div className="text-white text-xs mt-5 opacity-80 font-medium">{desc}</div>
     </div>
   );
 }

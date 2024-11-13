@@ -31,7 +31,7 @@ function HoverIcon({
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className="h-10 w-10 flex items-center justify-center cursor-pointer bg-black-bg hover:bg-black">
+      className="h-10 w-10 flex items-center justify-center cursor-pointer bg-[#12021d] hover:bg-[#2A1C34]">
       <Image
         src={src}
         width={24}

@@ -43,5 +43,5 @@ function TrendingTitle({ marketType }: { marketType: string }) {
 }
 
 function AssetItem() {
-  return <div className="w-80 h-[172px] bg-black"></div>;
+  return <div className="w-80 h-[172px] bg-[#2A1C34]"></div>;
 }

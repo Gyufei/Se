@@ -12,9 +12,8 @@ export default {
     },
     extend: {
       colors: {
-        "black-bg": "var(--black-bg)",
-        black: "var(--black)",
         green: "var(--green)",
+        red: "var(--red)",
       },
     },
   },

@@ -1,10 +1,12 @@
 "use client";
 import Image from "next/image";
 import { use } from "react";
-import { PathBreadcrumb } from "./path-breadcrumb";
-import DetailTabs from "./detail-tabs";
 
-export default function NftPage({
+import PathBreadcrumb from "./path-breadcrumb";
+import DetailTabs from "./_detail-tabs";
+import BidInfos from "./_bid-infos";
+
+export default function NFTPage({
   params,
 }: {
   params: Promise<{ id: string[] }>;
@@ -20,7 +22,7 @@ export default function NftPage({
           <PathBreadcrumb paths={["Lucky Market", "Cyptopunks No. 999"]} />
           <Image
             className="mt-5"
-            src="/images/mock-nft-placeholder.png"
+            src="/images/mock-nft.png"
             width={580}
             height={580}
             alt="nft"
@@ -28,7 +30,7 @@ export default function NftPage({
           <DetailTabs />
         </div>
       </div>
-      <div className="w-[580px]"></div>
+      <BidInfos />
     </div>
   );
 }

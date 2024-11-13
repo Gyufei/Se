@@ -10,16 +10,16 @@ export default function ConnectBtn() {
 
   if (!isConnect) {
     return (
-      <button className={cn(ConnectBtnText, "bg-green text-black-bg")}>
+      <button className={cn(ConnectBtnText, "bg-green text-[#12021d]")}>
         Connect Wallet
       </button>
     );
   }
 
   return (
-    <button className={cn(ConnectBtnText, "bg-black space-x-[10px]")}>
+    <button className={cn(ConnectBtnText, "bg-[#2A1C34] space-x-[10px]")}>
       <Image
-        src="/images/mock-nft-placeholder.png"
+        src="/images/mock-nft.png"
         width={20}
         height={20}
         alt="avatar"

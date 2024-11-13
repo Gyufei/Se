@@ -3,22 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --black-bg: #12021D;
-  --black: #2A1C34;
-  --green: #AAED4A;
+  --green: #aaed4a;
+  --red: #f80a25;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --black-bg: #12021D;
-    --black: #2A1C34;
-    --green: #AAED4A;
+    --green: #aaed4a;
+    --red: #f80a25;
   }
 }
 
 body {
   font-family: var(--font-space-grotesk);
-  background-color: var(--black-bg);
+  background-color: #12021d;
 }
 
 @layer base {
