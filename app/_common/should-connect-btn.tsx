@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils/common";
 
-const isConnect = false;
+const isConnect = true;
 const isConnecting = false;
 
 export default function ShouldConnectBtn({
@@ -24,7 +24,7 @@ export default function ShouldConnectBtn({
     <button
       onClick={handleClick}
       className={cn(
-        "bg-green h-12 flex justify-center items-center flex-1 text-[#12021D] text-base font-bold",
+        "bg-green min-h-12 flex justify-center items-center flex-1 text-[#12021D] text-base font-bold",
         className,
       )}
     >

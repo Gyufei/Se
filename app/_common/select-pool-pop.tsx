@@ -53,10 +53,10 @@ export default function SelectPoolPop({
           </span>
         )}
         <Image
-          src="/icons/arrow-up.svg"
+          src="/icons/bracket-up.svg"
           width={16}
           height={16}
-          alt="arrow-up"
+          alt="bracket-up"
           className={cn(popOpen ? "rotate-180" : "")}
         />
       </PopoverTrigger>

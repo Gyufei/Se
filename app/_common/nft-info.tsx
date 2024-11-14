@@ -1,10 +1,8 @@
-import { truncateAddr } from "@/lib/utils/web3";
 import Image from "next/image";
 
 export default function NFTInfo() {
   const nftId = "8857";
   const nftSeriesName = "Cryptopunks";
-  const seller = "0x1234567890abcdef1234567890abcdef12345678";
 
   return (
     <>
@@ -21,9 +19,6 @@ export default function NFTInfo() {
         <span>
           {nftSeriesName} #{nftId}
         </span>
-      </div>
-      <div className="mt-[10px] text-xl text-white opacity-60">
-        Seller: {truncateAddr(seller)}
       </div>
     </>
   );

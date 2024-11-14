@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { useState } from "react";
 import AmountInput from "./amount-input";
 import BidBtn from "./bid-btn";
+import RaeToken from "@/app/_common/rae-token";
 
 const balance = 9.00655;
 
@@ -40,16 +40,7 @@ export default function BidAction() {
           >
             Buy max
           </div>
-          <div className="flex items-center ml-6 px-5 bg-[#382743] h-12">
-            <Image
-              src="/icons/rae.svg"
-              className="rounded-full"
-              width={16}
-              height={16}
-              alt="rae"
-            />
-            <span className="text-white text-base inline-block ml-2">RAE</span>
-          </div>
+          <RaeToken />
         </div>
       </div>
 

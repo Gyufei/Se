@@ -1,6 +1,6 @@
 import { useState } from "react";
-import SelectPoolPop from "./select-pool-pop";
-import ShouldConnectBtn from "@/components/share/should-connect-btn";
+import SelectPoolPop from "../../../../_common/select-pool-pop";
+import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 
 const canBidAsPool = true;
 

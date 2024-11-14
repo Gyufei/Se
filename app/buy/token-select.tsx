@@ -53,7 +53,7 @@ export default function TokenSelect({
               {token?.symbol}
             </div>
             <Image
-              src="/icons/arrow-up.svg"
+              src="/icons/bracket-up.svg"
               width={16}
               height={16}
               alt="arrow"

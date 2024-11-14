@@ -21,10 +21,6 @@ body {
 }
 
 @layer base {
-  input[type="text"]:not(:disabled) {
-    @apply !bg-transparent;
-  }
-
   input,
   .no-outline {
     @apply outline-none focus:outline-none focus-visible:outline-none;

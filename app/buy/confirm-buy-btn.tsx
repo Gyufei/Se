@@ -1,4 +1,4 @@
-import ShouldConnectBtn from "@/components/share/should-connect-btn";
+import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 
 export default function ConfirmBuyBtn({ onClick }: { onClick: () => void }) {
   return (
