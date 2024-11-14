@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils/common";
+import numeral from "numeral";
 
 export default function NFTPrice() {
   const price = 2000;
@@ -24,7 +25,7 @@ export default function NFTPrice() {
             className={cn("text-xl", isPercentUp ? "text-green" : "text-red")}
           >
             {isPercentUp ? "+" : "-"}
-            {raePriceChangePercent * 100}%
+            {numeral(raePriceChangePercent).format("0.[00]%")}
           </span>
         </div>
       </div>

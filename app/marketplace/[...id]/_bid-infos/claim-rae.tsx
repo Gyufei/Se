@@ -1,9 +1,13 @@
+import ShouldConnectBtn from "@/components/share/should-connect-btn";
+
 const claimValue = 100;
 
 export default function ClaimRae() {
+  function handleClaim() {}
+
   return (
-    <button className="bg-green w-full mt-5 h-12 flex justify-center items-center text-[#12021D] text-base font-bold">
+    <ShouldConnectBtn className="mt-5 w-full" onClick={handleClaim}>
       Claim {claimValue} RAE
-    </button>
+    </ShouldConnectBtn>
   );
 }

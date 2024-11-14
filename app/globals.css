@@ -17,6 +17,7 @@
 body {
   font-family: var(--font-space-grotesk);
   background-color: #12021d;
+  color: #fff;
 }
 
 @layer base {

@@ -1,14 +1,12 @@
 import Image from "next/image";
 import { useState } from "react";
 import AmountInput from "./amount-input";
-import SelectPoolPop from "./select-pool-pop";
+import BidBtn from "./bid-btn";
 
 const balance = 9.00655;
-const canBidAsPool = true;
 
 export default function BidAction() {
   const [bidAmount, setBidAmount] = useState(0);
-  const [selectedPool, setSelectedPool] = useState<string | null>(null);
 
   const handleInput = (value: string) => {
     setBidAmount(Number(value));
@@ -55,23 +53,7 @@ export default function BidAction() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-5 space-x-5">
-        {canBidAsPool ? (
-          <>
-            <button className="bg-green h-12 flex justify-center items-center flex-1 text-[#12021D] text-base font-bold">
-              Bid as
-            </button>
-            <SelectPoolPop
-              selectedPool={selectedPool}
-              setSelectedPool={setSelectedPool}
-            />
-          </>
-        ) : (
-          <button className="bg-green h-12 flex justify-center items-center flex-1 text-[#12021D] text-base font-bold">
-            Bid
-          </button>
-        )}
-      </div>
+      <BidBtn />
     </div>
   );
 }

@@ -1,7 +1,11 @@
+import ShouldConnectBtn from "@/components/share/should-connect-btn";
+
 export default function ClaimNFT() {
+  function handleClaim() {}
+
   return (
-    <button className="bg-green w-full mt-5 h-12 flex justify-center items-center text-[#12021D] text-base font-bold">
+    <ShouldConnectBtn className="mt-5 w-full" onClick={handleClaim}>
       Claim your NFT
-    </button>
+    </ShouldConnectBtn>
   );
 }
