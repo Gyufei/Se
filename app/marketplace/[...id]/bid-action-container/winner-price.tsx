@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils/common";
-import numeral from "numeral";
+import { formatPercent } from "@/lib/utils/number";
 
 const winnerPaid = 50;
 const winnerProfit = 60;
@@ -28,7 +28,7 @@ export default function WinnerPrice() {
           )}
         >
           {isPercentUp ? "+" : "-"}
-          {numeral(winnerProfitPercent).format("0.[00]%")}
+          {formatPercent(winnerProfitPercent)}
         </div>
         <div className="mt-[10px] text-white opacity-60">${winnerProfit}</div>
       </div>

@@ -9,15 +9,15 @@ const myCollections = [
     nfts: [
       {
         id: 1,
-        logoURI: "/images/mock-nft.png",
+        imgSrc: "/images/mock-nft.png",
       },
       {
         id: 2,
-        logoURI: "/images/mock-nft.png",
+        imgSrc: "/images/mock-nft.png",
       },
       {
         id: 3,
-        logoURI: "/images/mock-nft.png",
+        imgSrc: "/images/mock-nft.png",
       },
     ],
   },
@@ -26,15 +26,15 @@ const myCollections = [
     nfts: [
       {
         id: 5,
-        logoURI: "/images/mock-nft.png",
+        imgSrc: "/images/mock-nft.png",
       },
       {
         id: 6,
-        logoURI: "/images/mock-nft.png",
+        imgSrc: "/images/mock-nft.png",
       },
       {
         id: 7,
-        logoURI: "/images/mock-nft.png",
+        imgSrc: "/images/mock-nft.png",
       },
     ],
   },
@@ -70,7 +70,7 @@ export default function NftList({ type }: { type: NFTOwnByType }) {
                 key={idx}
                 className="border-2 border-transparent cursor-pointer hover:border-green h-[200px] w-[200px]"
               >
-                <Image src={nft.logoURI} width={200} height={200} alt="nft" />
+                <Image src={nft.imgSrc} width={200} height={200} alt="nft" />
               </div>
             ))}
           </div>

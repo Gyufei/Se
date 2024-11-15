@@ -11,15 +11,15 @@ import { cn } from "@/lib/utils/common";
 const tokens = [
   {
     symbol: "RAE",
-    logoURI: "/icons/rae.svg",
+    imgSrc: "/icons/rae.svg",
   },
   {
     symbol: "ETH",
-    logoURI: "/icons/rae.svg",
+    imgSrc: "/icons/rae.svg",
   },
   {
     symbol: "BTC",
-    logoURI: "/icons/rae.svg",
+    imgSrc: "/icons/rae.svg",
   },
 ] as Array<IToken>;
 
@@ -45,7 +45,7 @@ export default function TokenSelect({
             <Image
               width={18}
               height={18}
-              src={token?.logoURI}
+              src={token?.imgSrc}
               alt="selected token"
               className="mr-2 rounded-full"
             ></Image>
@@ -75,7 +75,7 @@ export default function TokenSelect({
             <Image
               width={18}
               height={18}
-              src={t.logoURI}
+              src={t.imgSrc}
               alt="token option"
               className="mr-2 rounded-full"
             ></Image>

@@ -1,5 +1,6 @@
 import CollectionInfo from "./collection-info";
 import CollectionPrice from "./collection-price";
+import CollectionTabs from "./collection-tabs";
 
 export function CollectionDisplay() {
   return (
@@ -7,6 +8,7 @@ export function CollectionDisplay() {
       <div className="w-[860px]">
         <CollectionInfo />
         <CollectionPrice />
+        <CollectionTabs />
       </div>
     </div>
   );

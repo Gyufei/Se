@@ -3,6 +3,6 @@ export interface IToken {
   name: string;
   symbol: string;
   decimals: number;
-  logoURI: string;
+  imgSrc: string;
   [key: string]: any;
 }

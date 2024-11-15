@@ -15,11 +15,11 @@ export default function HeaderMenu() {
     },
     {
       name: "Buy RAE",
-      link: "/buy",
+      link: "/buy-rae",
     },
     {
       name: "My NFT Collections",
-      link: "/my",
+      link: "/my-nft-collections",
     },
   ];
 

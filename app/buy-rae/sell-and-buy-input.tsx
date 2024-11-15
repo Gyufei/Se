@@ -2,8 +2,8 @@ import Image from "next/image";
 import { cn } from "@/lib/utils/common";
 import { NumericalInput } from "@/components/share/numerical-input";
 import TokenSelect from "./token-select";
-import numeral from "numeral";
 import { IToken } from "@/lib/types/token";
+import { formatNumber } from "@/lib/utils/number";
 
 export default function SellAndBuyInput({
   payToken,
@@ -34,7 +34,7 @@ export default function SellAndBuyInput({
             onUserInput={setPayAmount}
           />
           <div className="text-xl text-white opacity-60 mt-2">
-            ${numeral(sellPrice).format("0,0.[00]")}
+            ${formatNumber(sellPrice)}
           </div>
         </div>
         <div className="flex items-end">

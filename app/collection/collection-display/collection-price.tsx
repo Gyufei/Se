@@ -1,4 +1,4 @@
-import numeral from "numeral";
+import { formatNumberWithUnit, formatPercent } from "@/lib/utils/number";
 
 const valueTextClx = "text-white font-medium text-xl";
 const labelTextClx =
@@ -18,27 +18,19 @@ export default function CollectionPrice() {
         <div className={labelTextClx}>Price</div>
       </div>
       <div>
-        <div className={valueTextClx}>
-          {numeral(totalVol).format("0.[00]a").toUpperCase()} RAE
-        </div>
+        <div className={valueTextClx}>{formatNumberWithUnit(totalVol)} RAE</div>
         <div className={labelTextClx}>Total Volume</div>
       </div>
       <div>
-        <div className={valueTextClx}>
-          {numeral(items).format("0.[00]a").toUpperCase()}
-        </div>
+        <div className={valueTextClx}>{formatNumberWithUnit(items)}</div>
         <div className={labelTextClx}>Items</div>
       </div>
       <div>
-        <div className={valueTextClx}>
-          {numeral(listedPercent).format("0.[00]%")}
-        </div>
+        <div className={valueTextClx}>{formatPercent(listedPercent)}</div>
         <div className={labelTextClx}>Listed</div>
       </div>
       <div>
-        <div className={valueTextClx}>
-          {numeral(vaultedPercent).format("0.[00]%")}
-        </div>
+        <div className={valueTextClx}>{formatPercent(vaultedPercent)}</div>
         <div className={labelTextClx}>Vaulted</div>
       </div>
     </div>

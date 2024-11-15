@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils/common";
-import numeral from "numeral";
+import { formatPercent } from "@/lib/utils/number";
 
 export default function RaePrice() {
   const raePrice = 400;
@@ -19,7 +19,7 @@ export default function RaePrice() {
           className={cn("text-xl", isPercentUp ? "text-green" : "text-red")}
         >
           {isPercentUp ? "+" : "-"}
-          {numeral(raePriceChangePercent).format("0.[00]%")}
+          {formatPercent(raePriceChangePercent)}
         </span>
       </div>
     </div>

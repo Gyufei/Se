@@ -10,7 +10,7 @@ export default function BuyPage() {
   const [payAmount, setPayAmount] = useState("0");
   const [payToken, setPayToken] = useState<IToken>({
     symbol: "",
-    logoURI: "/icons/empty.svg",
+    imgSrc: "/icons/empty.svg",
     decimals: 9,
   } as IToken);
 

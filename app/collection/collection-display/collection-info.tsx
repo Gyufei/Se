@@ -6,6 +6,8 @@ import { useState } from "react";
 export default function CollectionInfo() {
   function handleShowMore() {}
 
+  function handleXClick() {}
+
   return (
     <>
       <div className="flex items-center">
@@ -34,10 +36,10 @@ export default function CollectionInfo() {
             </span>
           </div>
           <div className="flex items-center space-x-[10px] mt-[25px]">
-            <HoverIcon src="/icons/earth.svg" />
-            <HoverIcon src="/icons/x.svg" />
-            <HoverIcon src="/icons/discord.svg" />
-            <HoverIcon src="/icons/tg.svg" />
+            <HoverIcon onClick={handleXClick} src="/icons/earth.svg" />
+            <HoverIcon onClick={handleXClick} src="/icons/x.svg" />
+            <HoverIcon onClick={handleXClick} src="/icons/discord.svg" />
+            <HoverIcon onClick={handleXClick} src="/icons/tg.svg" />
           </div>
         </div>
       </div>
@@ -45,11 +47,12 @@ export default function CollectionInfo() {
   );
 }
 
-function HoverIcon({ src }: { src: string }) {
+function HoverIcon({ src, onClick }: { src: string; onClick: () => void }) {
   const [hover, setHover] = useState(false);
 
   return (
     <div
+      onClick={onClick}
       className="w-8 h-8 bg-[#281A31] flex items-center justify-center cursor-pointer"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}

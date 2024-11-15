@@ -12,3 +12,20 @@ export function formatTimeObj(secs: number) {
 
   return formattedTime;
 }
+
+export function replaceTimeUnitToSingleChar(
+  timeStr: string,
+  isUpperCase = false,
+) {
+  const str = timeStr
+    .replace("days", "d")
+    .replace("day", "d")
+    .replace("hours", "h")
+    .replace("hour", "h")
+    .replace("minutes", "m")
+    .replace("minute", "m")
+    .replace("seconds", "s")
+    .replace("second", "s");
+
+  return isUpperCase ? str.toUpperCase() : str;
+}
