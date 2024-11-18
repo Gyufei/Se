@@ -30,7 +30,7 @@ export default function CollectionInfo() {
             </span>
             <span
               onClick={handleShowMore}
-              className="inline-block ml-1 cursor-pointer text-white text-sm font-medium underline decoration-green"
+              className="inline-block ml-1 cursor-pointer text-white text-sm font-medium underline decoration-green underline-offset-4"
             >
               Show more
             </span>

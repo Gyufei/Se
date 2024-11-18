@@ -14,7 +14,7 @@ export default function BidProgress() {
           lf at least 1 Rae is remaining in the offer by the end of the time
           period.the NFT(s) in the vault will be listed to be purchased.
         </span>
-        <span className="inline-block ml-2 cursor-pointer underline decoration-green text-white">
+        <span className="inline-block ml-2 cursor-pointer underline decoration-green text-white underline-offset-4">
           Read More
         </span>
       </div>

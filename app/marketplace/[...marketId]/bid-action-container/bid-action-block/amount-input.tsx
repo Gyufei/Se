@@ -24,7 +24,12 @@ export default function AmountInput({
         onClick={handleDecrease}
         className="cursor-pointer h-12 w-12 flex items-center justify-center border border-[#ffffff20]"
       >
-        <Image src="/icons/minus.svg" width={48} height={48} alt="minus" />
+        <Image
+          src="/icons/minus-border.svg"
+          width={48}
+          height={48}
+          alt="minus"
+        />
       </div>
       <div>
         <NumericalInput
@@ -38,7 +43,12 @@ export default function AmountInput({
         onClick={handleIncrease}
         className="cursor-pointer h-12 w-12 flex items-center justify-center border border-[#ffffff20]"
       >
-        <Image src="/icons/plus.svg" width={48} height={48} alt="minus" />
+        <Image
+          src="/icons/plus-border.svg"
+          width={48}
+          height={48}
+          alt="minus"
+        />
       </div>
     </div>
   );

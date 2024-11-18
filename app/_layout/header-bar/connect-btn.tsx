@@ -1,8 +1,10 @@
 import { cn } from "@/lib/utils/common";
 import { truncateAddr } from "@/lib/utils/web3";
 import Image from "next/image";
+import SignInPop from "./sign-in-pop";
 
-const ConnectBtnText = "h-10 px-5 flex items-center text-[14px] font-bold";
+const ConnectBtnText =
+  "relative h-10 px-5 flex items-center text-[14px] font-bold";
 
 export default function ConnectBtn() {
   const isConnect = true;
@@ -28,6 +30,7 @@ export default function ConnectBtn() {
       <div className="text-white opacity-60 hover:opacity-100">
         {truncateAddr(address)}
       </div>
+      <SignInPop />
     </button>
   );
 }

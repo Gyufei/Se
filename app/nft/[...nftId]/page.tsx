@@ -11,13 +11,13 @@ const nftInfo = {
   imgSrc: "/images/mock-nft.png",
 };
 
-export default function SingleNFT({
+export default function Page({
   params,
 }: {
-  params: Promise<{ id: string[] }>;
+  params: Promise<{ nftId: string[] }>;
 }) {
   const nftParams = use(params);
-  const nftId = nftParams.id;
+  const nftId = nftParams.nftId;
   console.log(nftId);
 
   return (

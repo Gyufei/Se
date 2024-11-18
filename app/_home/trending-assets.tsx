@@ -34,7 +34,7 @@ function TrendingTitle({ marketType }: { marketType: string }) {
       </div>
       <div className="flex items-center text-base text-white">
         <span>Got questions?</span>
-        <span className="inline-block ml-1 underline decoration-solid decoration-green">
+        <span className="inline-block ml-1 underline decoration-green">
           Check our FAQ
         </span>
       </div>

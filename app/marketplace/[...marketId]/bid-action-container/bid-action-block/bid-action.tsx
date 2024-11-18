@@ -36,7 +36,7 @@ export default function BidAction() {
         <div className="flex items-center">
           <div
             onClick={handleBuyMax}
-            className="cursor-pointer text-white text-sm font-medium underline decoration-green"
+            className="cursor-pointer text-white text-sm font-medium underline decoration-green underline-offset-4"
           >
             Buy max
           </div>

@@ -22,7 +22,7 @@ export default function CollapsePanel({
       <div className="flex justify-between items-center px-5 py-3 border-b-2 border-b-[#ffffff10]">
         <div className="text-[18px] text-white font-medium">{panelName}</div>
         <Image
-          className="cursor-pointer"
+          className="transition-all duration-500 ease-in-out cursor-pointer"
           onClick={toggleCollapse}
           src={isCollapsed ? "/icons/plus.svg" : "/icons/minus.svg"}
           width={28}
@@ -32,8 +32,8 @@ export default function CollapsePanel({
       </div>
       <div
         className={cn(
-          "transition-all duration-500 ease-in-out overflow-hidden",
-          isCollapsed ? "h-0" : "h-auto",
+          "transition-all duration-300 ease-in-out overflow-hidden",
+          isCollapsed ? "max-h-0" : "max-h-[1000px]",
         )}
       >
         {children}

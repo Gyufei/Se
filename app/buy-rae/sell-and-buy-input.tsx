@@ -28,7 +28,7 @@ export default function SellAndBuyInput({
         <div className="flex-1">
           <div className="text-base text-white opacity-60">Sell</div>
           <NumericalInput
-            className="mr-2 mt-[10px] h-[50px] w-full text-left text-3xl text-white placeholder:opacity-50"
+            className="mr-2 mt-[10px] h-[50px] w-full text-left text-3xl text-white bg-transparent placeholder:opacity-50 placeholder:text-2xl"
             placeholder="Input Sell Amount"
             value={payAmount}
             onUserInput={setPayAmount}
@@ -48,8 +48,8 @@ export default function SellAndBuyInput({
         <div className="flex-1">
           <div className="text-base text-white opacity-60">Buy</div>
           <NumericalInput
-            className="mr-1 mt-[10px] w-full h-[50px] text-left text-3xl text-white placeholder:opacity-50"
-            placeholder="Input Sell Amount"
+            className="mr-1 mt-[10px] w-full h-[50px] text-left text-3xl text-white bg-transparent placeholder:opacity-50 placeholder:text-2xl"
+            placeholder="Input Buy Amount"
             value={buyAmount}
             onUserInput={setBuyAmount}
           />

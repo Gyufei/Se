@@ -7,14 +7,14 @@ import BidNftContainer from "./bid-nft-container";
 export default function NFTPage({
   params,
 }: {
-  params: Promise<{ id: string[] }>;
+  params: Promise<{ marketId: string[] }>;
 }) {
   const nftParams = use(params);
-  const nftId = nftParams.id;
+  const nftId = nftParams.marketId;
   console.log(nftId);
 
   return (
-    <div className="flex">
+    <div className="flex min-w-[1440px] overflow-x-auto">
       <BidNftContainer />
       <BidActionContainer />
     </div>

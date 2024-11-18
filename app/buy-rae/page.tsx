@@ -3,10 +3,10 @@ import { useState } from "react";
 import { IToken } from "@/lib/types/token";
 import SellAndBuyInput from "./sell-and-buy-input";
 import ToOtherAddr from "./to-other-addr";
-import ConfirmBuyBtn from "./confirm-buy-btn";
 import BuyOption from "./buy-option";
+import ShouldConnectBtn from "../_common/should-connect-btn";
 
-export default function BuyPage() {
+export default function Page() {
   const [payAmount, setPayAmount] = useState("0");
   const [payToken, setPayToken] = useState<IToken>({
     symbol: "",
@@ -44,7 +44,9 @@ export default function BuyPage() {
 
         <ToOtherAddr addr={toAddr} setAddr={setToAddr} />
 
-        <ConfirmBuyBtn onClick={handleBuy} />
+        <ShouldConnectBtn className="w-full mt-5" onClick={handleBuy}>
+          Buy
+        </ShouldConnectBtn>
 
         <BuyOption payToken={payToken} />
       </div>
