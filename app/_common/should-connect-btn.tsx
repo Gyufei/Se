@@ -1,7 +1,8 @@
+import { SignInDialogOpen } from "@/lib/state/other";
+import { AccessTokenAtom } from "@/lib/state/user";
 import { cn } from "@/lib/utils/common";
-
-const isConnect = true;
-const isConnecting = false;
+import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
+import { useAtomValue, useSetAtom } from "jotai";
 
 export default function ShouldConnectBtn({
   className,
@@ -12,11 +13,19 @@ export default function ShouldConnectBtn({
   children: React.ReactNode;
   onClick: () => void;
 }) {
+  const { open } = useAppKit();
+  const { isConnected } = useAppKitAccount();
+
+  const uuid = useAtomValue(AccessTokenAtom);
+  const setSignDialogOpen = useSetAtom(SignInDialogOpen);
+
   function handleClick() {
-    if (isConnect) {
-      onClick();
+    if (!isConnected) {
+      open();
+    } else if (isConnected && !uuid) {
+      setSignDialogOpen(true);
     } else {
-      //TODO: show connect wallet modal
+      onClick();
     }
   }
 
@@ -28,7 +37,7 @@ export default function ShouldConnectBtn({
         className,
       )}
     >
-      {isConnecting ? "Connecting" : isConnect ? children : "Connect Wallet"}
+      {isConnected ? children : "Connect Wallet"}
     </button>
   );
 }

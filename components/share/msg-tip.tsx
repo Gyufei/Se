@@ -3,11 +3,11 @@ import { cn } from "@/lib/utils/common";
 
 const iconMap = {
   error: "/icons/error.svg",
-  info: "/icons/tip.svg",
+  warning: "/icons/info.svg",
   success: "/icons/success.svg",
 };
 
-export type IMsgType = "error" | "info" | "success";
+export type IMsgType = "error" | "warning" | "success";
 
 export interface IMsgPayload {
   type: IMsgType | null;
@@ -30,7 +30,7 @@ export default function MsgTip({
       className={cn(
         "h-8 relative flex items-center px-5",
         type === "error" && "bg-[#EF466F40]",
-        type === "info" && "bg-[#3772FF40]",
+        type === "warning" && "bg-[#3772FF40]",
         type === "success" && "bg-[#AAED4A40]",
         className,
       )}
@@ -39,7 +39,7 @@ export default function MsgTip({
         className={cn(
           "absolute left-0 w-1 h-full",
           type === "error" && "bg-[#EF466F]",
-          type === "info" && "bg-[#3772FF]",
+          type === "warning" && "bg-[#3772FF]",
           type === "success" && "bg-[#AAED4A]",
         )}
       ></div>

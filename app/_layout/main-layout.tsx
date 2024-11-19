@@ -1,3 +1,4 @@
+import GlobalMessageTip from "@/components/share/global-message-tip";
 import HeaderBar from "./header-bar";
 
 export default function MainLayout({
@@ -9,6 +10,8 @@ export default function MainLayout({
     <main>
       <HeaderBar />
       {children}
+
+      <GlobalMessageTip />
     </main>
   );
 }

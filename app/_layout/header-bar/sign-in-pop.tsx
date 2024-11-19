@@ -1,12 +1,56 @@
 "use client";
+import { GlobalMessageAtom } from "@/lib/state/global-message";
+import { SignInDialogOpen } from "@/lib/state/other";
+import { useAtom, useSetAtom } from "jotai";
 import Image from "next/image";
-
-const isSignIn = false;
+import { useSignMessage } from "wagmi";
+import { SignMessageData } from "wagmi/query";
 
 export default function SignInPop() {
-  if (isSignIn) return null;
+  const [signInDialogOpen, setSignDialogOpen] = useAtom(SignInDialogOpen);
 
-  function handleClick() {}
+  const { signMessage, isPending: isSigning } = useSignMessage();
+
+  const setGlobalMsgTip = useSetAtom(GlobalMessageAtom);
+
+  async function handleSignIn() {
+    signMessage(
+      {
+        message: "Sign in to Tessera",
+      },
+      {
+        onSuccess: (data) => {
+          checkSignIn(data);
+        },
+        onError: (error) => {
+          setGlobalMsgTip({
+            type: "error",
+            message: error.message || "Sign in failed",
+          });
+        },
+      },
+    );
+  }
+
+  function checkSignIn(signInData: SignMessageData | undefined) {
+    if (isSigning) {
+      return;
+    }
+
+    console.log(signInData);
+    setSignDialogOpen(false);
+  }
+
+  function handleClose() {
+    if (isSigning) {
+      return;
+    }
+    setSignDialogOpen(false);
+  }
+
+  if (!signInDialogOpen) {
+    return null;
+  }
 
   return (
     <div className="px-5 pt-10 pb-5 top-[calc(100%+12px)] right-0 bg-[#281A31] absolute w-[400px]">
@@ -34,14 +78,16 @@ export default function SignInPop() {
       </div>
 
       <button
-        onClick={handleClick}
-        className="bg-green mt-[30px] w-full min-h-12 flex justify-center items-center flex-1 text-[#12021D] text-base font-bold"
+        disabled={isSigning}
+        onClick={handleSignIn}
+        className="bg-green mt-[30px] w-full min-h-12 flex justify-center items-center flex-1 text-[#12021D] text-base font-bold disabled:opacity-60"
       >
-        Sign in with Wallet
+        {isSigning ? "Signing in..." : "Sign in with Wallet"}
       </button>
       <button
-        onClick={handleClick}
-        className="bg-[#382743] mt-5 w-full min-h-12 flex justify-center items-center flex-1 text-white opacity-60 text-base font-bold"
+        disabled={isSigning}
+        onClick={handleClose}
+        className="bg-[#382743] mt-5 w-full min-h-12 flex justify-center items-center flex-1 text-white opacity-60 text-base font-bold hover:opacity-80 disabled:opacity-30"
       >
         I&apos;ll do it later
       </button>
