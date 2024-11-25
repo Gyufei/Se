@@ -1,59 +1,42 @@
 "use client";
 
-import { wagmiAdapter, projectId, networks } from "./wagmi-config";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createAppKit } from "@reown/appkit/react";
+import "@rainbow-me/rainbowkit/styles.css";
 import React, { type ReactNode } from "react";
-import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
+import {
+  darkTheme,
+  getDefaultConfig,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { http, WagmiProvider, type Config } from "wagmi";
+import { unichainSepolia } from "wagmi/chains";
 
-// Set up queryClient
 const queryClient = new QueryClient();
+
+const projectId = "ce2c2a3fb5d8e2a39ad4181746ddd873";
 
 if (!projectId) {
   throw new Error("Project ID is not defined");
 }
 
-// Set up metadata
-const metadata = {
-  name: "Tessera",
-  description: "",
-  url: "https://appkitexampleapp.com", // origin must match your domain & subdomain
-  icons: [],
-};
-
-// Create the modal
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const modal = createAppKit({
-  adapters: [wagmiAdapter],
+const wagmiConfig = getDefaultConfig({
+  appName: "Tessera",
   projectId,
-  networks: networks as any,
-  defaultNetwork: networks[0],
-  metadata: metadata,
-  features: {
-    analytics: true, // Optional - defaults to your Cloud configuration
-    email: false,
-    socials: [],
-  }
+  chains: [unichainSepolia],
+  ssr: true,
+  transports: {
+    [unichainSepolia.id]: http("https://sepolia.unichain.org"),
+  },
 });
 
-function WalletConnectProvider({
-  children,
-  cookies,
-}: {
-  children: ReactNode;
-  cookies: string | null;
-}) {
-  const initialState = cookieToInitialState(
-    wagmiAdapter.wagmiConfig as Config,
-    cookies,
-  );
-
+function WalletConnectProvider({ children }: { children: ReactNode }) {
   return (
-    <WagmiProvider
-      config={wagmiAdapter.wagmiConfig as Config}
-      initialState={initialState}
-    >
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <WagmiProvider config={wagmiConfig as Config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider theme={darkTheme({})}>
+          {children}
+        </RainbowKitProvider>
+      </QueryClientProvider>
     </WagmiProvider>
   );
 }

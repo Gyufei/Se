@@ -1,29 +1,30 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
 
 export default function ToOtherAddr({
+  toOther,
+  setToOther,
   addr,
   setAddr,
 }: {
+  toOther: boolean;
+  setToOther: (_v: boolean) => void;
   addr: string;
   setAddr: (v: string) => void;
 }) {
-  const [showAddrInput, setShowAddrInput] = useState(false);
-
   function handleToggleShowAddr(v: boolean) {
     if (!v) {
-      setShowAddrInput(false);
+      setToOther(false);
       setAddr("");
     }
 
-    setShowAddrInput(v);
+    setToOther(v);
   }
 
   return (
     <>
       <div className="flex mt-4 items-center space-x-2">
         <Checkbox
-          checked={showAddrInput}
+          checked={toOther}
           onCheckedChange={handleToggleShowAddr}
           id="toOtherAddr"
         />
@@ -32,7 +33,7 @@ export default function ToOtherAddr({
         </label>
       </div>
 
-      {showAddrInput && (
+      {toOther && (
         <input
           value={addr}
           onChange={(e) => setAddr(e.target.value)}

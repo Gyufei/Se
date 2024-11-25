@@ -49,8 +49,11 @@ export default function PoolInfoCard() {
             My Delegated
           </div>
           <div className="text-2xl text-right mt-[10px] text-white font-medium">
-            <span>{PoolInfo.myDelegated} RAE</span>
-            <span>{formatPercent(PoolInfo.myDelegatedPercent)}</span>
+            <span>{PoolInfo.myDelegated} RAE&nbsp;</span>
+            <span>
+              {PoolInfo.myDelegatedPercent &&
+                `(${formatPercent(PoolInfo.myDelegatedPercent)})`}
+            </span>
           </div>
         </div>
       </div>

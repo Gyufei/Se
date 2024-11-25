@@ -3,28 +3,35 @@ import { cn } from "@/lib/utils/common";
 import { truncateAddr } from "@/lib/utils/web3";
 import Image from "next/image";
 import SignInPop from "./sign-in-pop";
-import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
-import { useEffect } from "react";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { SignInDialogOpen } from "@/lib/state/other";
+import { useAccount, useAccountEffect } from "wagmi";
+import { AccessTokenAtom } from "@/lib/state/user";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 const ConnectBtnText = "h-10 px-5 flex items-center text-[14px] font-bold";
 
 export default function ConnectBtn() {
-  const { open } = useAppKit();
-  const { address, isConnected } = useAppKitAccount();
+  const { openConnectModal } = useConnectModal();
+  const { address, isConnected } = useAccount();
+  const uuid = useAtomValue(AccessTokenAtom);
+
+  useAccountEffect({
+    onConnect(_data) {
+      if (!uuid) {
+        setSignDialogOpen(true);
+      }
+    },
+    onDisconnect() {},
+  });
 
   const setSignDialogOpen = useSetAtom(SignInDialogOpen);
 
   function handleConnect() {
-    open();
-  }
+    if (!openConnectModal) return;
 
-  useEffect(() => {
-    if (isConnected) {
-      setSignDialogOpen(true);
-    }
-  }, [isConnected, setSignDialogOpen]);
+    openConnectModal();
+  }
 
   if (!isConnected) {
     return (

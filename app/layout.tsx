@@ -1,11 +1,10 @@
-import { headers } from "next/headers";
-import Metadata from "next";
+import type { Metadata } from "next";
+
 import "./globals.css";
 import { SpaceGroteskFont } from "./fonts";
 import { cn } from "@/lib/utils/common";
 import MainLayout from "./_layout/main-layout";
 import WalletConnectProvider from "@/components/context/wallet-connect-context";
-import { use } from "react";
 import { JotaiProviders } from "@/components/context/jotai-provider";
 
 export const metadata: Metadata = {
@@ -57,13 +56,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const resolvedHeader = use(headers());
-  const cookies = resolvedHeader.get("cookie");
-
   return (
     <html lang="en">
       <body className={cn(SpaceGroteskFont.variable)}>
-        <WalletConnectProvider cookies={cookies}>
+        <WalletConnectProvider>
           <JotaiProviders>
             <MainLayout>{children}</MainLayout>
           </JotaiProviders>

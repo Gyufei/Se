@@ -1,26 +1,25 @@
-"use client";
-
 import { use } from "react";
 import PoolInfoCard from "./pool-info-card";
-import DelegateAction from "./delegate-action";
 import PoolBidRecord from "./pool-bid-record";
+import { truncateAddr } from "@/lib/utils/web3";
+import PoolAction from "./pool-action";
 
 export default function Page({
   params,
 }: {
-  params: Promise<{ poolId: string[] }>;
+  params: Promise<{ poolId: string }>;
 }) {
   const nftParams = use(params);
   const poolId = nftParams.poolId;
-  console.log(poolId);
+  const displayPoolId = poolId.length > 6 ? truncateAddr(poolId) : poolId;
 
   return (
     <>
       <div className="text-[30px] font-medium text-white pb-5 px-6 border-b-2 border-[#ffffff10]">
-        Pool: {poolId}
+        Pool: {displayPoolId}
       </div>
       <PoolInfoCard />
-      <DelegateAction />
+      <PoolAction poolId={poolId} />
       <PoolBidRecord />
     </>
   );

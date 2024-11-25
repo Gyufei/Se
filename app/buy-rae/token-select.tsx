@@ -7,21 +7,9 @@ import {
 } from "@/components/ui/popover";
 import { IToken } from "@/lib/types/token";
 import { cn } from "@/lib/utils/common";
-
-const tokens = [
-  {
-    symbol: "RAE",
-    imgSrc: "/icons/rae.svg",
-  },
-  {
-    symbol: "ETH",
-    imgSrc: "/icons/rae.svg",
-  },
-  {
-    symbol: "BTC",
-    imgSrc: "/icons/rae.svg",
-  },
-] as Array<IToken>;
+import { useTokens } from "@/lib/api/use-tokens";
+import { Skeleton } from "@/components/ui/skeleton";
+import { range } from "lodash";
 
 export default function TokenSelect({
   token,
@@ -30,6 +18,7 @@ export default function TokenSelect({
   token: IToken;
   setToken: (_t: IToken) => void;
 }) {
+  const { data: tokens, isPending } = useTokens();
   const [popOpen, setPopOpen] = useState(false);
 
   const handleSelectToken = (t: IToken) => {
@@ -45,7 +34,7 @@ export default function TokenSelect({
             <Image
               width={18}
               height={18}
-              src={token?.imgSrc}
+              src={token?.url}
               alt="selected token"
               className="mr-2 rounded-full"
             ></Image>
@@ -66,22 +55,26 @@ export default function TokenSelect({
         align="end"
         className="flex w-[112px] flex-col items-stretch rounded-none border-0 bg-[#382743] space-y-[5px] p-[5px]"
       >
-        {tokens.map((t) => (
-          <div
-            key={t.symbol}
-            onClick={() => handleSelectToken(t)}
-            className="flex h-10 cursor-pointer items-center rounded-none px-4 text-sm text-white hover:bg-[#281A31]"
-          >
-            <Image
-              width={18}
-              height={18}
-              src={t.imgSrc}
-              alt="token option"
-              className="mr-2 rounded-full"
-            ></Image>
-            {t.symbol}
-          </div>
-        ))}
+        {isPending &&
+          range(3).map((i) => <Skeleton key={i} className="h-10"></Skeleton>)}
+        {!isPending &&
+          tokens?.length &&
+          tokens.map((t) => (
+            <div
+              key={t.symbol}
+              onClick={() => handleSelectToken(t)}
+              className="flex h-10 cursor-pointer items-center rounded-none px-4 text-sm text-white hover:bg-[#281A31]"
+            >
+              <Image
+                width={18}
+                height={18}
+                src={t.url}
+                alt="token option"
+                className="mr-2 rounded-full"
+              ></Image>
+              {t.symbol}
+            </div>
+          ))}
       </PopoverContent>
     </Popover>
   );

@@ -8,9 +8,7 @@ import { SignMessageData } from "wagmi/query";
 
 export default function SignInPop() {
   const [signInDialogOpen, setSignDialogOpen] = useAtom(SignInDialogOpen);
-
   const { signMessage, isPending: isSigning } = useSignMessage();
-
   const setGlobalMsgTip = useSetAtom(GlobalMessageAtom);
 
   async function handleSignIn() {
@@ -53,7 +51,7 @@ export default function SignInPop() {
   }
 
   return (
-    <div className="px-5 pt-10 pb-5 top-[calc(100%+12px)] right-0 bg-[#281A31] absolute w-[400px]">
+    <div className="z-10 px-5 pt-10 pb-5 top-[calc(100%+12px)] right-0 bg-[#281A31] absolute w-[400px]">
       <div className="flex items-center justify-center space-x-1">
         <div className="text-white text-[30px] leading-[38px] opacity-80 bg-[#382743] h-16 w-16 flex items-center justify-center">
           T
