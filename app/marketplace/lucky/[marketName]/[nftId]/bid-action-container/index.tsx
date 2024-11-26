@@ -1,9 +1,10 @@
+import NFTPrice from "@/app/_common/nft-price";
+import NFTInfo from "@/app/_common/nft-info";
+
 import BidActionBlock from "./bid-action-block";
 import BidResult from "./bid-result";
 import ClaimBidNFT from "./claim-bid-nft";
 import ClaimRae from "./claim-rae";
-import NFTInfo from "../../../_common/nft-info";
-import NFTPrice from "../../../_common/nft-price";
 import NftSeller from "./nft-seller";
 import OptimisticBuyout from "./optimistic-buyout";
 import WinnerPrice from "./winner-price";

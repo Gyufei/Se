@@ -1,13 +1,11 @@
 import type { IToken } from "@/lib/types/token";
 // import { apiFetcher } from "@/lib/fetcher";
-// import { useEndPoint } from "@/lib/api/use-endpoint";
 import { useQuery } from "@tanstack/react-query";
 
 export function useTokens() {
-  // const { cdnEndPoint } = useEndPoint();
-
   async function tFetcher() {
-    // const tokens = await apiFetcher(`${cdnEndPoint}/tokenlist/uni.json`);
+    // const path = withApiHost(`/tokenlist/uni.json`);
+    // const tokens = await apiFetcher(path);
     const tokens = [
       {
         name: "Wrapped ETH",

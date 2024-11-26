@@ -3,7 +3,7 @@ import { useChainConfig } from "@/lib/use-chain-config";
 import { useWriteContract } from "wagmi";
 import { useGasCalc } from "../helper/use-gas-calc";
 
-export function useClaimBid() {
+export function useRetrieveBid() {
   const { chainConfig } = useChainConfig();
   const { getGasParams } = useGasCalc();
 

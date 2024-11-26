@@ -3,6 +3,7 @@ import { useState } from "react";
 import DescContent from "./desc-content";
 import BidContent from "./bid-content";
 import { capitalize } from "lodash";
+// import { useLuckyNFTPageContext } from "../../page-context";
 
 const TabTriggerClx =
   "h-10 px-5 text-white data-[state=inactive]:bg-transparent transition-all rounded-none data-[state=active]:bg-[#382544] data-[state=active]:font-bold data-[state=inactive]:font-medium data-[state=inactive]:opacity-60";
@@ -10,6 +11,7 @@ const TabTriggerClx =
 const tabs = ["details", "bids"];
 
 export default function DetailTabs() {
+  // const { isPending } = useLuckyNFTPageContext();
   const [currentTab, setCurrentTab] = useState(tabs[0]);
 
   const bidLength = 400;
@@ -21,7 +23,8 @@ export default function DetailTabs() {
           {capitalize(tabs[0])}
         </TabsTrigger>
         <TabsTrigger className={TabTriggerClx} value={tabs[1]}>
-          {capitalize(tabs[1])} {bidLength ? `(${bidLength})` : ""}
+          {capitalize(tabs[1])}
+          {bidLength ? `(${bidLength})` : ""}
         </TabsTrigger>
       </TabsList>
       <TabsContent

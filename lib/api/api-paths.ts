@@ -1,8 +1,9 @@
-import { isProduction } from "../const/env";
+import { isProduction } from "@/lib/const/env";
 
 export function WithApiHost(path: string) {
   const prodHost = `https://api.tadle.com`;
-  const devHost = `https://preview-api.tadle.com`;
+  // const devHost = `https://preview-api.tadle.com`;
+  const devHost = `https://private-anon-9a060573f5-tesseradev.apiary-mock.com`;
   const host = isProduction ? prodHost : devHost;
   return `${host}${path}`;
 }
@@ -14,4 +15,8 @@ export function WithCDN(path: string) {
   return `${cdn}${path}`;
 }
 
-export const ApiPaths = {};
+export const ApiPaths = {
+  markets: "/markets",
+  activity: "/activities",
+  auction: "/auction",
+};

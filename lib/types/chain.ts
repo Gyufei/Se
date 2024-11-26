@@ -1,3 +1,3 @@
 export enum ChainType {
-  Uni = "Uni",
+  Uni = "Unichain",
 }

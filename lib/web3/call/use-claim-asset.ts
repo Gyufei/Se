@@ -3,7 +3,7 @@ import { useChainConfig } from "@/lib/use-chain-config";
 import { useWriteContract } from "wagmi";
 import { useGasCalc } from "../helper/use-gas-calc";
 
-export function useClaimNFT() {
+export function useClaimAsset() {
   const { chainConfig } = useChainConfig();
   const { getGasParams } = useGasCalc();
 
@@ -12,6 +12,7 @@ export function useClaimNFT() {
   const write = async (
     args: {
       auctionId: number;
+      winner: string;
     },
     {
       onSuccess,
@@ -22,15 +23,15 @@ export function useClaimNFT() {
     },
   ) => {
     try {
-      const { auctionId } = args || {};
+      const { auctionId, winner } = args || {};
 
       const abiAddress = chainConfig.contracts.LuckyMarkets;
 
       const callParams = {
         abi: LuckyMarketsABI,
         address: abiAddress as any,
-        functionName: "retrieveNFT",
-        args: [auctionId],
+        functionName: "claimAsset",
+        args: [auctionId, winner],
       };
 
       const gasParams = await getGasParams({

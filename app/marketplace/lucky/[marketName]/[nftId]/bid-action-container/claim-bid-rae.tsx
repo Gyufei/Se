@@ -1,23 +1,26 @@
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
-import { useClaimNFT } from "@/lib/web3/call/use-claim-nft";
+import { useRetrieveBid } from "@/lib/web3/call/use-retrieve-bid";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useMemo } from "react";
+import { useAccount } from "wagmi";
 
 const auctionId = 0;
 const nftNum = 15;
 
-export default function ClaimBidNFT() {
+export default function ClaimBidRae() {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
+  const { address } = useAccount();
 
-  const { write, isPending: isClaiming } = useClaimNFT();
+  const { write, isPending: isClaiming } = useRetrieveBid();
 
   function handleClaim() {
     write(
       {
         auctionId,
+        bidder: address!,
       },
       {
         onSuccess: () => {

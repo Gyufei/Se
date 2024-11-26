@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.tadle.com",
       },
+      {
+        protocol: "https",
+        hostname: "api.pudgypenguins.io",
+        pathname: "/lil/image/*",
+      },
     ],
   },
   // webpack: (config: { externals: string[] }) => {
