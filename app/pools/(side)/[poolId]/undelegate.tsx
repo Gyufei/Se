@@ -5,7 +5,7 @@ import { NumericalInput } from "@/components/share/numerical-input";
 import { formatNumber } from "@/lib/utils/number";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { multiply } from "safebase";
-import usePoolUndelegate from "@/lib/web3/call/use-pool-undelegate";
+import { usePoolUndelegate } from "@/lib/web3/call/use-pool-undelegate";
 import { RAE } from "@/lib/const/rae";
 import { useSetAtom } from "jotai";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
@@ -64,6 +64,13 @@ export default function Undelegate({
       };
     }
 
+    if (Number(withdrawNum) > Number(poolRaeBalance.value)) {
+      return {
+        text: "Insufficient balance",
+        disabled: true,
+      };
+    }
+
     if (isUndelegatePending) {
       return {
         text: "Withdrawing...",
@@ -75,7 +82,7 @@ export default function Undelegate({
       text: "Withdraw",
       disabled: false,
     };
-  }, [withdrawNum, isUndelegatePending]);
+  }, [withdrawNum, isUndelegatePending, poolRaeBalance.value]);
 
   return (
     <div className="px-5 pt-5">

@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { NFTOwnByType, PersonalAndPoolBtns } from "./personal-and-pool-btns";
 import NftList from "./nft-list";

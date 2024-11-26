@@ -81,6 +81,13 @@ export default function Delegate({
       };
     }
 
+    if (Number(depositNum) > raeBalance.value) {
+      return {
+        text: "Insufficient balance",
+        disabled: true,
+      };
+    }
+
     if (isDelegatePending) {
       return {
         text: "Depositing...",
@@ -98,6 +105,7 @@ export default function Delegate({
     isApproving,
     approveBtnText,
     isDelegatePending,
+    raeBalance.value,
   ]);
 
   return (

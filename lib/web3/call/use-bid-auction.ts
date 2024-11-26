@@ -1,16 +1,20 @@
 import { useWriteContract } from "wagmi";
 import { useChainConfig } from "@/lib/use-chain-config";
 import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
-import { DelegatePoolABI } from "@/lib/abi/DelegatePool";
+import { LuckyMarketsABI } from "@/lib/abi/LuckyMarkets";
 
-export default function usePoolUndelegate() {
+export function useBidAuction() {
   const { chainConfig } = useChainConfig();
   const { getGasParams } = useGasCalc();
 
   const mutation = useWriteContract();
 
   const write = async (
-    args: { poolId: string; undelegateNum: number },
+    args: {
+      bidder: string;
+      auctionId: number;
+      amount: number;
+    },
     {
       onSuccess,
       onError,
@@ -20,15 +24,15 @@ export default function usePoolUndelegate() {
     },
   ) => {
     try {
-      const { poolId, undelegateNum } = args || {};
+      const { bidder, auctionId, amount } = args || {};
 
-      const abiAddress = chainConfig.contracts.DelegatePool;
+      const abiAddress = chainConfig.contracts.LuckyMarkets;
 
       const callParams = {
-        abi: DelegatePoolABI,
+        abi: LuckyMarketsABI,
         address: abiAddress as any,
-        functionName: "undelegate",
-        args: [poolId, BigInt(undelegateNum)],
+        functionName: "bidAuction",
+        args: [bidder, auctionId, amount],
       };
 
       const gasParams = await getGasParams({
@@ -53,8 +57,6 @@ export default function usePoolUndelegate() {
       console.log("tx error", e);
     }
   };
-
-  console.log("mutation", mutation.error);
 
   return {
     ...mutation,

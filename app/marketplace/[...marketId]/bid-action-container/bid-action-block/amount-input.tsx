@@ -5,17 +5,17 @@ export default function AmountInput({
   amount,
   setAmount,
 }: {
-  amount: number;
+  amount: string;
   setAmount: (amount: string) => void;
 }) {
   function handleDecrease() {
-    if (amount > 0) {
-      setAmount(String(amount - 1));
+    if (Number(amount) > 0) {
+      setAmount(String(Number(amount) - 1));
     }
   }
 
   function handleIncrease() {
-    setAmount(String(amount + 1));
+    setAmount(String(Number(amount) + 1));
   }
 
   return (
@@ -33,7 +33,7 @@ export default function AmountInput({
       </div>
       <div>
         <NumericalInput
-          className="h-12 w-[100px] rounded-none border border-[#ffffff20] text-white text-center focus:border-focus disabled:cursor-not-allowed disabled:bg-[#F0F1F5]"
+          className="h-12 w-[100px] rounded-none bg-transparent border border-[#ffffff20] text-white text-center focus:border-focus disabled:cursor-not-allowed disabled:bg-[#F0F1F5]"
           placeholder="0"
           value={amount}
           onUserInput={(v) => setAmount(v)}

@@ -1,6 +1,6 @@
 import BidActionBlock from "./bid-action-block";
 import BidResult from "./bid-result";
-import ClaimNFT from "./claim-nft";
+import ClaimBidNFT from "./claim-bid-nft";
 import ClaimRae from "./claim-rae";
 import NFTInfo from "../../../_common/nft-info";
 import NFTPrice from "../../../_common/nft-price";
@@ -30,7 +30,7 @@ export default function BidActionContainer() {
           <BidResult success={isBidSuccess} />
         </>
       )}
-      {isBidSuccess ? <ClaimNFT /> : <ClaimRae />}
+      {!isBidding && (isBidSuccess ? <ClaimBidNFT /> : <ClaimRae />)}
     </div>
   );
 }

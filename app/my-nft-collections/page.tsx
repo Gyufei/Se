@@ -1,3 +1,4 @@
+"use client";
 import ListDisplay from "./list-display";
 import NftOperation from "./nft-operation";
 

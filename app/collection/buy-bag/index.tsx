@@ -3,9 +3,15 @@ import { range } from "lodash";
 import BagItem from "./bag-item";
 import { formatNumber } from "@/lib/utils/number";
 import RaeToken from "@/app/_common/rae-token";
-import BagBuyBtn from "./bag-pay-btn";
 import MsgTip, { IMsgPayload } from "@/components/share/msg-tip";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useApprove } from "@/lib/web3/use-approve";
+import { useBatchBuy } from "@/lib/web3/call/use-batch-buy";
+import { RAE } from "@/lib/const/rae";
+import ShouldConnectBtn from "@/app/_common/should-connect-btn";
+import { useTokenBalance } from "@/lib/web3/helper/use-token-balance";
+import { divide } from "safebase";
 
 const bagNum = 3;
 const total = 11.49;
@@ -14,17 +20,108 @@ const totalPriceValue = 30300;
 export default function BuyBag() {
   function handleClear() {}
 
-  function handleBuy() {
-    setMsg({
-      type: "success",
-      msg: "Buy success",
-    });
-  }
+  const queryClient = useQueryClient();
+
+  const { isShouldApprove, isApproving, approveAction, approveBtnText } =
+    useApprove(RAE.address, RAE.symbol);
+
+  const {
+    data: rae,
+    isPending: isRaePending,
+    queryKey: raeQueryKey,
+  } = useTokenBalance({
+    address: RAE.address,
+  });
+
+  const raeDisplay = rae ? divide(String(rae), String(10 ** RAE.decimals)) : 0;
+
+  const { write, isPending: isBuying } = useBatchBuy();
+
+  const orderIds: string[] = [];
 
   const [msg, setMsg] = useState<IMsgPayload>({
     type: null,
     msg: null,
   });
+
+  function handleBuy() {
+    if (isShouldApprove) {
+      approveAction();
+      return;
+    }
+
+    write(
+      {
+        orderIds,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [raeQueryKey] });
+          setMsg({
+            type: "success",
+            msg: "Buy successfully",
+          });
+          handleClear();
+        },
+        onError: (e: any) => {
+          setMsg({
+            type: "error",
+            msg: e.message || "Buy failed",
+          });
+        },
+      },
+    );
+  }
+
+  const btnProps = useMemo(() => {
+    if (isRaePending) {
+      return {
+        text: "Pay",
+        disabled: true,
+      };
+    }
+
+    if (isShouldApprove) {
+      return {
+        text: approveBtnText,
+        disabled: isApproving,
+      };
+    }
+
+    if (Number(raeDisplay) < totalPriceValue) {
+      return {
+        text: "Insufficient balance",
+        disabled: true,
+      };
+    }
+
+    if (!orderIds.length) {
+      return {
+        text: "Select items",
+        disabled: true,
+      };
+    }
+
+    if (isBuying) {
+      return {
+        text: "Buying...",
+        disabled: true,
+      };
+    }
+
+    return {
+      text: "Pay",
+      disabled: false,
+    };
+  }, [
+    isShouldApprove,
+    isApproving,
+    approveBtnText,
+    isBuying,
+    orderIds,
+    isRaePending,
+    raeDisplay,
+  ]);
 
   return (
     <div className="w-[400px] bg-[#1D0E27]">
@@ -55,7 +152,13 @@ export default function BuyBag() {
           </div>
           <RaeToken className="self-end" />
         </div>
-        <BagBuyBtn onClick={handleBuy} />
+        <ShouldConnectBtn
+          disabled={btnProps.disabled}
+          className="mt-5 w-full"
+          onClick={handleBuy}
+        >
+          {btnProps.text}
+        </ShouldConnectBtn>
         <MsgTip className="mt-[15px]" msgPayload={msg} />
       </div>
     </div>
