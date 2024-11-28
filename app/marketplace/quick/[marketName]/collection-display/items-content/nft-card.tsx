@@ -1,28 +1,32 @@
-import { cn } from "@/lib/utils/common";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { capitalize } from "lodash";
 import Image from "next/image";
-import { useState } from "react";
+import { useMarketActivity } from "@/lib/api/use-market-activity";
+import { INFT } from "@/lib/api/use-market-nfts";
+import { cn } from "@/lib/utils/common";
+import { useCartContext } from "../../cart-context";
+import { checkIsExist } from "../../cart-reducer";
+import { useNftStatus } from "@/lib/common/use-nft-statu";
 
-const nftInfo = {
-  imgSrc: "/images/mock-nft.png",
-  name: "Tessera 0210",
-  status: "listed",
-};
+export default function NFTCard({ nft }: { nft: INFT }) {
+  const { isListed, isVault, isPerson, isCanBuy } = useNftStatus(nft);
 
-export default function NFTCard() {
   const [isHover, setIsHover] = useState(false);
 
-  const isListed = nftInfo.status === "listed";
-  const isVault = nftInfo.status === "vault";
+  function handleHover(hover: boolean) {
+    if (!isCanBuy && !isVault && !isPerson) return;
+    setIsHover(hover);
+  }
 
   return (
     <div
-      onMouseEnter={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
+      onMouseEnter={() => handleHover(true)}
+      onMouseLeave={() => handleHover(false)}
       className="w-[200px] h-[260px] overflow-hidden bg-[#1D0E27] border-2 border-transparent hover:border-green relative"
     >
       <Image
-        src={nftInfo.imgSrc}
+        src={nft.token_uri}
         width={200}
         height={200}
         alt="nft"
@@ -38,7 +42,7 @@ export default function NFTCard() {
         )}
       >
         <div className="flex justify-between items-center">
-          <span>{nftInfo.name}</span>
+          <span>{nft.name}</span>
           {(isListed || isVault) && (
             <div
               className={cn(
@@ -47,15 +51,16 @@ export default function NFTCard() {
                 isVault && "bg-[#DB734A]",
               )}
             >
-              {capitalize(nftInfo.status)}
+              {capitalize(nft.status)}
             </div>
           )}
         </div>
         <>
           {isHover && (
             <>
-              {isListed && <AddToBagBtn />}
-              {isVault && <ViewVaultBtn />}
+              {isPerson && <NoListBtn />}
+              {isCanBuy && <AddToBagBtn nft={nft} />}
+              {isVault && <ViewVaultBtn nft={nft} />}
             </>
           )}
         </>
@@ -67,10 +72,53 @@ export default function NFTCard() {
 const BtnClx =
   "bg-green w-full flex items-center justify-center h-8 text-[#12021D] mt-[10px] text-xs font-bold";
 
-function AddToBagBtn() {
-  return <button className={BtnClx}>Add to Quick Bag</button>;
+function AddToBagBtn({ nft }: { nft: INFT }) {
+  const { cartItems, addProduct, removeProduct } = useCartContext() || {};
+  const isExist = checkIsExist(cartItems, nft.token_id);
+
+  function handleAddToBag() {
+    if (isExist) {
+      removeProduct?.(nft);
+    } else {
+      addProduct?.(nft);
+    }
+  }
+
+  return (
+    <button
+      className={cn(
+        BtnClx,
+        isExist ? "bg-[rgb(255,95,82)] text-white" : "bg-green",
+      )}
+      onClick={handleAddToBag}
+    >
+      {isExist ? "Remove from Quick Bag" : "Add to Quick Bag"}
+    </button>
+  );
 }
 
-function ViewVaultBtn() {
-  return <button className={BtnClx}>View Vault</button>;
+function NoListBtn() {
+  return (
+    <div className="w-full flex items-center justify-center h-8 bg-[rgba(255,255,255,0.3)] text-black mt-[10px] text-xs font-bold">
+      Not Listed
+    </div>
+  );
+}
+
+function ViewVaultBtn({ nft }: { nft: INFT }) {
+  const router = useRouter();
+  const { data: activities } = useMarketActivity(nft.market_name, nft.token_id);
+
+  const auctionId = activities?.[0]?.auction_id;
+
+  function handleViewVault() {
+    if (!auctionId) return;
+    router.push(`/marketplace/lucky/${nft.market_name}/${auctionId}`);
+  }
+
+  return (
+    <button className={BtnClx} onClick={handleViewVault}>
+      View Vault
+    </button>
+  );
 }

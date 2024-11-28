@@ -3,7 +3,7 @@ import { erc20Abi } from "viem";
 import { readContract } from "@wagmi/core";
 import { useAccount, useConfig, useWriteContract } from "wagmi";
 import { USDTAbi } from "@/lib/abi/USDT";
-import { useChainConfig } from "../use-chain-config";
+import { useChainConfig } from "./use-chain-config";
 
 export function useApprove(tokenAddr: string, tokenSymbol: string) {
   const { chainConfig } = useChainConfig();
@@ -96,6 +96,9 @@ export function useApprove(tokenAddr: string, tokenSymbol: string) {
         {
           onSuccess: () => {
             readAllowance();
+          },
+          onError: (error) => {
+            console.error("approveAction error: =>", error);
           },
         },
       );

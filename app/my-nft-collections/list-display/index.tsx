@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { NFTOwnByType, PersonalAndPoolBtns } from "./personal-and-pool-btns";
+import { PersonalAndPoolBtns } from "./personal-and-pool-btns";
 import NftList from "./nft-list";
+import { useMyNFTCollectionsPageContext } from "../page-context";
 
 export default function NftListDisplay() {
-  const [type, setType] = useState<NFTOwnByType>("personal");
+  const { nftType, setNftType, myNfts, poolNfts, isPending } =
+    useMyNFTCollectionsPageContext();
 
   return (
     <div className="mt-[45px] mb-[60px] flex flex-1 justify-center">
@@ -12,14 +13,15 @@ export default function NftListDisplay() {
           My NFT Collections
         </div>
         <PersonalAndPoolBtns
-          type={type}
-          setType={setType}
+          isPending={isPending}
+          type={nftType}
+          setType={setNftType}
           typeNumbers={{
-            personal: 40,
-            pool: 20,
+            personal: myNfts.length,
+            pool: poolNfts.length,
           }}
         />
-        <NftList type={type} />
+        <NftList type={nftType} />
       </div>
     </div>
   );

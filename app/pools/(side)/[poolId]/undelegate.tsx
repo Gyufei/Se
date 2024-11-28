@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import RaeToken from "@/app/_common/rae-token";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
-import { NumericalInput } from "@/components/share/numerical-input";
+import { NumericalInput } from "@/components/ui/numerical-input";
 import { formatNumber } from "@/lib/utils/number";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { multiply } from "safebase";

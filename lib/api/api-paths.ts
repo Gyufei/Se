@@ -19,4 +19,6 @@ export const ApiPaths = {
   markets: "/markets",
   activity: "/activities",
   auction: "/auction",
+  raePrice: "/rae",
+  pools: "/pools",
 };

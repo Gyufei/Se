@@ -7,17 +7,18 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils/common";
 import { capitalize } from "lodash";
+import { IActivity } from "@/lib/api/use-market-activity";
 
-export type IEventType = (typeof EventArr)[number];
+export type IEventType = IActivity["event"];
 
 export const EventArr = [
-  "list",
-  "delist",
-  "purchase",
-  "vault",
-  "bid",
-  "abort",
-  "transfer",
+  "LIST",
+  "DELIST",
+  "PURCHASE",
+  "VAULT",
+  "BID",
+  "ABORT",
+  "TRANSFER",
 ] as const;
 
 const SelectItemRowClx =
@@ -42,7 +43,7 @@ export default function EventSelect({
   function handleSelectEvent(t: IEventType) {
     setEvents((prev: Array<IEventType>) => {
       if (prev.includes(t)) {
-        return prev.filter((e: IEventType) => e !== t);
+        return [...prev.filter((e: IEventType) => e !== t)];
       } else {
         return [...prev, t];
       }

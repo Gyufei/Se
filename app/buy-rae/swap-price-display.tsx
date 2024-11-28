@@ -14,7 +14,7 @@ export default function SwapPriceDisplay({
   isLoading: boolean;
   isNative: boolean;
   payPrice: string;
-  buyPrice: string;
+  buyPrice: string | undefined;
   payToken: IToken;
   buyToken: IToken;
 }) {

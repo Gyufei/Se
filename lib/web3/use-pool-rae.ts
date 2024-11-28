@@ -1,6 +1,6 @@
 import { useAccount, useReadContract } from "wagmi";
 import { DelegatePoolABI } from "../abi/DelegatePool";
-import { useChainConfig } from "../use-chain-config";
+import { useChainConfig } from "./use-chain-config";
 
 export function usePoolRae(poolId: string) {
   const { chainConfig } = useChainConfig();

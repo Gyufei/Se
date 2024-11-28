@@ -1,5 +1,5 @@
-import { ChainConfigs } from "./const/chain-config";
-import { ChainType } from "./types/chain";
+import { ChainConfigs } from "@/lib/const/chain-config";
+import { ChainType } from "@/lib/types/chain";
 
 export function useChainConfig() {
   const chainConfig = ChainConfigs[ChainType.Uni];

@@ -9,8 +9,8 @@ export default function Page({
 }: {
   params: Promise<{ poolId: string }>;
 }) {
-  const nftParams = use(params);
-  const poolId = nftParams.poolId;
+  const pageParams = use(params);
+  const poolId = pageParams.poolId;
   const displayPoolId = poolId.length > 6 ? truncateAddr(poolId) : poolId;
 
   return (

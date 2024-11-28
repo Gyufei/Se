@@ -4,23 +4,26 @@ import { useRetrieveBid } from "@/lib/web3/call/use-retrieve-bid";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useMemo } from "react";
-import { useAccount } from "wagmi";
 
-const auctionId = 0;
-const nftNum = 15;
-
-export default function ClaimBidRae() {
+export default function ClaimBidRae({
+  auctionId,
+  claimNum,
+  bidder,
+}: {
+  auctionId: string | undefined;
+  claimNum: string;
+  bidder: string | undefined;
+}) {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
-  const { address } = useAccount();
 
   const { write, isPending: isClaiming } = useRetrieveBid();
 
   function handleClaim() {
     write(
       {
-        auctionId,
-        bidder: address!,
+        auctionId: Number(auctionId),
+        bidder: bidder!,
       },
       {
         onSuccess: () => {
@@ -41,6 +44,13 @@ export default function ClaimBidRae() {
   }
 
   const btnProps = useMemo(() => {
+    if (!auctionId || !bidder) {
+      return {
+        text: "Claim NFT",
+        disabled: true,
+      };
+    }
+
     if (isClaiming) {
       return {
         text: "Claiming...",
@@ -49,10 +59,10 @@ export default function ClaimBidRae() {
     }
 
     return {
-      text: `Claim ${nftNum} NFT`,
+      text: `Claim ${claimNum} NFT`,
       disabled: false,
     };
-  }, [isClaiming]);
+  }, [isClaiming, claimNum, auctionId, bidder]);
 
   return (
     <ShouldConnectBtn

@@ -3,7 +3,8 @@ import { useState } from "react";
 import DescContent from "./desc-content";
 import BidContent from "./bid-content";
 import { capitalize } from "lodash";
-// import { useLuckyNFTPageContext } from "../../page-context";
+import { useLuckyNFTPageContext } from "../../page-context";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const TabTriggerClx =
   "h-10 px-5 text-white data-[state=inactive]:bg-transparent transition-all rounded-none data-[state=active]:bg-[#382544] data-[state=active]:font-bold data-[state=inactive]:font-medium data-[state=inactive]:opacity-60";
@@ -11,10 +12,9 @@ const TabTriggerClx =
 const tabs = ["details", "bids"];
 
 export default function DetailTabs() {
-  // const { isPending } = useLuckyNFTPageContext();
+  const { isAuctionPending, auctionInfo } = useLuckyNFTPageContext();
   const [currentTab, setCurrentTab] = useState(tabs[0]);
-
-  const bidLength = 400;
+  const bidLength = auctionInfo?.bidders?.length;
 
   return (
     <Tabs value={currentTab} className="mt-12" onValueChange={setCurrentTab}>
@@ -24,7 +24,11 @@ export default function DetailTabs() {
         </TabsTrigger>
         <TabsTrigger className={TabTriggerClx} value={tabs[1]}>
           {capitalize(tabs[1])}
-          {bidLength ? `(${bidLength})` : ""}
+          {isAuctionPending ? (
+            <Skeleton className="w-9 h-5 ml-1" />
+          ) : (
+            <span>{bidLength ? `(${bidLength})` : ""}</span>
+          )}
         </TabsTrigger>
       </TabsList>
       <TabsContent

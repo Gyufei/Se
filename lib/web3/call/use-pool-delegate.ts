@@ -1,5 +1,5 @@
 import { useWriteContract } from "wagmi";
-import { useChainConfig } from "@/lib/use-chain-config";
+import { useChainConfig } from "@/lib/web3/use-chain-config";
 import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
 import { DelegatePoolABI } from "@/lib/abi/DelegatePool";
 

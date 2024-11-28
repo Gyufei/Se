@@ -8,14 +8,21 @@ export interface IActivity {
   auction_id?: string;
 
   token_id: string;
-  event: "Purchase" | "List" | "Delist" | "Vault";
+  event:
+    | "LIST"
+    | "DELIST"
+    | "PURCHASE"
+    | "VAULT"
+    | "BID"
+    | "ABORT"
+    | "TRANSFER";
   price: string;
   by: string;
   update_at: string;
 }
 
 export async function fetchMarketActivity(
-  marketName?: string,
+  marketName: string | undefined,
   tokenId?: string,
 ) {
   if (!marketName) return;
@@ -32,7 +39,10 @@ export async function fetchMarketActivity(
   return newResult as Array<IActivity>;
 }
 
-export function useMarketActivity(marketName?: string, tokenId?: string) {
+export function useMarketActivity(
+  marketName: string | undefined,
+  tokenId?: string,
+) {
   const result = useQuery({
     queryKey: [marketName, "activity", tokenId],
     queryFn: () => fetchMarketActivity(marketName, tokenId),

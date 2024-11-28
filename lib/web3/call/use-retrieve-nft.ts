@@ -1,5 +1,5 @@
 import { LuckyMarketsABI } from "@/lib/abi/LuckyMarkets";
-import { useChainConfig } from "@/lib/use-chain-config";
+import { useChainConfig } from "@/lib/web3/use-chain-config";
 import { useWriteContract } from "wagmi";
 import { useGasCalc } from "../helper/use-gas-calc";
 

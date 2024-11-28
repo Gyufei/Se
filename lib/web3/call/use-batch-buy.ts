@@ -1,4 +1,4 @@
-import { useChainConfig } from "@/lib/use-chain-config";
+import { useChainConfig } from "@/lib/web3/use-chain-config";
 import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
 import { QuickMarketsABI } from "@/lib/abi/QuickMarkets";
 import { useWriteContract } from "wagmi";

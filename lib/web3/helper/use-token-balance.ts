@@ -1,6 +1,6 @@
 import { useReadContract, useAccount, useBalance } from "wagmi";
 import { erc20Abi } from "viem";
-import { useChainConfig } from "@/lib/use-chain-config";
+import { useChainConfig } from "@/lib/web3/use-chain-config";
 
 export function useTokenBalance({ address }: { address: string }) {
   const { chainConfig } = useChainConfig();

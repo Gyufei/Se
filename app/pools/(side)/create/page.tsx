@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { multiply } from "safebase";
 import { useSetAtom } from "jotai";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
-import { NumericalInput } from "@/components/share/numerical-input";
+import { NumericalInput } from "@/components/ui/numerical-input";
 import { useCreatePool } from "@/lib/web3/call/use-create-pool";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useQueryClient } from "@tanstack/react-query";

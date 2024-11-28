@@ -1,30 +1,32 @@
 "use client";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { IToken } from "@/lib/types/token";
-import ToOtherAddr from "./to-other-addr";
-import ShouldConnectBtn from "../_common/should-connect-btn";
-import { useTokens } from "@/lib/api/use-tokens";
-import { useApprove } from "@/lib/web3/use-approve";
-import { NumericalInput } from "@/components/share/numerical-input";
-import { formatNumber } from "@/lib/utils/number";
-import TokenSelect from "./token-select";
-import { useChainConfig } from "@/lib/use-chain-config";
-import useRaePrice from "@/lib/web3/use-rae-price";
-import { RAE } from "@/lib/const/rae";
-import { cn } from "@/lib/utils/common";
-import SlippageSelect from "./gas-select";
-import { Skeleton } from "@/components/ui/skeleton";
-import SwapPriceDisplay from "./swap-price-display";
-import useEthSwap from "@/lib/web3/use-eth-swap";
-import { multiply, divide } from "safebase";
-import { useBuyRae } from "@/lib/web3/call/use-buy-rae";
-import { useAccount } from "wagmi";
-import { useTokenBalance } from "@/lib/web3/helper/use-token-balance";
+import { divide, multiply } from "safebase";
 import { isAddress } from "viem";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAccount } from "wagmi";
 import { useSetAtom } from "jotai";
+
+import { cn } from "@/lib/utils/common";
+import { useRaePrice } from "@/lib/api/use-rae-price";
+import { useTokens } from "@/lib/api/use-tokens";
+import { RAE } from "@/lib/const/rae";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
+import { IToken } from "@/lib/types/token";
+import { useChainConfig } from "@/lib/web3/use-chain-config";
+import { formatNumber } from "@/lib/utils/number";
+import { useBuyRae } from "@/lib/web3/call/use-buy-rae";
+import { useTokenBalance } from "@/lib/web3/helper/use-token-balance";
+import { useApprove } from "@/lib/web3/use-approve";
+import { useEthSwap } from "@/lib/web3/use-eth-swap";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { NumericalInput } from "@/components/ui/numerical-input";
+import { Skeleton } from "@/components/ui/skeleton";
+import ShouldConnectBtn from "../_common/should-connect-btn";
+import SlippageSelect from "./gas-select";
+import SwapPriceDisplay from "./swap-price-display";
+import ToOtherAddr from "./to-other-addr";
+import TokenSelect from "./token-select";
 
 export default function Page() {
   const { address: myAddress } = useAccount();
@@ -35,9 +37,7 @@ export default function Page() {
 
   const { ethPrice, ethOutTo, raeInTo } = useEthSwap();
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
-  const raePrice = raePriceData
-    ? divide(String(raePriceData), String(10 ** 6)).toString()
-    : undefined;
+  const raePrice = raePriceData?.price;
 
   const { isPending: isTxPending, write } = useBuyRae();
 
@@ -234,15 +234,8 @@ export default function Page() {
   }
 
   useEffect(() => {
-    if (raePrice && Number(payAmount)) {
-      calcPayToAmount(payAmount, isNativePayToken);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [raePrice]);
-
-  useEffect(() => {
     if (tokens?.length) {
-      setPayToken(tokens[0]);
+      handlePayTokenChange(tokens[0]);
     }
   }, [tokens]);
 

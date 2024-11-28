@@ -1,14 +1,31 @@
-const hasBid = 400;
-const bidValue = 1000;
+import { divide } from "safebase";
+import { useLuckyNFTPageContext } from "../../page-context";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BidProgress() {
+  const { auctionInfo, isAuctionPending } = useLuckyNFTPageContext();
+
+  const hasBid = auctionInfo?.total_bids;
+  const totalBid = auctionInfo?.bidding_cap;
+  const percent = divide(hasBid, totalBid);
+
   return (
     <div className="pt-5 pb-6 px-5 flex flex-col items-center border-b-[2px] border-b-[#ffffff10]">
       <div className="text-white opacity-60 font-medium">Bidding Progress</div>
-      <div className="text-[40px] text-white mt-5 font-bold">
-        {hasBid} / {bidValue} RAE
+      <div className="flex items-center text-[40px] text-white mt-5 font-bold">
+        {isAuctionPending ? (
+          <>
+            <Skeleton className="w-[80px] h-[40px]" />
+            <span className="text-[35px]">&nbsp;/&nbsp;</span>
+            <Skeleton className="w-[80px] h-[40px]" />
+          </>
+        ) : (
+          <>
+            {hasBid} / {totalBid} RAE
+          </>
+        )}
       </div>
-      <ArrowProgress percent={hasBid / bidValue} />
+      <ArrowProgress percent={percent} />
       <div className="mt-[15px] text-xs font-medium">
         <span className="text-white opacity-80 ">
           lf at least 1 Rae is remaining in the offer by the end of the time

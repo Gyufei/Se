@@ -1,7 +1,7 @@
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
 import { RAEMarketsABI } from "@/lib/abi/RAEMarkets";
-import { useChainConfig } from "@/lib/use-chain-config";
+import { useChainConfig } from "@/lib/web3/use-chain-config";
 
 export function useBuyRae() {
   const { chainConfig } = useChainConfig();

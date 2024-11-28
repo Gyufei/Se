@@ -1,19 +1,17 @@
 import { useMemo, useState } from "react";
 import { useTokens } from "../api/use-tokens";
 import useGetAmountInOut from "./helper/use-get-amount-in-out";
-import useRaePrice from "./use-rae-price";
+import { useRaePrice } from "../api/use-rae-price";
 import { divide, multiply } from "safebase";
 import { debounce } from "../utils/debounceFn";
 
-export default function useEthSwap() {
+export function useEthSwap() {
   const slippage = 0.01;
   const { data: tokens } = useTokens();
   const { getAmountIn, getAmountOut } = useGetAmountInOut();
 
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
-  const raePrice = raePriceData
-    ? divide(String(raePriceData), String(10 ** 6)).toString()
-    : undefined;
+  const raePrice = raePriceData?.price;
 
   const [ethPrice, setEthPrice] = useState("0");
 

@@ -1,23 +1,27 @@
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
-import { useRetrieveNft } from "@/lib/web3/call/use-retrieve-nft";
+import { useClaimAsset } from "@/lib/web3/call/use-claim-asset";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useMemo } from "react";
 
-const auctionId = 0;
-const nftNum = 15;
-
-export default function ClaimBidNFT() {
+export default function ClaimBidNFT({
+  auctionId,
+  winner,
+}: {
+  auctionId: string;
+  winner: string;
+}) {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
-  const { write, isPending: isClaiming } = useRetrieveNft();
+  const { write, isPending: isClaiming } = useClaimAsset();
 
   function handleClaim() {
     write(
       {
-        auctionId,
+        auctionId: Number(auctionId),
+        winner,
       },
       {
         onSuccess: () => {
@@ -46,7 +50,7 @@ export default function ClaimBidNFT() {
     }
 
     return {
-      text: `Claim ${nftNum} NFT`,
+      text: `Claim Your NFT`,
       disabled: false,
     };
   }, [isClaiming]);

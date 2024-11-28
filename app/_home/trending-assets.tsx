@@ -16,18 +16,18 @@ export default function TrendingAssets() {
   const quickMarkets =
     markets?.filter((m) => m.supported_market_types.includes("quick")) || [];
 
-  const { data: luckyNfts, pending: isLuckyNftsPending } =
+  const { data: luckyNfts, isPending: isLuckyNftsPending } =
     useMarketsNfts(luckyMarkets);
-  const { data: quickNfts, pending: isQuickNftsPending } =
+  const { data: quickNfts, isPending: isQuickNftsPending } =
     useMarketsNfts(quickMarkets);
 
   const luckyNfts3 = sampleSize(
-    luckyNfts.filter((n) => n.status === "Vaulted"),
+    luckyNfts.filter((n) => n.status === "VAULTED"),
     3,
   );
 
   const quickNfts3 = sampleSize(
-    quickNfts.filter((n) => n.status === "Listed"),
+    quickNfts.filter((n) => n.status === "LISTED"),
     3,
   );
 
@@ -100,7 +100,8 @@ function AssetItem({ marketType, nft }: { marketType: MarketType; nft: INFT }) {
         backgroundColor:
           "linear-gradient(180deg, rgba(18, 2, 29, 0) 0%, #12021D 100%)",
         backgroundImage: `url('/images/home-asset-cover.svg'), url('${nft.token_uri}')`,
-        backgroundPosition: "center",
+        backgroundPosition: "bottom",
+        backgroundSize: "cover",
       }}
     >
       <div>

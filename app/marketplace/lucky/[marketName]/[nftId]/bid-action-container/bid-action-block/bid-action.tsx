@@ -14,11 +14,35 @@ import SelectPoolPop from "@/app/_common/select-pool-pop";
 import { useSetAtom } from "jotai";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useAccount } from "wagmi";
+import { useLuckyNFTPageContext } from "../../page-context";
+import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
 
 export default function BidAction() {
   const queryClient = useQueryClient();
-  const { address } = useAccount();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
+
+  const { address } = useAccount();
+
+  const { isMarketAndNftPending, isAuctionPending, auctionInfo } =
+    useLuckyNFTPageContext();
+  const { data: asPoolCreator } = useCheckIsPoolCreator(address);
+
+  const canBidAsPool = asPoolCreator?.isAPoolCreator;
+  const pools = useMemo(() => {
+    if (!canBidAsPool) return [];
+
+    const pools = asPoolCreator.pools.map((pool) => ({
+      address: pool.address,
+      type: "pool",
+    }));
+
+    pools.unshift({
+      address: address!,
+      type: "wallet",
+    });
+
+    return pools;
+  }, [canBidAsPool, asPoolCreator, address]);
 
   const { isShouldApprove, isApproving, approveAction, approveBtnText } =
     useApprove(RAE.address, RAE.symbol);
@@ -30,12 +54,11 @@ export default function BidAction() {
   } = useTokenBalance({
     address: RAE.address,
   });
+
   const raeDisplay = rae ? divide(String(rae), String(10 ** RAE.decimals)) : 0;
 
   const { write, isPending: isBidding } = useBidAuction();
 
-  const canBidAsPool = true;
-  const auctionId = 0;
   const [bidAmount, setBidAmount] = useState("");
   const [selectedPool, setSelectedPool] = useState<string | null>(null);
 
@@ -48,7 +71,7 @@ export default function BidAction() {
     write(
       {
         bidder: selectedPool || address!,
-        auctionId: auctionId,
+        auctionId: Number(auctionInfo!.id),
         amount: Number(bidAmount),
       },
       {
@@ -70,9 +93,9 @@ export default function BidAction() {
   }
 
   const btnProps = useMemo(() => {
-    if (isRaePending) {
+    if (isMarketAndNftPending || isAuctionPending || isRaePending) {
       return {
-        text: "Pay",
+        text: "Bid",
         disabled: true,
       };
     }
@@ -101,7 +124,7 @@ export default function BidAction() {
     if (canBidAsPool) {
       return {
         text: "Bid as",
-        disabled: false,
+        disabled: !selectedPool,
       };
     }
 
@@ -110,6 +133,8 @@ export default function BidAction() {
       disabled: false,
     };
   }, [
+    isMarketAndNftPending,
+    isAuctionPending,
     isShouldApprove,
     isApproving,
     approveBtnText,
@@ -117,6 +142,7 @@ export default function BidAction() {
     bidAmount,
     isBidding,
     isRaePending,
+    selectedPool,
     canBidAsPool,
   ]);
 
@@ -170,6 +196,7 @@ export default function BidAction() {
         </ShouldConnectBtn>
         {canBidAsPool && (
           <SelectPoolPop
+            pools={pools}
             selectedPool={selectedPool}
             setSelectedPool={setSelectedPool}
           />

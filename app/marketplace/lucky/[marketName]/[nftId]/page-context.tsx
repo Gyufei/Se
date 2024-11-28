@@ -4,11 +4,16 @@ import { createContext, useContext } from "react";
 import { useMarketActivity } from "@/lib/api/use-market-activity";
 import { useAuction } from "@/lib/api/use-auction";
 import { IAuction } from "@/lib/api/use-auction";
+
 const LuckyNFTPageContext = createContext<
   | {
+      marketName: string;
       marketInfo: IMarket | undefined;
+      nftId: string;
       nftInfo: INFT | undefined;
-      isPending: boolean;
+      isMarketAndNftPending: boolean;
+
+      auctionId: string | undefined;
       auctionInfo: IAuction | undefined;
       isAuctionPending: boolean;
     }
@@ -32,7 +37,7 @@ export function LuckyNFTPageProvider({
 
   const nftInfo = (marketNfts || []).find((n) => n.token_id === nftId);
 
-  const isPending = isMarketPending || isNftsPending;
+  const isMarketAndNftPending = isMarketPending || isNftsPending;
 
   const { data: activities } = useMarketActivity(marketName, nftId);
 
@@ -44,11 +49,23 @@ export function LuckyNFTPageProvider({
   );
 
   const isAuctionPending =
-    isPending || nftInfo?.status !== "Vaulted" || !auctionId || isAucPending;
+    isMarketAndNftPending ||
+    nftInfo?.status !== "VAULTED" ||
+    !auctionId ||
+    isAucPending;
 
   return (
     <LuckyNFTPageContext.Provider
-      value={{ marketInfo, nftInfo, auctionInfo, isAuctionPending, isPending }}
+      value={{
+        marketName,
+        nftId,
+        auctionId,
+        marketInfo,
+        nftInfo,
+        auctionInfo,
+        isAuctionPending,
+        isMarketAndNftPending,
+      }}
     >
       {children}
     </LuckyNFTPageContext.Provider>

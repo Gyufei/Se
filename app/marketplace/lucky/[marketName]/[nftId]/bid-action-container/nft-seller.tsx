@@ -1,7 +1,14 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { truncateAddr } from "@/lib/utils/web3";
 
-export default function NftSeller() {
-  const seller = "0x1234567890abcdef1234567890abcdef12345678";
+export default function NftSeller({
+  isPending,
+  seller,
+}: {
+  isPending: boolean;
+  seller?: string;
+}) {
+  if (isPending) return <Skeleton className="mt-[10px] h-6 w-[200px]" />;
 
   return (
     <div className="mt-[10px] text-xl text-white opacity-60">

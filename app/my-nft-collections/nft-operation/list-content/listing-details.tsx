@@ -1,19 +1,17 @@
 "use client";
 import { useSetAtom } from "jotai";
 import { useMemo, useState } from "react";
-import { useAccount } from "wagmi";
 import RaeToken from "@/app/_common/rae-token";
-import SelectPoolPop from "@/app/_common/select-pool-pop";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
-import { NumericalInput } from "@/components/share/numerical-input";
+import { NumericalInput } from "@/components/ui/numerical-input";
 import { RAE } from "@/lib/const/rae";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useApprove } from "@/lib/web3/use-approve";
 import { useQueryClient } from "@tanstack/react-query";
 import { multiply } from "safebase";
 import { useListAsset } from "@/lib/web3/call/use-list-asset";
-
-const isConnect = true;
+import { truncateAddr } from "@/lib/utils/web3";
+import { useMyNFTCollectionsPageContext } from "../../page-context";
 
 const nftInfo = {
   name: "NFT #3333",
@@ -24,7 +22,7 @@ const nftInfo = {
 export default function ListingDetail() {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
-  const { address } = useAccount();
+  const { nftType, selectedNft } = useMyNFTCollectionsPageContext();
 
   const {
     isShouldApprove: isShouldApproveNft,
@@ -43,7 +41,6 @@ export default function ListingDetail() {
   const { write, isPending: isCreating } = useListAsset();
 
   const [sellPrice, setSellPrice] = useState("");
-  const [selectedPool, setSelectedPool] = useState<string | null>(null);
 
   function handleList() {
     if (isShouldApproveRae) {
@@ -56,18 +53,16 @@ export default function ListingDetail() {
       return;
     }
 
-    const seller = selectedPool || address;
-
-    if (!seller) {
+    if (!selectedNft) {
       return;
     }
 
     write(
       {
-        nftAddr: nftInfo.nftAddr,
-        tokenId: nftInfo.tokenId,
+        nftAddr: selectedNft.token_address,
+        tokenId: Number(selectedNft.token_id),
         price: multiply(sellPrice, String(10 ** RAE.decimals)),
-        seller,
+        seller: selectedNft.owner,
       },
       {
         onSuccess: () => {
@@ -161,11 +156,13 @@ export default function ListingDetail() {
         >
           {btnProps.text}
         </ShouldConnectBtn>
-        {isConnect && (
-          <SelectPoolPop
-            selectedPool={selectedPool}
-            setSelectedPool={setSelectedPool}
-          />
+        {nftType === "pool" && (
+          <div className="flex-1 items-center h-12 bg-[#382743] border-none rounded-none flex justify-center space-x-[5px]">
+            <span className="text-white text-base font-medium">
+              Pool:&nbsp;
+              {truncateAddr(selectedNft?.owner || "")}
+            </span>
+          </div>
         )}
       </div>
     </>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { NumericalInput } from "@/components/share/numerical-input";
+import { NumericalInput } from "@/components/ui/numerical-input";
 
 export default function AmountInput({
   amount,

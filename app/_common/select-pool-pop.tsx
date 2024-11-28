@@ -7,36 +7,23 @@ import {
 } from "@/components/ui/popover";
 import { truncateAddr } from "@/lib/utils/web3";
 import { cn } from "@/lib/utils/common";
-
-const pools = [
-  {
-    address: "0x1234567890123456789123456789123456789",
-  },
-  {
-    address: "0x000000000000000000000ffffffffffffffff",
-  },
-  {
-    address: "0x0000000000000000000000000000000000001",
-  },
-  {
-    address: "0x0000000000000000000000000000000000004",
-  },
-  {
-    address: "0x0000000000000000000000000000000000003",
-  },
-];
+import { capitalize } from "lodash";
 
 export default function SelectPoolPop({
+  pools,
   selectedPool,
   setSelectedPool,
 }: {
+  pools: { address: string; type: string }[];
   selectedPool: string | null;
   setSelectedPool: (pool: string) => void;
 }) {
+  const [selectedPoolType, setSelectedPoolType] = useState<string | null>(null);
   const [popOpen, setPopOpen] = useState(false);
 
   function handleSelectPool(addr: string) {
     setSelectedPool(addr);
+    setSelectedPoolType(pools.find((p) => p.address === addr)?.type || null);
     setPopOpen(false);
   }
 
@@ -45,7 +32,8 @@ export default function SelectPoolPop({
       <PopoverTrigger className="flex-1 items-center h-12 bg-[#382743] border-none rounded-none flex justify-center space-x-[5px]">
         {selectedPool ? (
           <span className="text-white text-base font-medium">
-            Pool: {truncateAddr(selectedPool || "")}
+            {selectedPoolType && capitalize(selectedPoolType)}:&nbsp;
+            {truncateAddr(selectedPool || "")}
           </span>
         ) : (
           <span className="text-white opacity-50 text-base font-medium">
@@ -67,7 +55,7 @@ export default function SelectPoolPop({
             key={pool.address}
             onClick={() => handleSelectPool(pool.address)}
           >
-            Pool: {truncateAddr(pool.address)}
+            {capitalize(pool.type)}: {truncateAddr(pool.address)}
           </div>
         ))}
       </PopoverContent>

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import RaeToken from "@/app/_common/rae-token";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 
-import { NumericalInput } from "@/components/share/numerical-input";
+import { NumericalInput } from "@/components/ui/numerical-input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RAE } from "@/lib/const/rae";
 import { formatNumber } from "@/lib/utils/number";

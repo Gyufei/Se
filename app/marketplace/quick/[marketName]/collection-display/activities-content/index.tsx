@@ -1,34 +1,32 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
 
 import { truncateAddr } from "@/lib/utils/web3";
-import EventSelect from "./event-select";
+import EventSelect, { IEventType } from "./event-select";
 import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
-
-const nftList = [
-  {
-    id: 1,
-    imgSrc: "/images/mock-nft.png",
-    name: "NFT 1",
-    price: 100,
-    event: "Event 1",
-    by: "0x1234567890abcdef1234567890abcdef12345678",
-    time: new Date().getTime() - 1000 * 60 * 60 * 3,
-  },
-  {
-    id: 2,
-    imgSrc: "/images/mock-nft.png",
-    name: "NFT 2",
-    price: 200,
-    event: "Event 2",
-    by: "0x1234567890abcdef1234567890abcdef12345678",
-    time: new Date().getTime() - 1000 * 60 * 60 * 4,
-  },
-];
+import { IActivity, useMarketActivity } from "@/lib/api/use-market-activity";
+import { useQuickPageContext } from "../../page-context";
+import { capitalize, range } from "lodash";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ActivitiesContent() {
-  const [filterEvents, setFilterEvents] = useState([]);
+  const { marketInfo } = useQuickPageContext();
+
+  const { data: activities, isPending: isActivitiesPending } =
+    useMarketActivity(marketInfo?.market_name);
+
+  const [filterEvents, setFilterEvents] = useState<IEventType[]>([]);
+
+  const displayActivities = useMemo(() => {
+    if (!activities) return [];
+
+    if (filterEvents.length) {
+      return activities.filter((act) => filterEvents.includes(act.event));
+    }
+
+    return activities;
+  }, [activities, filterEvents]);
 
   return (
     <>
@@ -41,29 +39,52 @@ export default function ActivitiesContent() {
         </div>
         <div className="w-[130px]"></div>
       </div>
-      {nftList.map((nft) => (
-        <div
-          key={nft.id}
-          className="flex bg-[#281A31] px-5 py-4 items-center text-sm text-white mb-[15px]"
-        >
-          <div className="w-[210px] flex items-center">
+      {isActivitiesPending
+        ? range(3).map((i) => (
+            <Skeleton className="w-full h-16 mb-[15px]" key={i} />
+          ))
+        : displayActivities.map((activity) => (
+            <ActivityItem key={activity.token_id} activity={activity} />
+          ))}
+    </>
+  );
+}
+
+function ActivityItem({ activity }: { activity: IActivity }) {
+  const { marketNfts, isNftsPending } = useQuickPageContext();
+
+  const nft = marketNfts?.find((nft) => nft.token_id === activity.token_id);
+  const actTime = Number(activity?.update_at || 0) * 1000;
+
+  return (
+    <div className="flex bg-[#281A31] px-5 py-4 items-center text-sm text-white mb-[15px]">
+      <div className="w-[210px] flex items-center">
+        {isNftsPending || !nft ? (
+          <>
+            <Skeleton className="w-[30px] h-[30px] mr-[25px]" />
+            <Skeleton className="w-[60px] h-[20px]" />
+          </>
+        ) : (
+          <>
             <Image
-              src={nft.imgSrc}
+              src={nft.token_uri}
               alt=""
               width={30}
               height={30}
               className="mr-[25px]"
             />
-            <span>{nft.name}</span>
-          </div>
-          <div className="w-[160px]">{nft.price} RAE</div>
-          <div className="w-[160px]">{truncateAddr(nft.by)}</div>
-          <div className="w-[160px]">{nft.event}</div>
-          <div className="w-[130px]">
-            {replaceTimeUnitToSingleChar(formatDistanceToNowStrict(nft.time))}
-          </div>
-        </div>
-      ))}
-    </>
+            <span>
+              {nft?.market_name} {nft?.token_id}
+            </span>
+          </>
+        )}
+      </div>
+      <div className="w-[160px]">{activity.price} RAE</div>
+      <div className="w-[160px]">{truncateAddr(activity.by)}</div>
+      <div className="w-[160px]">{capitalize(activity.event)}</div>
+      <div className="w-[130px]">
+        {replaceTimeUnitToSingleChar(formatDistanceToNowStrict(actTime))}
+      </div>
+    </div>
   );
 }

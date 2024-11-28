@@ -1,4 +1,4 @@
-import GlobalMessageTip from "@/components/share/global-message-tip";
+import GlobalMessageTip from "@/app/_common/global-message-tip";
 import HeaderBar from "./header-bar";
 
 export default function MainLayout({

@@ -4,8 +4,8 @@ import "./globals.css";
 import { SpaceGroteskFont } from "./fonts";
 import { cn } from "@/lib/utils/common";
 import MainLayout from "./_layout/main-layout";
-import WalletConnectProvider from "@/components/context/wallet-connect-context";
-import { JotaiProviders } from "@/components/context/jotai-provider";
+import WalletConnectProvider from "@/app/wallet-connect-context";
+import { JotaiProviders } from "@/app/jotai-provider";
 
 export const metadata: Metadata = {
   title: {

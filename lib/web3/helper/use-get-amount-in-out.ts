@@ -1,7 +1,7 @@
 import { useConfig } from "wagmi";
 import { UniswapRouterABI } from "@/lib/abi/UniswapRouter";
 import { readContract } from "@wagmi/core";
-import { useChainConfig } from "@/lib/use-chain-config";
+import { useChainConfig } from "@/lib/web3/use-chain-config";
 
 export default function useGetAmountInOut() {
   const config = useConfig();

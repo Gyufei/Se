@@ -10,10 +10,10 @@ export default function Page({
 }: {
   params: Promise<{ marketName: string; nftId: string }>;
 }) {
-  const nftParams = use(params);
+  const pageParams = use(params);
 
-  const marketName = nftParams.marketName;
-  const nftId = nftParams.nftId;
+  const marketName = pageParams.marketName;
+  const nftId = pageParams.nftId;
 
   return (
     <LuckyNFTPageProvider marketName={marketName} nftId={nftId}>

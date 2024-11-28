@@ -1,59 +1,69 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { NFTOwnByType } from "./personal-and-pool-btns";
 import { Pagination } from "@/components/ui/pagination/pagination";
+import { NftOwnerType, useMyNFTCollectionsPageContext } from "../page-context";
+import { INFT } from "@/lib/api/use-market-nfts";
+import { chunk, flatten, groupBy, range } from "lodash";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const myCollections = [
-  {
-    name: "Cryptopunks",
-    nfts: [
-      {
-        id: 1,
-        imgSrc: "/images/mock-nft.png",
-      },
-      {
-        id: 2,
-        imgSrc: "/images/mock-nft.png",
-      },
-      {
-        id: 3,
-        imgSrc: "/images/mock-nft.png",
-      },
-    ],
-  },
-  {
-    name: "Azuki",
-    nfts: [
-      {
-        id: 5,
-        imgSrc: "/images/mock-nft.png",
-      },
-      {
-        id: 6,
-        imgSrc: "/images/mock-nft.png",
-      },
-      {
-        id: 7,
-        imgSrc: "/images/mock-nft.png",
-      },
-    ],
-  },
-];
+function getPagesNfts(nfts: INFT[]) {
+  if (!nfts?.length) return [[]];
 
-export default function NftList({ type }: { type: NFTOwnByType }) {
-  console.log(type);
+  const groupByMarketName = groupBy(nfts, (nft) => nft.market_name);
+  const marketNfts = Object.values(groupByMarketName);
+  const marketRowNfts = marketNfts.map((nfts) => chunk(nfts, 3));
+  const twoRowNfts = chunk(flatten(marketRowNfts), 2);
 
-  const displayList = useMemo(() => {
-    return myCollections;
-  }, []);
+  const pageGroupNfts = [];
+  for (const page of twoRowNfts) {
+    if (page.length < 2) {
+      pageGroupNfts.push([
+        {
+          market_name: page[0][0].market_name,
+          nfts: flatten(page),
+        },
+      ]);
+    } else {
+      if (page[0][0].market_name === page[1][0].market_name) {
+        pageGroupNfts.push([
+          {
+            market_name: page[0][0].market_name,
+            nfts: flatten(page),
+          },
+        ]);
+      } else {
+        pageGroupNfts.push([
+          {
+            market_name: page[0][0].market_name,
+            nfts: flatten(page[0]),
+          },
+          {
+            market_name: page[1][0].market_name,
+            nfts: flatten(page[1]),
+          },
+        ]);
+      }
+    }
+  }
 
-  const totalPages = useMemo(() => {
-    const all = myCollections.map((c) => c.nfts).flat();
+  return pageGroupNfts;
+}
 
-    return Math.ceil(all.length / 6);
-  }, []);
+export default function NftList({ type }: { type: NftOwnerType }) {
+  const { myNfts, poolNfts, isPending } = useMyNFTCollectionsPageContext();
 
   const [currentPage, setCurrentPage] = useState(0);
+
+  const pageNfts = useMemo(() => {
+    const pageList = getPagesNfts(type === "personal" ? myNfts : poolNfts);
+    return pageList;
+  }, [type, myNfts, poolNfts]);
+
+  const displayNftList = useMemo(() => {
+    if (!pageNfts?.length) return [];
+
+    return pageNfts[currentPage];
+  }, [pageNfts, currentPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -61,41 +71,73 @@ export default function NftList({ type }: { type: NFTOwnByType }) {
 
   return (
     <div className="mt-[30px]">
-      {displayList.map((coll, idx) => (
-        <div className="mb-10" key={idx}>
-          <div className="text-xl font-medium text-white">{coll.name}</div>
-          <div className="mt-[15px] pr-[10px] flex flex-wrap justify-between space-x-5">
-            {coll.nfts.map((nft, idx) => (
-              <div
-                key={idx}
-                className="border-2 border-transparent cursor-pointer hover:border-green h-[200px] w-[200px]"
-              >
-                <Image src={nft.imgSrc} width={200} height={200} alt="nft" />
+      <div className="min-h-[500px]">
+        {isPending ? (
+          <>
+            <Skeleton className="w-[100px] h-5 my-2" />
+            <div className="mt-[15px] pr-[10px] grid grid-cols-3 gap-x-5">
+              {range(5).map((i) => (
+                <Skeleton
+                  style={{ marginTop: i > 2 ? "80px" : "0" }}
+                  key={i}
+                  className="h-[200px] w-[200px]"
+                />
+              ))}
+            </div>
+          </>
+        ) : displayNftList?.length ? (
+          displayNftList.map((market, idx) => (
+            <div className="mb-10" key={idx}>
+              <div className="text-xl font-medium text-white">
+                {market.market_name}
               </div>
-            ))}
+              <div className="mt-[15px] pr-[10px] grid grid-cols-3 gap-x-5">
+                {market.nfts.map((nft, idx) => (
+                  <div
+                    key={idx}
+                    className="border-2 border-transparent cursor-pointer hover:border-green h-[200px] w-[200px]"
+                    style={{ marginTop: idx > 2 ? "80px" : "0" }}
+                  >
+                    <Image
+                      src={nft.token_uri}
+                      width={200}
+                      height={200}
+                      alt="nft"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="h-[300px] w-full flex items-center justify-center text-[#ffffff60] text-2xl font-medium">
+            No NFTs found
           </div>
-        </div>
-      ))}
+        )}
+      </div>
 
       <Pagination
-        totalPages={totalPages}
+        totalPages={pageNfts?.length || 0}
         edgePageCount={3}
         middlePagesSiblingCount={1}
         currentPage={currentPage}
         setCurrentPage={handlePageChange}
+        className="justify-start"
       >
         <Pagination.PrevButton />
-
         <nav className="mx-2 flex items-center justify-center">
           <ul className="flex items-center gap-2">
-            <Pagination.PageButton
-              activeClassName=""
-              inactiveClassName=""
-              className=""
-            />
+            {isPending ? (
+              range(3).map((i) => <Skeleton key={i} className="h-5 w-5" />)
+            ) : (
+              <Pagination.PageButton
+                activeClassName=""
+                inactiveClassName=""
+                className=""
+              />
+            )}
           </ul>
         </nav>
-
         <Pagination.NextButton />
       </Pagination>
     </div>

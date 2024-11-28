@@ -1,7 +1,7 @@
 "use client";
 import RaeToken from "@/app/_common/rae-token";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
-import { NumericalInput } from "@/components/share/numerical-input";
+import { NumericalInput } from "@/components/ui/numerical-input";
 import { RAE } from "@/lib/const/rae";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useCreateAuction } from "@/lib/web3/call/use-create-auction";

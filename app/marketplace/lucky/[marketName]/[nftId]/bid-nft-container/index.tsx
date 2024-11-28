@@ -5,12 +5,12 @@ import { useLuckyNFTPageContext } from "../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DetailContainer() {
-  const { nftInfo, isPending } = useLuckyNFTPageContext();
+  const { nftInfo, isMarketAndNftPending } = useLuckyNFTPageContext();
 
   return (
     <div className="mt-12 mb-10 flex-1 flex justify-center">
       <div className="w-[580px]">
-        {!isPending || !nftInfo ? (
+        {isMarketAndNftPending || !nftInfo ? (
           <>
             <Skeleton className="h-6 w-[280px]" />
             <Skeleton className="mt-5 h-[580px] w-[580px]" />
@@ -22,7 +22,7 @@ export default function DetailContainer() {
                 "Lucky Market",
                 `${nftInfo.market_name} NO.${nftInfo.token_id}`,
               ]}
-              isLoadings={[false, isPending]}
+              isLoadings={[false, isMarketAndNftPending]}
             />
 
             <Image

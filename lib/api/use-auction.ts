@@ -3,6 +3,7 @@ import { apiFetcher } from "../fetcher";
 import { ApiPaths, WithApiHost } from "./api-paths";
 
 export interface IAuction {
+  id: string;
   token_id: string;
   seller: string;
   bidding_cap: string;
@@ -20,7 +21,7 @@ export interface IAuction {
   bid_withdrawn: boolean[];
   sell_withdrawn: boolean;
   status: "NOTEXIST" | "BIDDING" | "COMPLETED" | "FAILED";
-  auction_type: string;
+  auction_type: "NORMAL" | "REFUNDABLE";
 }
 
 export async function fetchAuction(marketName: string, auctionId?: string) {
@@ -29,6 +30,7 @@ export async function fetchAuction(marketName: string, auctionId?: string) {
   const result = await apiFetcher(
     WithApiHost(`${ApiPaths.auction}/${marketName}/${auctionId}`),
   );
+
   return result as IAuction;
 }
 

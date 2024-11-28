@@ -14,8 +14,9 @@ export type INFT = {
   token_id: string;
   owner: string;
   price: string;
-  status: "Listed" | "Vaulted" | "Person";
+  status: "LISTED" | "VAULTED" | "PERSON";
   market_name: string;
+  total_supply: number;
 } & IMarketNftInfo;
 
 export async function fetchMarketNfts(marketInfo?: IMarket) {
@@ -27,6 +28,7 @@ export async function fetchMarketNfts(marketInfo?: IMarket) {
 
   for (const nft of nfts) {
     nft.market_name = marketInfo.market_name;
+    nft.total_supply = nfts.length;
   }
 
   const newNfts = nfts.map((n: Record<string, any>) => ({
@@ -59,17 +61,19 @@ export function useMarketNfts(marketName: string) {
 
 function CombineResults(results: QueryObserverResult<INFT[], unknown>[]) {
   return {
-    data: flatten(results.map((result) => result.data || [])),
-    pending: results.some((result) => result.isPending),
+    data: flatten(results.map((result) => result?.data || [])),
+    isPending: results.some((result) => result?.isPending),
   };
 }
 
-export function useMarketsNfts(markets: IMarket[]) {
+export function useMarketsNfts(markets: IMarket[] | undefined) {
   const marketsNfts = useQueries({
-    queries: markets.map((m) => ({
-      queryKey: [m.market_name, "nfts"],
-      queryFn: () => fetchMarketNfts(m),
-    })),
+    queries: markets?.length
+      ? markets.map((m) => ({
+          queryKey: [m.market_name, "nfts"],
+          queryFn: () => fetchMarketNfts(m),
+        }))
+      : [],
     combine: CombineResults,
   });
 

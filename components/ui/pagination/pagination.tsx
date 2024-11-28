@@ -120,7 +120,7 @@ export const PageButton = ({ className }: PageButtonProps) => {
         onClick={() => pagination.setCurrentPage(page - 1)}
         data-active={pagination.currentPage + 1 === page}
         className={cn(
-          "flex h-8 w-8 cursor-pointer items-center justify-center text-sm leading-5 text-white data-[active=true]:opacity-100 opacity-60",
+          "flex h-8 w-8 cursor-pointer items-center justify-center text-sm leading-5 text-white data-[active=true]:opacity-100 data-[active=true]:bg-[#2A1C34] opacity-60",
           className,
         )}
       >
