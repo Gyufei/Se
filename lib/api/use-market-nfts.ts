@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 
 import { apiFetcher } from "../fetcher";
-import { WithApiHost } from "./api-paths";
+import { ApiPaths, WithApiHost } from "./api-paths";
 import { IMarket, IMarketNftInfo } from "./use-markets";
 import { useMarketByName } from "./use-markets";
 
@@ -24,7 +24,9 @@ export async function fetchMarketNfts(marketInfo?: IMarket) {
     return [];
   }
 
-  const nfts = await apiFetcher(WithApiHost(`/${marketInfo.market_name}`));
+  const nfts = await apiFetcher(
+    WithApiHost(`${ApiPaths.market}/${marketInfo.market_name}`),
+  );
 
   for (const nft of nfts) {
     nft.market_name = marketInfo.market_name;

@@ -1,10 +1,17 @@
 import { PersonalAndPoolBtns } from "./personal-and-pool-btns";
 import NftList from "./nft-list";
-import { useMyNFTCollectionsPageContext } from "../page-context";
+import { NftOwnerType, useMyNFTCollectionsPageContext } from "../page-context";
 
 export default function NftListDisplay() {
-  const { nftType, setNftType, myNfts, poolNfts, isPending } =
+  const { nftType, setNftType, myNfts, poolNfts, setSelectedNft, isPending } =
     useMyNFTCollectionsPageContext();
+
+  function handleTypeChange(type: NftOwnerType) {
+    if (type === nftType) return;
+
+    setNftType(type);
+    setSelectedNft(null);
+  }
 
   return (
     <div className="mt-[45px] mb-[60px] flex flex-1 justify-center">
@@ -15,7 +22,7 @@ export default function NftListDisplay() {
         <PersonalAndPoolBtns
           isPending={isPending}
           type={nftType}
-          setType={setNftType}
+          setType={handleTypeChange}
           typeNumbers={{
             personal: myNfts.length,
             pool: poolNfts.length,

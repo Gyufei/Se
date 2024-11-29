@@ -12,16 +12,13 @@ import { multiply } from "safebase";
 import { useListAsset } from "@/lib/web3/call/use-list-asset";
 import { truncateAddr } from "@/lib/utils/web3";
 import { useMyNFTCollectionsPageContext } from "../../page-context";
-
-const nftInfo = {
-  name: "NFT #3333",
-  nftAddr: "0x12345612131314141412414124214124",
-  tokenId: 1,
-};
+import { Skeleton } from "@/components/ui/skeleton";
+import { useRaePrice } from "@/lib/api/use-rae-price";
 
 export default function ListingDetail() {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
+
   const { nftType, selectedNft } = useMyNFTCollectionsPageContext();
 
   const {
@@ -29,7 +26,7 @@ export default function ListingDetail() {
     isApproving: isApprovingNft,
     approveAction: approveActionNft,
     approveBtnText: approveBtnTextNft,
-  } = useApprove(nftInfo.nftAddr, nftInfo.name);
+  } = useApprove(selectedNft?.token_address || "", `#${selectedNft?.token_id}`);
 
   const {
     isShouldApprove: isShouldApproveRae,
@@ -40,9 +37,21 @@ export default function ListingDetail() {
 
   const { write, isPending: isCreating } = useListAsset();
 
+  const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
+
   const [sellPrice, setSellPrice] = useState("");
 
+  const sellPriceValue = useMemo(() => {
+    if (isRaePricePending || !raePriceData || !sellPrice) return "";
+
+    return multiply(sellPrice, raePriceData.price);
+  }, [raePriceData, sellPrice, isRaePricePending]);
+
   function handleList() {
+    if (!selectedNft) {
+      return;
+    }
+
     if (isShouldApproveRae) {
       approveActionRae();
       return;
@@ -50,10 +59,6 @@ export default function ListingDetail() {
 
     if (isShouldApproveNft) {
       approveActionNft();
-      return;
-    }
-
-    if (!selectedNft) {
       return;
     }
 
@@ -67,7 +72,9 @@ export default function ListingDetail() {
       {
         onSuccess: () => {
           setSellPrice("");
-          queryClient.invalidateQueries({ queryKey: [nftInfo.nftAddr] });
+          queryClient.invalidateQueries({
+            queryKey: [selectedNft?.market_name, "nfts"],
+          });
           setGlobalMsg({
             type: "success",
             message: "List successfully",
@@ -140,9 +147,15 @@ export default function ListingDetail() {
               value={sellPrice}
               onUserInput={(v) => setSellPrice(v)}
             />
-            <div className="text-base text-white opacity-60 inline-block ml-5">
-              ~ $3000
-            </div>
+            {isRaePricePending ? (
+              <Skeleton className="w-[60px] h-[20px] ml-5" />
+            ) : (
+              sellPriceValue && (
+                <div className="text-base text-white opacity-60 inline-block ml-5">
+                  ~ ${sellPriceValue}
+                </div>
+              )
+            )}
           </div>
 
           <RaeToken />

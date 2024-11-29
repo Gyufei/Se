@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { erc20Abi } from "viem";
+import { erc20Abi, isAddress } from "viem";
 import { readContract } from "@wagmi/core";
 import { useAccount, useConfig, useWriteContract } from "wagmi";
 import { USDTAbi } from "@/lib/abi/USDT";
 import { useChainConfig } from "./use-chain-config";
 
-export function useApprove(tokenAddr: string, tokenSymbol: string) {
+export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
   const { chainConfig } = useChainConfig();
 
   const allowAmount: number = 0;
@@ -20,11 +20,11 @@ export function useApprove(tokenAddr: string, tokenSymbol: string) {
   const { writeContract, isPending: isApproving } = useWriteContract();
 
   const shouldWithApprove = useMemo(() => {
-    if (!tokenAddr) return false;
+    if (!tokenAddr || !isAddress(tokenAddr)) return false;
 
     if (tokenSymbol === "ETH") return false;
 
-    if (!walletAccount || !spender || !tokenAddr) return false;
+    if (!walletAccount || !spender) return false;
 
     return true;
   }, [walletAccount, spender, tokenAddr, tokenSymbol]);
@@ -34,15 +34,20 @@ export function useApprove(tokenAddr: string, tokenSymbol: string) {
 
     setIsAllowanceLoading(true);
 
-    const res = await readContract(config, {
-      abi: erc20Abi,
-      address: tokenAddr as any,
-      functionName: "allowance",
-      args: [walletAccount!, spender as any],
-    });
+    try {
+      const res = await readContract(config, {
+        abi: erc20Abi,
+        address: tokenAddr as any,
+        functionName: "allowance",
+        args: [walletAccount!, spender as any],
+      });
 
-    setIsAllowanceLoading(false);
-    setAllowance(Number(res) / 10 ** 18);
+      setAllowance(Number(res) / 10 ** 18);
+    } catch (e) {
+      console.error("readAllowance error: =>", e);
+    } finally {
+      setIsAllowanceLoading(false);
+    }
   }, [shouldWithApprove, walletAccount, config, spender, tokenAddr]);
 
   useEffect(() => {

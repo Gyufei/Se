@@ -10,23 +10,22 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useMemo, useState } from "react";
 import { multiply } from "safebase";
-
-const nftInfo = {
-  name: "NFT #3333",
-  nftAddr: "0x12345612131314141412414124214124",
-  tokenId: 1,
-};
+import { useMyNFTCollectionsPageContext } from "../../page-context";
+import { useRaePrice } from "@/lib/api/use-rae-price";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CreateBidding() {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
+
+  const { selectedNft } = useMyNFTCollectionsPageContext();
 
   const {
     isShouldApprove: isShouldApproveNft,
     isApproving: isApprovingNft,
     approveAction: approveActionNft,
     approveBtnText: approveBtnTextNft,
-  } = useApprove(nftInfo.nftAddr, nftInfo.name);
+  } = useApprove(selectedNft?.token_address || "", `#${selectedNft?.token_id}`);
 
   const {
     isShouldApprove: isShouldApproveRae,
@@ -37,12 +36,22 @@ export default function CreateBidding() {
 
   const { write, isPending: isCreating } = useCreateAuction();
 
+  const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
+
   const [days, setDays] = useState("");
   const [hours, setHours] = useState("");
   const [taxRate, setTaxRate] = useState("");
   const [bidCap, setBidCap] = useState("");
 
+  const bidCapValue = useMemo(() => {
+    if (isRaePricePending || !raePriceData || !bidCap) return "";
+
+    return multiply(bidCap, raePriceData.price);
+  }, [raePriceData, bidCap, isRaePricePending]);
+
   function handleConfirm() {
+    if (!selectedNft) return;
+
     if (isShouldApproveRae) {
       approveActionRae();
       return;
@@ -59,8 +68,8 @@ export default function CreateBidding() {
 
     write(
       {
-        nftAddr: nftInfo.nftAddr,
-        tokenId: nftInfo.tokenId,
+        nftAddr: selectedNft.token_address,
+        tokenId: Number(selectedNft.token_id),
         biddingCap: multiply(bidCap, String(10 ** RAE.decimals)),
         taxRate: multiply(taxRate, String(10 ** 2)),
         bidDuration,
@@ -71,7 +80,7 @@ export default function CreateBidding() {
           setHours("");
           setTaxRate("");
           setBidCap("");
-          queryClient.invalidateQueries({ queryKey: [nftInfo.nftAddr] });
+          queryClient.invalidateQueries({ queryKey: [] });
           setGlobalMsg({
             type: "success",
             message: "Vault successfully",
@@ -132,13 +141,13 @@ export default function CreateBidding() {
 
     if (isCreating) {
       return {
-        text: "Depositing...",
+        text: "Vaulting...",
         disabled: true,
       };
     }
 
     return {
-      text: "Deposit",
+      text: "Vault onto Lucky Market",
       disabled: false,
     };
   }, [
@@ -205,9 +214,15 @@ export default function CreateBidding() {
                 value={bidCap}
                 onUserInput={(v) => setBidCap(v)}
               />
-              <div className="text-base text-white opacity-60 inline-block ml-5">
-                ~ $3000{" "}
-              </div>
+              {isRaePricePending ? (
+                <Skeleton className="w-[60px] h-[20px] ml-5" />
+              ) : (
+                bidCapValue && (
+                  <div className="text-base text-white opacity-60 inline-block ml-5">
+                    ~ ${bidCapValue}
+                  </div>
+                )
+              )}
             </div>
           </div>
 

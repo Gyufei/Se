@@ -5,6 +5,7 @@ import { NftOwnerType, useMyNFTCollectionsPageContext } from "../page-context";
 import { INFT } from "@/lib/api/use-market-nfts";
 import { chunk, flatten, groupBy, range } from "lodash";
 import { Skeleton } from "@/components/ui/skeleton";
+import { removeQueryParams } from "@/lib/utils/url";
 
 function getPagesNfts(nfts: INFT[]) {
   if (!nfts?.length) return [[]];
@@ -50,7 +51,8 @@ function getPagesNfts(nfts: INFT[]) {
 }
 
 export default function NftList({ type }: { type: NftOwnerType }) {
-  const { myNfts, poolNfts, isPending } = useMyNFTCollectionsPageContext();
+  const { myNfts, poolNfts, isPending, selectedNft, setSelectedNft } =
+    useMyNFTCollectionsPageContext();
 
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -67,6 +69,11 @@ export default function NftList({ type }: { type: NftOwnerType }) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleSelectNft = (nft: INFT) => {
+    removeQueryParams(["marketName", "nftId", "action"]);
+    setSelectedNft(nft);
   };
 
   return (
@@ -94,8 +101,13 @@ export default function NftList({ type }: { type: NftOwnerType }) {
               <div className="mt-[15px] pr-[10px] grid grid-cols-3 gap-x-5">
                 {market.nfts.map((nft, idx) => (
                   <div
+                    onClick={() => handleSelectNft(nft)}
                     key={idx}
-                    className="border-2 border-transparent cursor-pointer hover:border-green h-[200px] w-[200px]"
+                    data-active={
+                      selectedNft?.token_id === nft.token_id &&
+                      selectedNft?.market_name === nft.market_name
+                    }
+                    className="border-2 border-transparent cursor-pointer hover:border-green data-[active=true]:border-green h-[200px] w-[200px]"
                     style={{ marginTop: idx > 2 ? "80px" : "0" }}
                   >
                     <Image
