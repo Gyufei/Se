@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config: { externals: string[] }) => {
+  webpack: (config: { externals: string[]; module: { rules: any[] } }) => {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },

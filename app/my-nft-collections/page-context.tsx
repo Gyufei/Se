@@ -1,3 +1,4 @@
+"use client";
 import { INFT, useMarketsNfts } from "@/lib/api/use-market-nfts";
 import { useMarkets } from "@/lib/api/use-markets";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";

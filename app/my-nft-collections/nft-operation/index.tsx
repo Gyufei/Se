@@ -1,3 +1,4 @@
+"use client";
 import NFTInfo from "../../_common/nft-info";
 import { useMyNFTCollectionsPageContext } from "../page-context";
 import VaultListTabs from "./vault-list-tabs";

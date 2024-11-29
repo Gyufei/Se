@@ -1,3 +1,4 @@
+"use client";
 import { PersonalAndPoolBtns } from "./personal-and-pool-btns";
 import NftList from "./nft-list";
 import { NftOwnerType, useMyNFTCollectionsPageContext } from "../page-context";
