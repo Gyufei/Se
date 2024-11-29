@@ -2,8 +2,7 @@
   "extends": [
     "eslint:recommended",
     "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@tanstack/query/recommended"
+    "plugin:@typescript-eslint/recommended"
   ],
   "globals": {
     "React": true
@@ -20,7 +19,6 @@
   },
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "@typescript-eslint",
-    "@tanstack/query"
+    "@typescript-eslint"
   ]
 }

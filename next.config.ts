@@ -15,10 +15,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // webpack: (config: { externals: string[] }) => {
-  //   config.externals.push("pino-pretty", "lokijs", "encoding");
-  //   return config;
-  // },
+  webpack: (config: { externals: string[] }) => {
+    config.externals.push("pino-pretty", "lokijs", "encoding");
+    return config;
+  },
 };
 
 export default nextConfig;
