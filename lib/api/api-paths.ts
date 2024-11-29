@@ -3,7 +3,7 @@ import { isProduction } from "@/lib/const/env";
 export function WithApiHost(path: string) {
   const prodHost = `https://api.tadle.com`;
   // const devHost = `https://preview-api.tadle.com`;
-  const devHost = `https://private-anon-9a060573f5-tesseradev.apiary-mock.com`;
+  const devHost = `https://tessera.aggregation.top`;
   const host = isProduction ? prodHost : devHost;
   return `${host}${path}`;
 }
@@ -22,4 +22,5 @@ export const ApiPaths = {
   auction: "/auction",
   raePrice: "/rae/price",
   pools: "/pools",
+  pool: "/pool",
 };

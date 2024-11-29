@@ -3,62 +3,28 @@ import { formatPercent } from "@/lib/utils/number";
 import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
 import { truncateAddr } from "@/lib/utils/web3";
 import { formatDistanceToNowStrict } from "date-fns";
-import { upperCase } from "lodash";
+import { range, upperCase } from "lodash";
 import Image from "next/image";
-import { IPoolStatusTab } from "./pool-status-tabs";
 import { useMemo } from "react";
+import { IPoolStatus, usePools } from "@/lib/api/use-pools";
+import { Skeleton } from "@/components/ui/skeleton";
+import { divide } from "safebase";
+import { useRouter } from "next/navigation";
+import Empty from "../_common/empty";
 
-const poolList = [
-  {
-    id: 1,
-    imgSrc: "/images/mock-nft.png",
-    name: "Milady No. 999",
-    status: "active",
-    capacity: 2.342,
-    createBy: "0x1234567890abcdef",
-    createBonus: 0.12,
-    delegators: 123,
-    lifeTime: new Date().getTime() - 1000 * 60 * 60 * 3,
-  },
-  {
-    id: 2,
-    imgSrc: "/images/mock-nft.png",
-    name: "Milady No. 999",
-    status: "active",
-    capacity: 2.342,
-    createBy: "0x1234567890abcdef",
-    createBonus: 0.12,
-    delegators: 123,
-    lifeTime: new Date().getTime() - 1000 * 60 * 60 * 3,
-  },
-  {
-    id: 3,
-    imgSrc: "/images/mock-nft.png",
-    name: "Milady No. 999",
-    status: "closed",
-    capacity: 2.342,
-    createBy: "0x1234567890abcdef",
-    createBonus: 0.12,
-    delegators: 123,
-    lifeTime: new Date().getTime() - 1000 * 60 * 60 * 3,
-  },
-  {
-    id: 4,
-    imgSrc: "/images/mock-nft.png",
-    name: "Milady No. 999",
-    status: "closed",
-    capacity: 2.342,
-    createBy: "0x1234567890abcdef",
-    createBonus: 0.12,
-    delegators: 123,
-    lifeTime: new Date().getTime() - 1000 * 60 * 60 * 3,
-  },
-];
+export default function PoolTable({ status }: { status: IPoolStatus }) {
+  const { data: pools, isPending: isPoolPending } = usePools();
+  const router = useRouter();
 
-export default function PoolTable({ status }: { status: IPoolStatusTab }) {
   const showList = useMemo(() => {
-    return poolList.filter((pool) => pool.status === status);
-  }, [status]);
+    if (!pools) return [];
+
+    return pools?.filter((pool) => pool.status === status);
+  }, [status, pools]);
+
+  function handlePoolClick(poolAddress: string) {
+    router.push(`/pools/${poolAddress}`);
+  }
 
   return (
     <div className="w-full mt-10">
@@ -67,50 +33,68 @@ export default function PoolTable({ status }: { status: IPoolStatusTab }) {
         <div className="w-[100px]">Capacity</div>
         <div className="w-[110px]">Created By</div>
         <div className="w-[130px]">Created Bonus</div>
-        <div className="w-[120px]">Delegators</div>
+        <div className="w-[120px]">Delegator</div>
         <div className="w-[65px]">LifeTime</div>
         <div></div>
       </div>
-      {showList.map((pool, i) => (
-        <div
-          className="h-20 bg-[#281A31] p-5 flex items-center mb-[15px]"
-          key={i}
-        >
-          <div className="w-[190px] flex items-center gap-x-[15px] text-sma font-medium text-white">
-            <Image
-              src={pool.imgSrc}
-              width={40}
-              height={40}
-              className="rounded-full"
-              alt={pool.name}
-            />
-            <div className=" flex flex-col items-start space-y-[6px]">
-              <span>{pool.name}</span>
-              <span
-                className={cn(
-                  "flex items-center justify-center px-2 text-xs",
-                  pool.status === "closed" && "bg-[#EF466F15] text-red",
-                  pool.status === "active" && "bg-[#AAED4A15] text-green",
-                )}
-              >
-                {upperCase(pool.status)}
-              </span>
+      {isPoolPending ? (
+        range(3).map((i) => (
+          <Skeleton key={i} className="mb-[15px] h-20 w-full" />
+        ))
+      ) : showList.length ? (
+        showList.map((pool, i) => (
+          <div
+            className="h-20 bg-[#281A31] p-5 flex items-center mb-[15px]"
+            key={i}
+          >
+            <div className="w-[190px] flex items-center gap-x-[15px] text-sma font-medium text-white">
+              <Image
+                src="/images/mock-nft.png"
+                width={40}
+                height={40}
+                className="rounded-full"
+                alt={pool.name}
+              />
+              <div className=" flex flex-col items-start space-y-[6px]">
+                <span>{pool.name}</span>
+                <span
+                  className={cn(
+                    "flex items-center justify-center px-2 text-xs",
+                    pool.status === "LIQUIDATING" && "bg-[#EF466F15] text-red",
+                    pool.status === "ACTIVE" && "bg-[#AAED4A15] text-green",
+                  )}
+                >
+                  {upperCase(pool.status)}
+                </span>
+              </div>
+            </div>
+            <div className="w-[100px]">{pool.capacity} RAE</div>
+            <div className="w-[110px]">
+              {truncateAddr(pool.creator, [4, 4])}
+            </div>
+            <div className="w-[130px]">
+              {formatPercent(divide(pool.creator_bonus, String(10 ** 4)))}
+            </div>
+            <div className="w-[120px]">{pool.delegator}</div>
+            <div className="w-[65px] text-right">
+              {replaceTimeUnitToSingleChar(
+                formatDistanceToNowStrict(Number(pool.create_at) * 1000),
+              )}
+            </div>
+            <div
+              onClick={() => handlePoolClick(pool.address)}
+              className="flex-1 cursor-pointer items-center text-center underline decoration-green underline-offset-4"
+            >
+              Delegate
             </div>
           </div>
-          <div className="w-[100px]">{pool.capacity} RAE</div>
-          <div className="w-[110px]">{truncateAddr(pool.createBy, [4, 4])}</div>
-          <div className="w-[130px]">{formatPercent(pool.createBonus)}</div>
-          <div className="w-[120px]">{pool.delegators}</div>
-          <div className="w-[65px] text-right">
-            {replaceTimeUnitToSingleChar(
-              formatDistanceToNowStrict(pool.lifeTime),
-            )}
-          </div>
-          <div className="flex-1 cursor-pointer items-center text-center underline decoration-green underline-offset-4">
-            Delegate
-          </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <Empty
+          className="mt-[68px] items-center text-2xl"
+          text="No NFTs found"
+        />
+      )}
     </div>
   );
 }

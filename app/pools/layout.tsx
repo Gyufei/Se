@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import CateTabs, { IPoolStatusTab } from "./pool-status-tabs";
+import CateTabs from "./pool-status-tabs";
 import PoolTable from "./pool-table";
+import { IPoolStatus } from "@/lib/api/use-pools";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [status, setStatus] = useState<IPoolStatusTab>("active");
+  const [status, setStatus] = useState<IPoolStatus>("ACTIVE");
 
   return (
     <div className="flex min-w-[1440px] overflow-x-auto">

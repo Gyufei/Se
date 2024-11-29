@@ -7,7 +7,7 @@ import Undelegate from "./undelegate";
 import { RAE } from "@/lib/const/rae";
 import { usePoolRae } from "@/lib/web3/use-pool-rae";
 
-export default function PoolAction({ poolId }: { poolId: string }) {
+export default function PoolAction({ poolAddress: poolId }: { poolAddress: string }) {
   const {
     data: rae,
     isPending,

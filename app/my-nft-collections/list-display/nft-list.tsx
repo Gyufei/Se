@@ -6,6 +6,7 @@ import { INFT } from "@/lib/api/use-market-nfts";
 import { chunk, flatten, groupBy, range } from "lodash";
 import { Skeleton } from "@/components/ui/skeleton";
 import { removeQueryParams } from "@/lib/utils/url";
+import Empty from "@/app/_common/empty";
 
 function getPagesNfts(nfts: INFT[]) {
   if (!nfts?.length) return [[]];
@@ -122,9 +123,10 @@ export default function NftList({ type }: { type: NftOwnerType }) {
             </div>
           ))
         ) : (
-          <div className="h-[300px] w-full flex items-center justify-center text-[#ffffff60] text-2xl font-medium">
-            No NFTs found
-          </div>
+          <Empty
+            className="h-[300px] items-center text-2xl"
+            text="No NFTs found"
+          />
         )}
       </div>
 

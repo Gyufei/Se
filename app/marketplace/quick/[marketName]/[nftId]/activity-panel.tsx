@@ -7,6 +7,7 @@ import { useQuickPageContext } from "../page-context";
 import { useMarketActivity } from "@/lib/api/use-market-activity";
 import { Skeleton } from "@/components/ui/skeleton";
 import { capitalize, range } from "lodash";
+import Empty from "@/app/_common/empty";
 
 export default function ActivityPanel({ nft }: { nft: INFT | undefined }) {
   const { marketName } = useQuickPageContext();
@@ -41,9 +42,7 @@ export default function ActivityPanel({ nft }: { nft: INFT | undefined }) {
             </div>
           ))
         ) : (
-          <div className="text-center text-white opacity-60 mt-5">
-            No activity
-          </div>
+          <Empty className="mt-5" text="No activity" />
         )}
       </div>
     </CollapsePanel>

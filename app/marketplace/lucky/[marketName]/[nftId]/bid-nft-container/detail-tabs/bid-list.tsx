@@ -9,6 +9,7 @@ import { divide } from "safebase";
 import { useAccount } from "wagmi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCheckIsPool } from "@/lib/api/use-pools";
+import Empty from "@/app/_common/empty";
 
 export default function BidList({ onlyMe }: { onlyMe: boolean }) {
   const { address } = useAccount();
@@ -51,9 +52,7 @@ export default function BidList({ onlyMe }: { onlyMe: boolean }) {
       {isAuctionPending ? (
         range(2).map((i) => <Skeleton key={i} className="w-full h-16" />)
       ) : !displayArr.length ? (
-        <div className="text-white flex justify-center text-sm opacity-60">
-          No bids Data
-        </div>
+        <Empty text="No bids data" />
       ) : (
         displayArr.map((bid) => <BidItem key={bid.at} bid={bid} />)
       )}

@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils/common";
 import { useTokens } from "@/lib/api/use-tokens";
 import { Skeleton } from "@/components/ui/skeleton";
 import { range } from "lodash";
+import Empty from "../_common/empty";
 
 export default function TokenSelect({
   token,
@@ -55,10 +56,9 @@ export default function TokenSelect({
         align="end"
         className="flex w-[112px] flex-col items-stretch rounded-none border-0 bg-[#382743] space-y-[5px] p-[5px]"
       >
-        {isPending &&
-          range(3).map((i) => <Skeleton key={i} className="h-10"></Skeleton>)}
-        {!isPending &&
-          tokens?.length &&
+        {isPending ? (
+          range(3).map((i) => <Skeleton key={i} className="h-10"></Skeleton>)
+        ) : tokens?.length ? (
           tokens.map((t) => (
             <div
               key={t.symbol}
@@ -74,7 +74,10 @@ export default function TokenSelect({
               ></Image>
               {t.symbol}
             </div>
-          ))}
+          ))
+        ) : (
+          <Empty text="No token" />
+        )}
       </PopoverContent>
     </Popover>
   );

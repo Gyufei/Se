@@ -3,9 +3,11 @@ import { ApiPaths, WithApiHost } from "./api-paths";
 import { apiFetcher } from "../fetcher";
 import { useMemo } from "react";
 
-export interface IPool {
+export type IPoolStatus = "ACTIVE" | "LIQUIDATING";
+
+export interface IPoolBase {
   name: string;
-  status: "Active" | "Liquidating";
+  status: IPoolStatus;
   address: string;
   creator_bonus: string;
   creator: string;
@@ -16,7 +18,7 @@ export interface IPool {
 
 export async function fetchPools() {
   const result = await apiFetcher(WithApiHost(ApiPaths.pools));
-  return result as IPool[];
+  return result as IPoolBase[];
 }
 
 export function usePools() {
@@ -45,7 +47,7 @@ export function useCheckIsPoolCreator(addr: string | undefined) {
     if (!addr || !result.data) return [];
 
     return result.data
-      .filter((pool) => pool.status === "Active")
+      .filter((pool) => pool.status === "ACTIVE")
       .filter((pool) => pool.creator === addr);
   }, [addr, result.data]);
 
