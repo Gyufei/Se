@@ -42,6 +42,8 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
         args: [walletAccount!, spender as any],
       });
 
+      console.log(res, tokenAddr, walletAccount, spender);
+
       setAllowance(Number(res) / 10 ** 18);
     } catch (e) {
       console.error("readAllowance error: =>", e);

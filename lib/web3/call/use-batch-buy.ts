@@ -23,13 +23,14 @@ export function useBatchBuy() {
   ) => {
     try {
       const { orderIds } = args || {};
+      console.log(orderIds);
 
       const abiAddress = chainConfig.contracts.QuickMarkets;
 
       const callParams = {
         abi: QuickMarketsABI,
         address: abiAddress as any,
-        functionName: "listAsset",
+        functionName: "batchPurchaseAssets",
         args: [orderIds],
       };
 

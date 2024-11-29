@@ -55,7 +55,7 @@ export default function BuyBag() {
         (activity) => activity.token_id === nft.token_id,
       );
 
-      if (activity && activity.order_id && activity.event === "LIST") {
+      if (activity && activity.order_id && activity.event === "LISTED") {
         ids.push(activity.order_id);
       }
     }

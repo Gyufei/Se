@@ -89,6 +89,18 @@ export const QuickMarketsABI = [
         name: "nftAmount",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "vaultAddr",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "guidePrice",
+        type: "uint256",
+      },
     ],
     name: "BatchMintedAndListed",
     type: "event",
@@ -796,4 +808,4 @@ export const QuickMarketsABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const;
+];

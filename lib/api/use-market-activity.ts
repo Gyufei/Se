@@ -9,7 +9,7 @@ export interface IActivity {
 
   token_id: string;
   event:
-    | "LIST"
+    | "LISTED"
     | "DELIST"
     | "PURCHASE"
     | "VAULT"

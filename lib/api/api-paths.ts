@@ -18,8 +18,8 @@ export function WithCDN(path: string) {
 export const ApiPaths = {
   markets: "/markets",
   market: "/market",
-  activity: "/activities",
-  auction: "/auction",
+  activity: "/market/activities",
+  auction: "/market/auction",
   raePrice: "/rae/price",
   pools: "/pools",
   pool: "/pool",

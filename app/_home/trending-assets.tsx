@@ -31,6 +31,8 @@ export default function TrendingAssets() {
     3,
   );
 
+  console.log(luckyNfts3, quickNfts3);
+
   return (
     <>
       <div className="mt-[100px]">
