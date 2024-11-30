@@ -11,8 +11,8 @@ import { IActivity } from "@/lib/api/use-market-activity";
 
 export type IEventType = IActivity["event"];
 
-export const EventArr = [
-  "LIST",
+export const EventArr: Array<IEventType> = [
+  "LISTED",
   "DELIST",
   "PURCHASE",
   "VAULT",
