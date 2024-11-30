@@ -3,6 +3,7 @@ import { usePools } from "./use-pools";
 import { apiFetcher } from "../fetcher";
 import { ApiPaths, WithApiHost } from "./api-paths";
 import { useQuery } from "@tanstack/react-query";
+import { checkIsSameAddress } from "../utils/web3";
 
 export interface IPoolInfo {
   acc_profit: string;
@@ -39,7 +40,7 @@ export function usePoolInfo(address: string) {
   const poolAllInfo = useMemo(() => {
     if (!pools?.length || !poolInfo) return undefined;
 
-    const poolBase = pools.find((p) => p.address === address);
+    const poolBase = pools.find((p) => checkIsSameAddress(p.address, address));
     if (!poolBase) return undefined;
 
     return {

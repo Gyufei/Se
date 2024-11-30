@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ApiPaths, WithApiHost } from "./api-paths";
 import { apiFetcher } from "../fetcher";
 import { useMemo } from "react";
+import { checkIsSameAddress } from "../utils/web3";
 
 export type IPoolStatus = "ACTIVE" | "LIQUIDATING";
 
@@ -38,7 +39,9 @@ export function useCheckIsPool(addr: string | undefined) {
   return {
     ...result,
     data:
-      addr && result.data && result.data.some((pool) => pool.address === addr),
+      addr &&
+      result.data &&
+      result.data.some((pool) => checkIsSameAddress(pool.address, addr)),
   };
 }
 

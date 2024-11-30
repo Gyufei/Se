@@ -2,7 +2,8 @@
 import { INFT, useMarketsNfts } from "@/lib/api/use-market-nfts";
 import { useMarkets } from "@/lib/api/use-markets";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
-import { sortBy } from "lodash";
+import { checkIsSameAddress } from "@/lib/utils/web3";
+import { lowerCase, sortBy } from "lodash";
 import { useSearchParams } from "next/navigation";
 import {
   createContext,
@@ -50,7 +51,7 @@ export function MyNFTCollectionsPageContextProvider({
 
   const myNfts = sortBy(
     sortBy(
-      allNfts.filter((nft) => nft.owner === address),
+      allNfts.filter((nft) => checkIsSameAddress(nft.owner, address || "")),
       sortNftByNftId,
     ),
     sortNftByMarketName,

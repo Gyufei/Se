@@ -1,12 +1,16 @@
 import { useReadContract, useAccount, useBalance } from "wagmi";
 import { erc20Abi } from "viem";
 import { useChainConfig } from "@/lib/web3/use-chain-config";
+import { checkIsSameAddress } from "@/lib/utils/web3";
 
 export function useTokenBalance({ address }: { address: string }) {
   const { chainConfig } = useChainConfig();
   const { address: myAccount } = useAccount();
 
-  const isNativeToken = address === chainConfig.nativeTokenAddr;
+  const isNativeToken = checkIsSameAddress(
+    address,
+    chainConfig.nativeTokenAddr,
+  );
 
   const ethResult = useBalance({
     address: myAccount,

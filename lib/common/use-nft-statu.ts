@@ -1,12 +1,16 @@
 import { useAccount } from "wagmi";
 import { INFT } from "../api/use-market-nfts";
 import { useCheckIsPoolCreator } from "../api/use-pools";
+import { lowerCase } from "lodash";
 
 export function useNftStatus(nft: INFT | undefined) {
   const { address } = useAccount();
   const { data: asPoolCreator } = useCheckIsPoolCreator(address);
 
-  const addressArr = [...asPoolCreator.poolAddrs, address];
+  const addressArr = [
+    ...asPoolCreator.poolAddrs,
+    address ? lowerCase(address) : undefined,
+  ];
 
   const isListed = nft?.status === "LISTED";
   const isVault = nft?.status === "VAULTED";

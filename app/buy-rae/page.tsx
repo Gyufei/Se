@@ -27,6 +27,7 @@ import SlippageSelect from "./gas-select";
 import SwapPriceDisplay from "./swap-price-display";
 import ToOtherAddr from "./to-other-addr";
 import TokenSelect from "./token-select";
+import { checkIsSameAddress } from "@/lib/utils/web3";
 
 export default function Page() {
   const { address: myAddress } = useAccount();
@@ -43,7 +44,7 @@ export default function Page() {
 
   const checkIsNative = useCallback(
     (token: IToken) => {
-      return token.address === chainConfig.nativeTokenAddr;
+      return checkIsSameAddress(token.address, chainConfig.nativeTokenAddr);
     },
     [chainConfig],
   );

@@ -5,7 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { truncateAddr } from "@/lib/utils/web3";
+import { checkIsSameAddress, truncateAddr } from "@/lib/utils/web3";
 import { cn } from "@/lib/utils/common";
 import { capitalize } from "lodash";
 
@@ -23,7 +23,9 @@ export default function SelectPoolPop({
 
   function handleSelectPool(addr: string) {
     setSelectedPool(addr);
-    setSelectedPoolType(pools.find((p) => p.address === addr)?.type || null);
+    setSelectedPoolType(
+      pools.find((p) => checkIsSameAddress(p.address, addr))?.type || null,
+    );
     setPopOpen(false);
   }
 

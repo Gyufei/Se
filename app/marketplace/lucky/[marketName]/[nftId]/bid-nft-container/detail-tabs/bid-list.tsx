@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import Image from "next/image";
-import { truncateAddr } from "@/lib/utils/web3";
+import { checkIsSameAddress, truncateAddr } from "@/lib/utils/web3";
 import { formatDistanceToNowStrict } from "date-fns";
 import { cn } from "@/lib/utils/common";
 import { random, range } from "lodash";
@@ -40,7 +40,9 @@ export default function BidList({ onlyMe }: { onlyMe: boolean }) {
 
   const displayArr = useMemo(() => {
     if (!onlyMe) return bidArr;
-    return bidArr.filter((bid) => bid.address === address);
+    return bidArr.filter((bid) =>
+      checkIsSameAddress(bid.address, address || ""),
+    );
   }, [onlyMe, bidArr, address]);
 
   return (
