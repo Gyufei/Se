@@ -12,7 +12,7 @@ export function useTokenBalance({ address }: { address: string }) {
     chainConfig.nativeTokenAddr,
   );
 
-  const ethResult = useBalance({
+  const nativeResult = useBalance({
     address: myAccount,
     query: {
       enabled: !!(address && chainConfig && isNativeToken),
@@ -29,12 +29,12 @@ export function useTokenBalance({ address }: { address: string }) {
     },
   });
 
-  const ethBalance = ethResult.data?.value || 0n;
+  const ethBalance = nativeResult.data?.value || 0n;
   const tokenBalance = tokenResult.data || 0n;
 
   return isNativeToken
     ? {
-        ...ethResult,
+        ...nativeResult,
         data: ethBalance,
       }
     : {
