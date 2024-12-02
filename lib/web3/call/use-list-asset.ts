@@ -1,28 +1,23 @@
-import { useWriteContract } from "wagmi";
 import { useChainConfig } from "@/lib/web3/use-chain-config";
-import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
 import { QuickMarketsABI } from "@/lib/abi/QuickMarkets";
+import {
+  CommonWriteContractRestParams,
+  useCommonWriteContract,
+} from "../helper/use-common-write-contract";
 
 export function useListAsset() {
   const { chainConfig } = useChainConfig();
-  const { getGasParams } = useGasCalc();
 
-  const mutation = useWriteContract();
+  const mutation = useCommonWriteContract();
 
-  const write = async (
+  const writeContract = async (
     args: {
       nftAddr: string;
       tokenId: number;
       price: number;
       seller: string;
     },
-    {
-      onSuccess,
-      onError,
-    }: {
-      onSuccess?: () => void;
-      onError?: (e: any) => void;
-    },
+    rest: CommonWriteContractRestParams,
   ) => {
     try {
       const { nftAddr, tokenId, price, seller } = args || {};
@@ -36,24 +31,7 @@ export function useListAsset() {
         args: [nftAddr, tokenId, price, seller],
       };
 
-      const gasParams = await getGasParams({
-        ...callParams,
-      });
-
-      mutation.writeContract(
-        {
-          ...(callParams as any),
-          ...gasParams,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
-          onError: (e: any) => {
-            onError?.(e);
-          },
-        },
-      );
+      mutation.writeContract(callParams, rest);
     } catch (e: any) {
       console.log("tx error", e);
     }
@@ -61,6 +39,6 @@ export function useListAsset() {
 
   return {
     ...mutation,
-    write,
+    writeContract,
   };
 }

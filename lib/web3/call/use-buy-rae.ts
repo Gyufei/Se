@@ -1,13 +1,15 @@
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
+import { useWaitForTransactionReceipt } from "wagmi";
 import { RAEMarketsABI } from "@/lib/abi/RAEMarkets";
 import { useChainConfig } from "@/lib/web3/use-chain-config";
+import {
+  CommonWriteContractRestParams,
+  useCommonWriteContract,
+} from "../helper/use-common-write-contract";
 
 export function useBuyRae() {
   const { chainConfig } = useChainConfig();
-  const { getGasParams } = useGasCalc();
 
-  const mutation = useWriteContract();
+  const mutation = useCommonWriteContract();
 
   const {
     isPending: isTxPending,
@@ -20,7 +22,7 @@ export function useBuyRae() {
     },
   });
 
-  const write = async (
+  const writeContract = async (
     args: {
       payAmount: number;
       buyAmount: number;
@@ -28,13 +30,7 @@ export function useBuyRae() {
       payTokenAddress: string;
       gas: number;
     },
-    {
-      onSuccess,
-      onError,
-    }: {
-      onSuccess?: () => void;
-      onError?: (e: any) => void;
-    },
+    rest: CommonWriteContractRestParams,
   ) => {
     try {
       const { payAmount, buyAmount, buyer, payTokenAddress, gas } = args || {};
@@ -60,30 +56,18 @@ export function useBuyRae() {
         ...valueParams,
       };
 
-      const gasParams = await getGasParams(callParams, gas);
-
-      mutation.writeContract(
-        {
-          ...(callParams as any),
-          ...gasParams,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
-          onError: (e: any) => {
-            onError?.(e);
-          },
-        },
-      );
+      mutation.writeContract(callParams as any, {
+        ...rest,
+        gas,
+      });
     } catch (e) {
       console.log("tx error", e);
     }
   };
 
   return {
-    writeContractRes: mutation,
-    write,
+    ...mutation,
+    writeContract,
     isPending: mutation.isPending || (mutation.data && isTxPending),
     error: mutation.error || txError,
     isSuccess: isTxSuccess,

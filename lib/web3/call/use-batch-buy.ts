@@ -1,30 +1,22 @@
 import { useChainConfig } from "@/lib/web3/use-chain-config";
-import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
 import { QuickMarketsABI } from "@/lib/abi/QuickMarkets";
-import { useWriteContract } from "wagmi";
+import {
+  CommonWriteContractRestParams,
+  useCommonWriteContract,
+} from "../helper/use-common-write-contract";
 
 export function useBatchBuy() {
   const { chainConfig } = useChainConfig();
-  const { getGasParams } = useGasCalc();
+  const mutation = useCommonWriteContract();
 
-  const mutation = useWriteContract();
-
-  const write = async (
+  async function writeContract(
     args: {
       orderIds: string[];
     },
-    {
-      onSuccess,
-      onError,
-    }: {
-      onSuccess?: () => void;
-      onError?: (e: any) => void;
-    },
-  ) => {
+    rest: CommonWriteContractRestParams,
+  ) {
     try {
       const { orderIds } = args || {};
-      console.log(orderIds);
-
       const abiAddress = chainConfig.contracts.QuickMarkets;
 
       const callParams = {
@@ -34,31 +26,14 @@ export function useBatchBuy() {
         args: [orderIds],
       };
 
-      const gasParams = await getGasParams({
-        ...callParams,
-      });
-
-      mutation.writeContract(
-        {
-          ...(callParams as any),
-          ...gasParams,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
-          onError: (e: any) => {
-            onError?.(e);
-          },
-        },
-      );
+      await mutation.writeContract(callParams, rest);
     } catch (e: any) {
       console.log("tx error", e);
     }
-  };
+  }
 
   return {
     ...mutation,
-    write,
+    writeContract,
   };
 }

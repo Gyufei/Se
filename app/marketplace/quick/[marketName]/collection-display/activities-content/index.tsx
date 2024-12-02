@@ -43,8 +43,11 @@ export default function ActivitiesContent() {
         ? range(3).map((i) => (
             <Skeleton className="w-full h-16 mb-[15px]" key={i} />
           ))
-        : displayActivities.map((activity) => (
-            <ActivityItem key={activity.token_id} activity={activity} />
+        : displayActivities.map((activity, index) => (
+            <ActivityItem
+              key={activity.token_id + activity.event + index}
+              activity={activity}
+            />
           ))}
     </>
   );

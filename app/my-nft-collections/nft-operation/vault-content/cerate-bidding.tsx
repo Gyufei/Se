@@ -9,10 +9,11 @@ import { useApprove } from "@/lib/web3/use-approve";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useMemo, useState } from "react";
-import { multiply } from "safebase";
+import { add, multiply } from "safebase";
 import { useMyNFTCollectionsPageContext } from "../../page-context";
 import { useRaePrice } from "@/lib/api/use-rae-price";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useApproveNft } from "@/lib/web3/use-approve-nft";
 
 export default function CreateBidding() {
   const queryClient = useQueryClient();
@@ -25,7 +26,11 @@ export default function CreateBidding() {
     isApproving: isApprovingNft,
     approveAction: approveActionNft,
     approveBtnText: approveBtnTextNft,
-  } = useApprove(selectedNft?.token_address || "", `#${selectedNft?.token_id}`);
+  } = useApproveNft(
+    selectedNft?.token_address || "",
+    selectedNft?.token_id || "",
+    `#${selectedNft?.token_id}`,
+  );
 
   const {
     isShouldApprove: isShouldApproveRae,
@@ -34,7 +39,7 @@ export default function CreateBidding() {
     approveBtnText: approveBtnTextRae,
   } = useApprove(RAE.address, RAE.symbol);
 
-  const { write, isPending: isCreating } = useCreateAuction();
+  const { writeContract, isPending: isCreating } = useCreateAuction();
 
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
 
@@ -62,16 +67,19 @@ export default function CreateBidding() {
       return;
     }
 
-    const bidDuration =
-      multiply(days || "0", String(24 * 60 * 60)) +
-      multiply(hours || "0", String(60 * 60));
+    const bidDuration = Number(
+      add(
+        multiply(days || "0", String(24 * 60 * 60)),
+        multiply(hours || "0", String(60 * 60)),
+      ),
+    );
 
-    write(
+    writeContract(
       {
         nftAddr: selectedNft.token_address,
         tokenId: Number(selectedNft.token_id),
-        biddingCap: multiply(bidCap, String(10 ** RAE.decimals)),
-        taxRate: multiply(taxRate, String(10 ** 2)),
+        biddingCap: Number(multiply(bidCap, String(10 ** RAE.decimals))),
+        taxRate: Number(multiply(taxRate, String(10 ** 2))),
         bidDuration,
       },
       {

@@ -1,33 +1,32 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { erc20Abi, isAddress } from "viem";
+import { erc721Abi, isAddress } from "viem";
 import { readContract } from "@wagmi/core";
 import { useAccount, useConfig, useWriteContract } from "wagmi";
-import { USDTAbi } from "@/lib/abi/USDT";
 import { useChainConfig } from "./use-chain-config";
+import { checkIsSameAddress } from "../utils/web3";
 
-export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
+export function useApproveNft(
+  nftAddr: string | undefined,
+  nftId: string | undefined,
+  nftName: string | undefined,
+) {
   const { chainConfig } = useChainConfig();
-
-  const allowAmount: number = 0;
   const config = useConfig();
   const spender = chainConfig.contracts.TesseraRouter;
 
   const { address: walletAccount } = useAccount();
 
-  const [allowance, setAllowance] = useState<number | null>(null);
+  const [isApproved, setIsApproved] = useState<boolean>(false);
   const [isAllowanceLoading, setIsAllowanceLoading] = useState(false);
 
   const { writeContract, isPending: isApproving } = useWriteContract();
 
   const shouldWithApprove = useMemo(() => {
-    if (!tokenAddr || !isAddress(tokenAddr)) return false;
-
-    if (tokenSymbol === "ETH") return false;
-
+    if (!nftAddr || !isAddress(nftAddr) || !nftId) return false;
     if (!walletAccount || !spender) return false;
 
     return true;
-  }, [walletAccount, spender, tokenAddr, tokenSymbol]);
+  }, [walletAccount, spender, nftAddr, nftId]);
 
   const readAllowance = useCallback(async () => {
     if (!shouldWithApprove) return;
@@ -36,19 +35,19 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
 
     try {
       const res = await readContract(config, {
-        abi: erc20Abi,
-        address: tokenAddr as any,
-        functionName: "allowance",
-        args: [walletAccount!, spender as any],
+        abi: erc721Abi,
+        address: nftAddr as any,
+        functionName: "getApproved",
+        args: [BigInt(nftId!)],
       });
 
-      setAllowance(Number(res) / 10 ** 18);
+      setIsApproved(checkIsSameAddress(res, spender));
     } catch (e) {
       console.error("readAllowance error: =>", e);
     } finally {
       setIsAllowanceLoading(false);
     }
-  }, [shouldWithApprove, walletAccount, config, spender, tokenAddr]);
+  }, [shouldWithApprove, config, nftAddr, nftId, spender]);
 
   useEffect(() => {
     readAllowance();
@@ -56,42 +55,35 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
 
   const isShouldApprove = useMemo(() => {
     if (!shouldWithApprove) return false;
-    if (allowance == null || isAllowanceLoading) return false;
+    if (!isApproved || isAllowanceLoading) return false;
 
-    if (allowance === 0) return true;
-    if (allowance < allowAmount) return true;
-
+    if (isApproved) return true;
     return false;
-  }, [allowance, allowAmount, shouldWithApprove, isAllowanceLoading]);
+  }, [isApproved, shouldWithApprove, isAllowanceLoading]);
 
   const approveBtnText = useMemo(() => {
     if (!shouldWithApprove) return "";
 
     if (isApproving) {
-      return `Approving ${tokenSymbol}...`;
+      return `Approving ${nftName}...`;
     }
 
     if (isShouldApprove) {
-      return `Approve ${tokenSymbol}`;
+      return `Approve ${nftName}`;
     }
 
     return "";
-  }, [shouldWithApprove, isShouldApprove, tokenSymbol, isApproving]);
+  }, [shouldWithApprove, isShouldApprove, nftName, isApproving]);
 
   async function approveAction() {
     try {
       if (!shouldWithApprove) return () => {};
 
-      const isUSDT = tokenSymbol === "USDT";
-      const amountMax =
-        "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
-      const amount = isUSDT ? (allowAmount == 0 ? amountMax : "0") : amountMax;
-
       const callParams = {
-        abi: isUSDT ? USDTAbi : erc20Abi,
-        address: tokenAddr as any,
+        abi: erc721Abi,
+        address: nftAddr as any,
         functionName: "approve",
-        args: [spender, amount],
+        args: [spender, BigInt(nftId!)],
       };
 
       writeContract(

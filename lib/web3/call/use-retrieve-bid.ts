@@ -1,26 +1,20 @@
 import { LuckyMarketsABI } from "@/lib/abi/LuckyMarkets";
 import { useChainConfig } from "@/lib/web3/use-chain-config";
-import { useWriteContract } from "wagmi";
-import { useGasCalc } from "../helper/use-gas-calc";
+import {
+  CommonWriteContractRestParams,
+  useCommonWriteContract,
+} from "../helper/use-common-write-contract";
 
 export function useRetrieveBid() {
   const { chainConfig } = useChainConfig();
-  const { getGasParams } = useGasCalc();
+  const mutation = useCommonWriteContract();
 
-  const mutation = useWriteContract();
-
-  const write = async (
+  const writeContract = async (
     args: {
       auctionId: number;
       bidder: string;
     },
-    {
-      onSuccess,
-      onError,
-    }: {
-      onSuccess?: () => void;
-      onError?: (e: any) => void;
-    },
+    rest: CommonWriteContractRestParams,
   ) => {
     try {
       const { auctionId, bidder } = args || {};
@@ -34,24 +28,7 @@ export function useRetrieveBid() {
         args: [auctionId, bidder],
       };
 
-      const gasParams = await getGasParams({
-        ...callParams,
-      });
-
-      mutation.writeContract(
-        {
-          ...(callParams as any),
-          ...gasParams,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
-          onError: (e: any) => {
-            onError?.(e);
-          },
-        },
-      );
+      mutation.writeContract(callParams, rest);
     } catch (e: any) {
       console.log("tx error", e);
     }
@@ -59,6 +36,6 @@ export function useRetrieveBid() {
 
   return {
     ...mutation,
-    write,
+    writeContract,
   };
 }

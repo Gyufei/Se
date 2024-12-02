@@ -64,7 +64,7 @@ export function useCreatePool() {
   };
 
   return {
-    writeContractRes: mutation,
+    ...mutation,
     write,
     isPending: mutation.isPending || (mutation.data && isTxPending),
     error: mutation.error || txError,

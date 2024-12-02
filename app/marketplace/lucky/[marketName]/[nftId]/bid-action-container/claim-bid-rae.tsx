@@ -17,10 +17,10 @@ export default function ClaimBidRae({
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
-  const { write, isPending: isClaiming } = useRetrieveBid();
+  const { writeContract, isPending: isClaiming } = useRetrieveBid();
 
   function handleClaim() {
-    write(
+    writeContract(
       {
         auctionId: Number(auctionId),
         bidder: bidder!,

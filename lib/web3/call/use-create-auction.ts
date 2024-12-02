@@ -1,15 +1,15 @@
-import { useWriteContract } from "wagmi";
 import { useChainConfig } from "@/lib/web3/use-chain-config";
-import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
 import { LuckyMarketsABI } from "@/lib/abi/LuckyMarkets";
+import {
+  CommonWriteContractRestParams,
+  useCommonWriteContract,
+} from "../helper/use-common-write-contract";
 
 export function useCreateAuction() {
   const { chainConfig } = useChainConfig();
-  const { getGasParams } = useGasCalc();
+  const mutation = useCommonWriteContract();
 
-  const mutation = useWriteContract();
-
-  const write = async (
+  const writeContract = async (
     args: {
       nftAddr: string;
       tokenId: number;
@@ -17,13 +17,7 @@ export function useCreateAuction() {
       taxRate: number;
       bidDuration: number;
     },
-    {
-      onSuccess,
-      onError,
-    }: {
-      onSuccess?: () => void;
-      onError?: (e: any) => void;
-    },
+    rest: CommonWriteContractRestParams,
   ) => {
     try {
       const { nftAddr, tokenId, biddingCap, taxRate, bidDuration } = args || {};
@@ -37,24 +31,7 @@ export function useCreateAuction() {
         args: [nftAddr, tokenId, biddingCap, taxRate, bidDuration],
       };
 
-      const gasParams = await getGasParams({
-        ...callParams,
-      });
-
-      mutation.writeContract(
-        {
-          ...(callParams as any),
-          ...gasParams,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
-          onError: (e: any) => {
-            onError?.(e);
-          },
-        },
-      );
+      mutation.writeContract(callParams, rest);
     } catch (e: any) {
       console.log("tx error", e);
     }
@@ -62,6 +39,6 @@ export function useCreateAuction() {
 
   return {
     ...mutation,
-    write,
+    writeContract,
   };
 }

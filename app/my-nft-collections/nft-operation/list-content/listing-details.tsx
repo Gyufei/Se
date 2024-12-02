@@ -14,6 +14,7 @@ import { truncateAddr } from "@/lib/utils/web3";
 import { useMyNFTCollectionsPageContext } from "../../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRaePrice } from "@/lib/api/use-rae-price";
+import { useApproveNft } from "@/lib/web3/use-approve-nft";
 
 export default function ListingDetail() {
   const queryClient = useQueryClient();
@@ -26,7 +27,11 @@ export default function ListingDetail() {
     isApproving: isApprovingNft,
     approveAction: approveActionNft,
     approveBtnText: approveBtnTextNft,
-  } = useApprove(selectedNft?.token_address || "", `#${selectedNft?.token_id}`);
+  } = useApproveNft(
+    selectedNft?.token_address || "",
+    selectedNft?.token_id || "",
+    `#${selectedNft?.token_id}`,
+  );
 
   const {
     isShouldApprove: isShouldApproveRae,
@@ -35,7 +40,7 @@ export default function ListingDetail() {
     approveBtnText: approveBtnTextRae,
   } = useApprove(RAE.address, RAE.symbol);
 
-  const { write, isPending: isCreating } = useListAsset();
+  const { writeContract, isPending: isCreating } = useListAsset();
 
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
 
@@ -62,7 +67,7 @@ export default function ListingDetail() {
       return;
     }
 
-    write(
+    writeContract(
       {
         nftAddr: selectedNft.token_address,
         tokenId: Number(selectedNft.token_id),

@@ -7,9 +7,10 @@ import { INFT } from "@/lib/api/use-market-nfts";
 import { cn } from "@/lib/utils/common";
 import { useCartContext } from "../../cart-context";
 import { checkIsExist } from "../../cart-reducer";
-import { useNftStatus } from "@/lib/common/use-nft-statu";
+import { useNftStatus } from "@/lib/common/use-nft-status";
 
 export default function NFTCard({ nft }: { nft: INFT }) {
+  const router = useRouter();
   const { isListed, isVault, isPerson, isCanBuy } = useNftStatus(nft);
 
   const [isHover, setIsHover] = useState(false);
@@ -19,11 +20,18 @@ export default function NFTCard({ nft }: { nft: INFT }) {
     setIsHover(hover);
   }
 
+  function handleGoDetail(nft: INFT) {
+    router.push(`/marketplace/quick/${nft.market_name}/${nft.token_id}`);
+  }
+
   return (
     <div
       onMouseEnter={() => handleHover(true)}
       onMouseLeave={() => handleHover(false)}
-      className="w-[200px] h-[260px] overflow-hidden bg-[#1D0E27] border-2 border-transparent hover:border-green relative"
+      className="cursor-pointer w-[200px] h-[260px] overflow-hidden bg-[#1D0E27] border-2 border-transparent hover:border-green relative"
+      onClick={() => {
+        handleGoDetail(nft);
+      }}
     >
       <Image
         src={nft.token_uri}
@@ -31,7 +39,7 @@ export default function NFTCard({ nft }: { nft: INFT }) {
         height={200}
         alt="nft"
         className={cn(
-          " transition-all duration-500 ease-in-out",
+          "transition-all duration-500 ease-in-out",
           isHover && "scale-[1.15]",
         )}
       />
@@ -76,7 +84,9 @@ function AddToBagBtn({ nft }: { nft: INFT }) {
   const { cartItems, addProduct, removeProduct } = useCartContext() || {};
   const isExist = checkIsExist(cartItems, nft.token_id);
 
-  function handleAddToBag() {
+  function handleAddToBag(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+
     if (isExist) {
       removeProduct?.(nft);
     } else {
@@ -90,7 +100,7 @@ function AddToBagBtn({ nft }: { nft: INFT }) {
         BtnClx,
         isExist ? "bg-[rgb(255,95,82)] text-white" : "bg-green",
       )}
-      onClick={handleAddToBag}
+      onClick={(e) => handleAddToBag(e)}
     >
       {isExist ? "Remove from Quick Bag" : "Add to Quick Bag"}
     </button>
@@ -111,13 +121,15 @@ function ViewVaultBtn({ nft }: { nft: INFT }) {
 
   const auctionId = activities?.[0]?.auction_id;
 
-  function handleViewVault() {
+  function handleViewVault(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+
     if (!auctionId) return;
     router.push(`/marketplace/lucky/${nft.market_name}/${auctionId}`);
   }
 
   return (
-    <button className={BtnClx} onClick={handleViewVault}>
+    <button className={BtnClx} onClick={(e) => handleViewVault(e)}>
       View Vault
     </button>
   );

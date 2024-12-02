@@ -15,10 +15,10 @@ export default function ClaimBidNFT({
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
-  const { write, isPending: isClaiming } = useClaimAsset();
+  const { writeContract, isPending: isClaiming } = useClaimAsset();
 
   function handleClaim() {
-    write(
+    writeContract(
       {
         auctionId: Number(auctionId),
         winner,

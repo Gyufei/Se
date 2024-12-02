@@ -40,7 +40,7 @@ export default function BuyBag() {
   const { data: activities, isPending: isActivitiesPending } =
     useMarketActivity(marketName);
 
-  const { write, isPending: isBuying } = useBatchBuy();
+  const { writeContract, isPending: isBuying } = useBatchBuy();
 
   const isPending = isRaePending || isRaePricePending || isActivitiesPending;
 
@@ -78,7 +78,7 @@ export default function BuyBag() {
       return;
     }
 
-    write(
+    writeContract(
       {
         orderIds,
       },

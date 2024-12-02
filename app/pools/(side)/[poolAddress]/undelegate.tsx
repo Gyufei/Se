@@ -26,12 +26,12 @@ export default function Undelegate({
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
-  const { write, isPending: isUndelegatePending } = usePoolUndelegate();
+  const { writeContract, isPending: isUndelegatePending } = usePoolUndelegate();
 
   const [withdrawNum, setWithdrawNum] = useState("");
 
   function handleUndelegate() {
-    write(
+    writeContract(
       {
         poolId: poolId,
         undelegateNum: multiply(withdrawNum, String(10 ** RAE.decimals)),

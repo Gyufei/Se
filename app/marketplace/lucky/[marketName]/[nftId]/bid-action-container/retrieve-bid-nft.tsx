@@ -9,10 +9,10 @@ export default function RetrieveBidNFT({ auctionId }: { auctionId: string }) {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
-  const { write, isPending: isClaiming } = useRetrieveNft();
+  const { writeContract, isPending: isClaiming } = useRetrieveNft();
 
   function handleClaim() {
-    write(
+    writeContract(
       {
         auctionId: Number(auctionId),
       },

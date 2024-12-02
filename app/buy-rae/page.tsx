@@ -40,7 +40,7 @@ export default function Page() {
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
   const raePrice = raePriceData?.price;
 
-  const { isPending: isTxPending, write } = useBuyRae();
+  const { writeContract, isPending: isTxPending } = useBuyRae();
 
   const checkIsNative = useCallback(
     (token: IToken) => {
@@ -206,7 +206,7 @@ export default function Page() {
       return;
     }
 
-    write(
+    writeContract(
       {
         payAmount: multiply(payAmount, String(10 ** payToken.decimals)),
         buyAmount: multiply(buyAmount, String(10 ** buyToken.decimals)),

@@ -9,7 +9,7 @@ import { checkIsExist } from "../cart-reducer";
 import { useCartContext } from "../cart-context";
 import { cn } from "@/lib/utils/common";
 import { useMemo } from "react";
-import { useNftStatus } from "@/lib/common/use-nft-statu";
+import { useNftStatus } from "@/lib/common/use-nft-status";
 import { useRouter } from "next/navigation";
 
 export default function PriceAndOperation({

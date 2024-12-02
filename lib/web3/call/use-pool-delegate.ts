@@ -1,23 +1,18 @@
-import { useWriteContract } from "wagmi";
 import { useChainConfig } from "@/lib/web3/use-chain-config";
-import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
 import { DelegatePoolABI } from "@/lib/abi/DelegatePool";
+import {
+  CommonWriteContractRestParams,
+  useCommonWriteContract,
+} from "../helper/use-common-write-contract";
 
 export function usePoolDelegate() {
   const { chainConfig } = useChainConfig();
-  const { getGasParams } = useGasCalc();
 
-  const mutation = useWriteContract();
+  const mutation = useCommonWriteContract();
 
-  const write = async (
+  const writeContract = async (
     args: { poolId: string; delegateNum: number },
-    {
-      onSuccess,
-      onError,
-    }: {
-      onSuccess?: () => void;
-      onError?: (e: any) => void;
-    },
+    rest: CommonWriteContractRestParams,
   ) => {
     try {
       const { poolId, delegateNum } = args || {};
@@ -31,22 +26,7 @@ export function usePoolDelegate() {
         args: [poolId, BigInt(delegateNum)],
       };
 
-      const gasParams = await getGasParams(callParams);
-
-      mutation.writeContract(
-        {
-          ...(callParams as any),
-          ...gasParams,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
-          onError: (e: any) => {
-            onError?.(e);
-          },
-        },
-      );
+      mutation.writeContract(callParams, rest);
     } catch (e) {
       console.log("tx error", e);
     }
@@ -54,6 +34,6 @@ export function usePoolDelegate() {
 
   return {
     ...mutation,
-    write,
+    writeContract,
   };
 }

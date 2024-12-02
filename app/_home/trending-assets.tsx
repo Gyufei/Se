@@ -43,7 +43,7 @@ export default function TrendingAssets() {
                 <Skeleton key={i} className="w-80 h-[172px]" />
               ))
             : luckyNfts3.map((n) => (
-                <AssetItem key={n?.market_name} marketType="lucky" nft={n} />
+                <AssetItem key={n?.token_id} marketType="lucky" nft={n} />
               ))}
         </div>
       </div>
@@ -55,7 +55,7 @@ export default function TrendingAssets() {
                 <Skeleton key={i} className="w-80 h-[172px]" />
               ))
             : quickNfts3.map((n) => (
-                <AssetItem key={n?.market_name} marketType="quick" nft={n} />
+                <AssetItem key={n?.token_id} marketType="quick" nft={n} />
               ))}
         </div>
       </div>
@@ -108,7 +108,7 @@ function AssetItem({ marketType, nft }: { marketType: MarketType; nft: INFT }) {
     >
       <div>
         <div className="text-2xl text-white font-semibold">
-          {nft.market_name}
+          {nft.market_name} #{nft.token_id}
         </div>
         <div
           onClick={handleGo}
@@ -122,7 +122,7 @@ function AssetItem({ marketType, nft }: { marketType: MarketType; nft: INFT }) {
             alt=""
           />
           <span className="text-sm text-white font-semibold">
-            Jump to Vault
+            Jump to {nft?.market_name}
           </span>
         </div>
       </div>

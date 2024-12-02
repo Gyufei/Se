@@ -1,23 +1,18 @@
-import { useWriteContract } from "wagmi";
 import { useChainConfig } from "@/lib/web3/use-chain-config";
-import { useGasCalc } from "@/lib/web3/helper/use-gas-calc";
 import { DelegatePoolABI } from "@/lib/abi/DelegatePool";
+import {
+  CommonWriteContractRestParams,
+  useCommonWriteContract,
+} from "../helper/use-common-write-contract";
 
 export function usePoolUndelegate() {
   const { chainConfig } = useChainConfig();
-  const { getGasParams } = useGasCalc();
 
-  const mutation = useWriteContract();
+  const mutation = useCommonWriteContract();
 
-  const write = async (
+  const writeContract = async (
     args: { poolId: string; undelegateNum: number },
-    {
-      onSuccess,
-      onError,
-    }: {
-      onSuccess?: () => void;
-      onError?: (e: any) => void;
-    },
+    rest: CommonWriteContractRestParams,
   ) => {
     try {
       const { poolId, undelegateNum } = args || {};
@@ -31,24 +26,7 @@ export function usePoolUndelegate() {
         args: [poolId, BigInt(undelegateNum)],
       };
 
-      const gasParams = await getGasParams({
-        ...callParams,
-      });
-
-      mutation.writeContract(
-        {
-          ...(callParams as any),
-          ...gasParams,
-        },
-        {
-          onSuccess: () => {
-            onSuccess?.();
-          },
-          onError: (e: any) => {
-            onError?.(e);
-          },
-        },
-      );
+      mutation.writeContract(callParams, rest);
     } catch (e: any) {
       console.log("tx error", e);
     }
@@ -56,6 +34,6 @@ export function usePoolUndelegate() {
 
   return {
     ...mutation,
-    write,
+    writeContract,
   };
 }

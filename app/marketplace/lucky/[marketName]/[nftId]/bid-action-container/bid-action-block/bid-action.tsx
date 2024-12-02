@@ -57,7 +57,7 @@ export default function BidAction() {
 
   const raeDisplay = rae ? divide(String(rae), String(10 ** RAE.decimals)) : 0;
 
-  const { write, isPending: isBidding } = useBidAuction();
+  const { writeContract, isPending: isBidding } = useBidAuction();
 
   const [bidAmount, setBidAmount] = useState("");
   const [selectedPool, setSelectedPool] = useState<string | null>(null);
@@ -68,7 +68,7 @@ export default function BidAction() {
       return;
     }
 
-    write(
+    writeContract(
       {
         bidder: selectedPool || address!,
         auctionId: Number(auctionInfo!.id),

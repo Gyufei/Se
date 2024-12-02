@@ -33,7 +33,7 @@ export default function Delegate({
   const { isShouldApprove, isApproving, approveAction, approveBtnText } =
     useApprove(RAE.address, RAE.symbol);
 
-  const { write, isPending: isDelegatePending } = usePoolDelegate();
+  const { writeContract, isPending: isDelegatePending } = usePoolDelegate();
 
   function handleDelegate() {
     if (isShouldApprove) {
@@ -41,7 +41,7 @@ export default function Delegate({
       return;
     }
 
-    write(
+    writeContract(
       {
         poolId: poolId,
         delegateNum: multiply(depositNum, String(10 ** RAE.decimals)),
