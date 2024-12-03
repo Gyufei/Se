@@ -118,6 +118,13 @@ export default function BidAction() {
       };
     }
 
+    if (Number(bidAmount) === 0) {
+      return {
+        text: "Enter an amount",
+        disabled: true,
+      };
+    }
+
     if (Number(raeDisplay) < Number(bidAmount)) {
       return {
         text: "Insufficient balance",

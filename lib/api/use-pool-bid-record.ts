@@ -5,7 +5,7 @@ import { ApiPaths, WithApiHost } from "./api-paths";
 export interface IBiddingRecord {
   token_address: string;
   token_id: string;
-  result: "Win" | "Failed";
+  result: "WIN" | "FAILED" | "UNKNOWN";
   bid_at: string;
 }
 

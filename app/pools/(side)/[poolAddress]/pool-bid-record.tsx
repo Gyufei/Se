@@ -59,8 +59,9 @@ export default function PoolBidRecord({
               <div
                 className={cn(
                   "w-[165px]",
-                  record.result === "Win" && "text-green",
-                  record.result === "Failed" && "text-red",
+                  record.result === "WIN" && "text-green",
+                  record.result === "FAILED" && "text-red",
+                  record.result === "UNKNOWN" && "text-white",
                 )}
               >
                 {capitalize(record.result)}

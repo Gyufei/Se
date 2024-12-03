@@ -21,6 +21,10 @@ export default function HeaderMenu() {
       name: "My NFT Collections",
       link: "/my-nft-collections",
     },
+    {
+      name: "Pool",
+      link: "/pools",
+    },
   ];
 
   return (
