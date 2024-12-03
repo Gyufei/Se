@@ -52,6 +52,22 @@ export const LuckyMarketsABI = [
     type: "error",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "minBidAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "bidAmount",
+        type: "uint256",
+      },
+    ],
+    name: "BidBelowMinimum",
+    type: "error",
+  },
+  {
     inputs: [],
     name: "BidExceedsCap",
     type: "error",
@@ -127,6 +143,22 @@ export const LuckyMarketsABI = [
   {
     inputs: [
       {
+        internalType: "enum LuckyMarketsStorage.AuctionType",
+        name: "expected",
+        type: "uint8",
+      },
+      {
+        internalType: "enum LuckyMarketsStorage.AuctionType",
+        name: "actual",
+        type: "uint8",
+      },
+    ],
+    name: "InvalidAuctionType",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "bidder",
         type: "address",
@@ -149,6 +181,22 @@ export const LuckyMarketsABI = [
       },
     ],
     name: "InvalidTime",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "winner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "bidder",
+        type: "address",
+      },
+    ],
+    name: "IsWinner",
     type: "error",
   },
   {
@@ -239,6 +287,31 @@ export const LuckyMarketsABI = [
       },
     ],
     name: "BidAsset",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "auctionId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "bidder",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "BidRefunded",
     type: "event",
   },
   {
@@ -503,6 +576,12 @@ export const LuckyMarketsABI = [
       },
       {
         indexed: false,
+        internalType: "enum LuckyMarketsStorage.AuctionType",
+        name: "auctionType",
+        type: "uint8",
+      },
+      {
+        indexed: false,
         internalType: "address",
         name: "vaultAddr",
         type: "address",
@@ -511,6 +590,12 @@ export const LuckyMarketsABI = [
         indexed: false,
         internalType: "uint256",
         name: "biddingCap",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "minBidAmount",
         type: "uint256",
       },
       {
@@ -651,6 +736,11 @@ export const LuckyMarketsABI = [
       },
       {
         internalType: "uint256",
+        name: "minBidAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "totalBids",
         type: "uint256",
       },
@@ -692,6 +782,11 @@ export const LuckyMarketsABI = [
       {
         internalType: "enum LuckyMarketsStorage.AuctionStatus",
         name: "status",
+        type: "uint8",
+      },
+      {
+        internalType: "enum LuckyMarketsStorage.AuctionType",
+        name: "auctionType",
         type: "uint8",
       },
     ],
@@ -758,6 +853,11 @@ export const LuckyMarketsABI = [
       },
       {
         internalType: "uint256",
+        name: "minBidAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "taxRate",
         type: "uint256",
       },
@@ -765,6 +865,11 @@ export const LuckyMarketsABI = [
         internalType: "uint256",
         name: "bidDuration",
         type: "uint256",
+      },
+      {
+        internalType: "enum LuckyMarketsStorage.AuctionType",
+        name: "auctionType",
+        type: "uint8",
       },
     ],
     name: "createAuction",
@@ -851,6 +956,11 @@ export const LuckyMarketsABI = [
           },
           {
             internalType: "uint256",
+            name: "minBidAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "totalBids",
             type: "uint256",
           },
@@ -902,6 +1012,11 @@ export const LuckyMarketsABI = [
           {
             internalType: "enum LuckyMarketsStorage.AuctionStatus",
             name: "status",
+            type: "uint8",
+          },
+          {
+            internalType: "enum LuckyMarketsStorage.AuctionType",
+            name: "auctionType",
             type: "uint8",
           },
         ],
@@ -1057,6 +1172,30 @@ export const LuckyMarketsABI = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "auctionId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "bidder",
+        type: "address",
+      },
+    ],
+    name: "refundBids",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "totalBidAmount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -1231,4 +1370,4 @@ export const LuckyMarketsABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const;
+];

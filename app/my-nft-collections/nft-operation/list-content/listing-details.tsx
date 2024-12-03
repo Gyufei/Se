@@ -20,7 +20,8 @@ export default function ListingDetail() {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
-  const { nftType, selectedNft } = useMyNFTCollectionsPageContext();
+  const { nftType, selectedNft, market } = useMyNFTCollectionsPageContext();
+  const guidePrice = market?.guide_price;
 
   const {
     isShouldApprove: isShouldApproveNft,
@@ -40,7 +41,7 @@ export default function ListingDetail() {
     approveBtnText: approveBtnTextRae,
   } = useApprove(RAE.address, RAE.symbol);
 
-  const { writeContract, isPending: isCreating } = useListAsset();
+  const { writeContract, isPending: isListing } = useListAsset();
 
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
 
@@ -117,9 +118,16 @@ export default function ListingDetail() {
       };
     }
 
-    if (isCreating) {
+    if (Number(sellPrice) > Number(guidePrice || 0)) {
       return {
-        text: "Depositing...",
+        text: `price greater than guide price: ${guidePrice}`,
+        disabled: true,
+      };
+    }
+
+    if (isListing) {
+      return {
+        text: "Listing...",
         disabled: true,
       };
     }
@@ -135,8 +143,9 @@ export default function ListingDetail() {
     isShouldApproveRae,
     isApprovingRae,
     approveBtnTextRae,
-    isCreating,
+    isListing,
     sellPrice,
+    guidePrice,
   ]);
 
   return (

@@ -81,6 +81,8 @@ export default function CreateBidding() {
         biddingCap: Number(multiply(bidCap, String(10 ** RAE.decimals))),
         taxRate: Number(multiply(taxRate, String(10 ** 2))),
         bidDuration,
+        minBidAmount: 0,
+        auctionType: "NORMAL",
       },
       {
         onSuccess: () => {

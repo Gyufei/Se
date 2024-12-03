@@ -95,7 +95,7 @@ function ListOntoQuickBtn({ nft }: { nft: INFT }) {
 
   function handleList() {
     router.push(
-      `/my-nft-collection?marketName=${nft.market_name}&nftId=${nft.token_id}&action=list`,
+      `/my-nft-collections?marketName=${nft.market_name}&nftId=${nft.token_id}&action=list`,
     );
   }
 
@@ -111,7 +111,7 @@ function VaultOntoLuckyBtn({ nft }: { nft: INFT }) {
 
   function handleVault() {
     router.push(
-      `/my-nft-collection?marketName=${nft.market_name}&nftId=${nft.token_id}&action=vault`,
+      `/my-nft-collections?marketName=${nft.market_name}&nftId=${nft.token_id}&action=vault`,
     );
   }
 

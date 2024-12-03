@@ -6,9 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { checkIsSameAddress } from "../utils/web3";
 
 export interface IPoolInfo {
-  acc_profit: string;
-  delegate_able: string;
-  bidding_records: IBiddingRecord[];
+  total_staked: string;
+  total_withdraw: string;
 }
 
 export interface IBiddingRecord {
@@ -18,15 +17,17 @@ export interface IBiddingRecord {
   bid_at: string;
 }
 
-export async function fetchPool(address: string) {
-  const info = await apiFetcher(WithApiHost(`${ApiPaths.pool}/${address}`));
+export async function fetchPoolInfoOfUser(address: string) {
+  const info = await apiFetcher(
+    WithApiHost(`${ApiPaths.poolUserInfo}/${address}`),
+  );
   return info as IPoolInfo;
 }
 
-export function usePool(address: string) {
+export function usePoolInfoOfUser(address: string) {
   const result = useQuery({
     queryKey: ["pool", address],
-    queryFn: () => fetchPool(address),
+    queryFn: () => fetchPoolInfoOfUser(address),
     enabled: !!address,
   });
 
@@ -35,19 +36,20 @@ export function usePool(address: string) {
 
 export function usePoolInfo(address: string) {
   const { data: pools, isPending: isPoolsPending } = usePools();
-  const { data: poolInfo, isPending: isPoolPending } = usePool(address);
+  const { data: poolInfoOfUser, isPending: isPoolPending } =
+    usePoolInfoOfUser(address);
 
   const poolAllInfo = useMemo(() => {
-    if (!pools?.length || !poolInfo) return undefined;
+    if (!pools?.length || !poolInfoOfUser) return undefined;
 
     const poolBase = pools.find((p) => checkIsSameAddress(p.address, address));
     if (!poolBase) return undefined;
 
     return {
       base: poolBase,
-      info: poolInfo,
+      user: poolInfoOfUser,
     };
-  }, [pools, address, poolInfo]);
+  }, [pools, address, poolInfoOfUser]);
 
   return {
     data: poolAllInfo,

@@ -92,7 +92,7 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
       ) : (
         <Empty
           className="mt-[68px] items-center text-2xl"
-          text="No NFTs found"
+          text="No Pools found"
         />
       )}
     </div>

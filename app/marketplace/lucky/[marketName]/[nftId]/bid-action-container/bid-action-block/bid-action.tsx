@@ -5,7 +5,7 @@ import { RAE } from "@/lib/const/rae";
 import { useTokenBalance } from "@/lib/web3/helper/use-token-balance";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/utils/number";
-import { divide } from "safebase";
+import { divide, multiply } from "safebase";
 import { useApprove } from "@/lib/web3/use-approve";
 import { useBidAuction } from "@/lib/web3/call/use-bid-auction";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +16,7 @@ import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useAccount } from "wagmi";
 import { useLuckyNFTPageContext } from "../../page-context";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
+import { checkIsSameAddress } from "@/lib/utils/web3";
 
 export default function BidAction() {
   const queryClient = useQueryClient();
@@ -68,11 +69,21 @@ export default function BidAction() {
       return;
     }
 
+    if (checkIsSameAddress(selectedPool || address, auctionInfo?.seller)) {
+      setGlobalMsg({
+        type: "error",
+        message: "Auction seller cannot bid",
+      });
+      return;
+    }
+
+    const amount = multiply(bidAmount, String(10 ** RAE.decimals));
+
     writeContract(
       {
         bidder: selectedPool || address!,
         auctionId: Number(auctionInfo!.id),
-        amount: Number(bidAmount),
+        amount: Number(amount),
       },
       {
         onSuccess: () => {

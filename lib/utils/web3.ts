@@ -1,4 +1,4 @@
-import { lowerCase } from "lodash";
+import { isAddressEqual } from "viem";
 
 export function truncateAddr(
   address: string | undefined,
@@ -8,6 +8,10 @@ export function truncateAddr(
   return `${address.slice(0, start)}...${address.slice(-end)}`;
 }
 
-export function checkIsSameAddress(addr1: string, addr2: string) {
-  return lowerCase(addr1) === lowerCase(addr2);
+export function checkIsSameAddress(
+  addr1: string | undefined,
+  addr2: string | undefined,
+) {
+  if (!addr1 || !addr2) return false;
+  return isAddressEqual(addr1 as any, addr2 as any);
 }

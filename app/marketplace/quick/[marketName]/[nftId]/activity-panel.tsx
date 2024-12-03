@@ -8,11 +8,19 @@ import { useMarketActivity } from "@/lib/api/use-market-activity";
 import { Skeleton } from "@/components/ui/skeleton";
 import { capitalize, range } from "lodash";
 import Empty from "@/app/_common/empty";
+import { useMemo } from "react";
 
 export default function ActivityPanel({ nft }: { nft: INFT | undefined }) {
   const { marketName } = useQuickPageContext();
   const { data: activities, isPending: isActivitiesPending } =
     useMarketActivity(marketName, nft?.token_id);
+
+  const isPending = isActivitiesPending || !nft;
+
+  const displayActivities = useMemo(() => {
+    if (!activities || !nft) return [];
+    return activities?.filter((act) => act.token_id === nft?.token_id);
+  }, [activities, nft]);
 
   return (
     <CollapsePanel className="mt-[30px]" panelName="Activity">
@@ -23,12 +31,12 @@ export default function ActivityPanel({ nft }: { nft: INFT | undefined }) {
         <div className="w-[42px]">Time</div>
       </div>
       <div className="mt-[10px] mb-5">
-        {isActivitiesPending ? (
+        {isPending ? (
           range(0, 3).map((i) => <Skeleton key={i} className="h-5 my-5 mx-5" />)
-        ) : activities?.length ? (
-          activities.map((act) => (
+        ) : displayActivities?.length ? (
+          displayActivities.map((act, i) => (
             <div
-              key={act.update_at}
+              key={i + act.event}
               className="flex items-center text-white text-sm px-5 h-10"
             >
               <div className="w-[150px]">{capitalize(act.event)}</div>

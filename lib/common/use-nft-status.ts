@@ -1,7 +1,7 @@
 import { useAccount } from "wagmi";
 import { INFT } from "../api/use-market-nfts";
 import { useCheckIsPoolCreator } from "../api/use-pools";
-import { lowerCase } from "lodash";
+import { checkIsSameAddress } from "../utils/web3";
 
 export function useNftStatus(nft: INFT | undefined) {
   const { address } = useAccount();
@@ -9,15 +9,21 @@ export function useNftStatus(nft: INFT | undefined) {
 
   const addressArr = [
     ...asPoolCreator.poolAddrs,
-    address ? lowerCase(address) : undefined,
+    address ? address : undefined,
   ];
 
   const isListed = nft?.status === "LISTED";
   const isVault = nft?.status === "VAULTED";
   const isPerson = nft?.status === "PERSON";
 
-  const isBelongMyOrMyPool = address && addressArr.includes(nft?.owner);
-  const isCanBuy = address && !addressArr.includes(nft?.owner) && isListed;
+  const isBelongMyOrMyPool =
+    address && addressArr.some((addr) => checkIsSameAddress(addr, nft?.owner));
+
+  const isCanBuy =
+    address &&
+    isListed &&
+    !addressArr.some((addr) => checkIsSameAddress(addr, nft?.owner));
+
   const isCanList = isPerson && isBelongMyOrMyPool;
   const isCanVault = isPerson && isBelongMyOrMyPool;
 

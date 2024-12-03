@@ -31,7 +31,12 @@ export async function fetchAuction(marketName: string, auctionId?: string) {
     WithApiHost(`${ApiPaths.auction}/${marketName}/${auctionId}`),
   );
 
-  return result as IAuction;
+  const newRes = {
+    ...result,
+    id: auctionId,
+  };
+
+  return newRes as IAuction;
 }
 
 export function useAuction(marketName: string, auctionId?: string) {

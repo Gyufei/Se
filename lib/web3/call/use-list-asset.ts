@@ -28,7 +28,7 @@ export function useListAsset() {
         abi: QuickMarketsABI,
         address: abiAddress as any,
         functionName: "listAsset",
-        args: [nftAddr, tokenId, price, seller],
+        args: [nftAddr, BigInt(tokenId), BigInt(price), seller],
       };
 
       mutation.writeContract(callParams, rest);

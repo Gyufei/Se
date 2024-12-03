@@ -27,7 +27,7 @@ export function useBidAuction() {
         abi: LuckyMarketsABI,
         address: abiAddress as any,
         functionName: "bidAuction",
-        args: [bidder, auctionId, amount],
+        args: [bidder, BigInt(auctionId), BigInt(amount)],
       };
 
       mutation.writeContract(callParams, rest);

@@ -1,6 +1,6 @@
 "use client";
 import { INFT, useMarketsNfts } from "@/lib/api/use-market-nfts";
-import { useMarkets } from "@/lib/api/use-markets";
+import { IMarket, useMarkets } from "@/lib/api/use-markets";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
 import { checkIsSameAddress } from "@/lib/utils/web3";
 import { sortBy } from "lodash";
@@ -15,6 +15,7 @@ import {
 import { useAccount } from "wagmi";
 
 export type MyNFTCollectionsPageContextType = {
+  market: IMarket | null;
   myNfts: INFT[];
   poolNfts: INFT[];
   isPending: boolean;
@@ -46,7 +47,6 @@ export function MyNFTCollectionsPageContextProvider({
   const { data: allNfts, isPending: isNftsPending } = useMarketsNfts(markets);
 
   const { data: asPoolCreator } = useCheckIsPoolCreator(address);
-
   const poolCreatorPoolAddrs = asPoolCreator.poolAddrs;
 
   const myNfts = sortBy(
@@ -66,6 +66,8 @@ export function MyNFTCollectionsPageContextProvider({
   );
 
   const isPending = isMarketsPending || isNftsPending;
+
+  const market = markets?.find((m) => m.market_name === marketName) || null;
 
   const checkIsSameNft = useCallback(
     (nft: INFT) => nft.token_id === nftId && nft.market_name === marketName,
@@ -108,6 +110,7 @@ export function MyNFTCollectionsPageContextProvider({
   return (
     <MyNFTCollectionsPageContext.Provider
       value={{
+        market,
         myNfts,
         poolNfts,
         isPending,

@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { erc721Abi, isAddress } from "viem";
 import { readContract } from "@wagmi/core";
-import { useAccount, useConfig, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useConfig,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { useChainConfig } from "./use-chain-config";
 import { checkIsSameAddress } from "../utils/web3";
 
@@ -17,9 +22,17 @@ export function useApproveNft(
   const { address: walletAccount } = useAccount();
 
   const [isApproved, setIsApproved] = useState<boolean>(false);
-  const [isAllowanceLoading, setIsAllowanceLoading] = useState(false);
+  const [isApprovedLoading, setIsApprovedLoading] = useState(false);
 
-  const { writeContract, isPending: isApproving } = useWriteContract();
+  const mutation = useWriteContract();
+  const confirmMutation = useWaitForTransactionReceipt({
+    hash: mutation.data,
+    query: {
+      enabled: !!mutation.data,
+    },
+  });
+  const isApproving =
+    mutation.isPending || (mutation.isSuccess && confirmMutation.isPending);
 
   const shouldWithApprove = useMemo(() => {
     if (!nftAddr || !isAddress(nftAddr) || !nftId) return false;
@@ -31,7 +44,7 @@ export function useApproveNft(
   const readAllowance = useCallback(async () => {
     if (!shouldWithApprove) return;
 
-    setIsAllowanceLoading(true);
+    setIsApprovedLoading(true);
 
     try {
       const res = await readContract(config, {
@@ -45,7 +58,7 @@ export function useApproveNft(
     } catch (e) {
       console.error("readAllowance error: =>", e);
     } finally {
-      setIsAllowanceLoading(false);
+      setIsApprovedLoading(false);
     }
   }, [shouldWithApprove, config, nftAddr, nftId, spender]);
 
@@ -53,13 +66,19 @@ export function useApproveNft(
     readAllowance();
   }, [readAllowance]);
 
+  useEffect(() => {
+    if (confirmMutation.isSuccess) {
+      readAllowance();
+    }
+  }, [confirmMutation.isSuccess, readAllowance]);
+
   const isShouldApprove = useMemo(() => {
     if (!shouldWithApprove) return false;
-    if (!isApproved || isAllowanceLoading) return false;
+    if (isApproved || isApprovedLoading) return false;
 
-    if (isApproved) return true;
+    if (!isApproved) return true;
     return false;
-  }, [isApproved, shouldWithApprove, isAllowanceLoading]);
+  }, [isApproved, shouldWithApprove, isApprovedLoading]);
 
   const approveBtnText = useMemo(() => {
     if (!shouldWithApprove) return "";
@@ -86,14 +105,12 @@ export function useApproveNft(
         args: [spender, BigInt(nftId!)],
       };
 
-      writeContract(
+      mutation.writeContract(
         {
           ...(callParams as any),
         },
         {
-          onSuccess: () => {
-            readAllowance();
-          },
+          onSuccess: () => {},
           onError: (error) => {
             console.error("approveAction error: =>", error);
           },

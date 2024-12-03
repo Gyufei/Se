@@ -12,9 +12,10 @@ export default function WinnerPrice() {
   const winnerPaid = auctionInfo?.winning_bid || "0";
   const totalCap = auctionInfo?.bidding_cap || "0";
   const winnerProfit = subtract(totalCap, winnerPaid);
-  const winnerProfitPercent = !isAuctionPending
-    ? divide(subtract(winnerProfit, winnerPaid), winnerPaid)
-    : "0";
+  const winnerProfitPercent =
+    isAuctionPending || !Number(winnerPaid)
+      ? "0"
+      : divide(subtract(winnerProfit, winnerPaid), winnerPaid);
 
   const isPercentUp = winnerProfitPercent >= 0;
 

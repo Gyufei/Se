@@ -24,10 +24,7 @@ export function useCommonWriteContract() {
         return;
       }
 
-      const gasParams = await getGasParams({
-        ...callParams,
-        gas: rest?.gas,
-      });
+      const gasParams = await getGasParams(callParams, rest?.gas);
 
       mutation.writeContract(
         {

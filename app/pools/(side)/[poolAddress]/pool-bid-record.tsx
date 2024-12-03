@@ -2,7 +2,7 @@
 import Empty from "@/app/_common/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMarkets } from "@/lib/api/use-markets";
-import { usePoolInfo } from "@/lib/api/use-pool-info";
+import { usePoolBidRecord } from "@/lib/api/use-pool-bid-record";
 import { cn } from "@/lib/utils/common";
 import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
 import { formatDistanceToNowStrict } from "date-fns";
@@ -14,13 +14,14 @@ export default function PoolBidRecord({
 }: {
   poolAddress: string;
 }) {
-  const { data: pool, isPending: isPoolPending } = usePoolInfo(poolAddress);
+  const { data: bidRecord, isPending: isBidRecordPending } =
+    usePoolBidRecord(poolAddress);
   const { data: markets, isPending: isMarketsPending } = useMarkets();
 
   const records = useMemo(() => {
-    if (!pool || !markets) return [];
+    if (!bidRecord || !markets) return [];
 
-    const newR = pool?.info.bidding_records.map((record) => {
+    const newR = bidRecord.map((record) => {
       const market = markets?.find(
         (m) => m.nft_info.token_address === record.token_address,
       );
@@ -30,9 +31,9 @@ export default function PoolBidRecord({
       };
     });
     return newR;
-  }, [pool, markets]);
+  }, [bidRecord, markets]);
 
-  const isPending = isPoolPending || isMarketsPending;
+  const isPending = isBidRecordPending || isMarketsPending;
 
   return (
     <div className="bg-[#281A31] mx-6 mt-5">

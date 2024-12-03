@@ -23,4 +23,5 @@ export const ApiPaths = {
   raePrice: "/rae/price",
   pools: "/pools",
   pool: "/pool",
+  poolUserInfo: "/pool/delegate/user",
 };

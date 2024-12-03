@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { erc20Abi, isAddress } from "viem";
 import { readContract } from "@wagmi/core";
-import { useAccount, useConfig, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useConfig,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { USDTAbi } from "@/lib/abi/USDT";
 import { useChainConfig } from "./use-chain-config";
 
@@ -17,7 +22,15 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
   const [allowance, setAllowance] = useState<number | null>(null);
   const [isAllowanceLoading, setIsAllowanceLoading] = useState(false);
 
-  const { writeContract, isPending: isApproving } = useWriteContract();
+  const mutation = useWriteContract();
+  const confirmMutation = useWaitForTransactionReceipt({
+    hash: mutation.data,
+    query: {
+      enabled: !!mutation.data,
+    },
+  });
+  const isApproving =
+    mutation.isPending || (mutation.isSuccess && confirmMutation.isPending);
 
   const shouldWithApprove = useMemo(() => {
     if (!tokenAddr || !isAddress(tokenAddr)) return false;
@@ -53,6 +66,12 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
   useEffect(() => {
     readAllowance();
   }, [readAllowance]);
+
+  useEffect(() => {
+    if (confirmMutation.isSuccess) {
+      readAllowance();
+    }
+  }, [confirmMutation.isSuccess, readAllowance]);
 
   const isShouldApprove = useMemo(() => {
     if (!shouldWithApprove) return false;
@@ -94,14 +113,12 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
         args: [spender, amount],
       };
 
-      writeContract(
+      mutation.writeContract(
         {
           ...(callParams as any),
         },
         {
-          onSuccess: () => {
-            readAllowance();
-          },
+          onSuccess: () => {},
           onError: (error) => {
             console.error("approveAction error: =>", error);
           },
