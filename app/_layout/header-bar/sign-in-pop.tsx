@@ -1,6 +1,7 @@
 "use client";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { SignInDialogOpen } from "@/lib/state/other";
+import { AccessTokenAtom } from "@/lib/state/user";
 import { useAtom, useSetAtom } from "jotai";
 import Image from "next/image";
 import { useSignMessage } from "wagmi";
@@ -9,6 +10,7 @@ import { SignMessageData } from "wagmi/query";
 export default function SignInPop() {
   const [signInDialogOpen, setSignDialogOpen] = useAtom(SignInDialogOpen);
   const { signMessage, isPending: isSigning } = useSignMessage();
+  const setUuid = useSetAtom(AccessTokenAtom);
   const setGlobalMsgTip = useSetAtom(GlobalMessageAtom);
 
   async function handleSignIn() {
@@ -35,7 +37,11 @@ export default function SignInPop() {
       return;
     }
 
-    console.log(signInData);
+    console.log("signInData", signInData);
+    if (signInData) {
+      setUuid(`test_${signInData}`);
+    }
+
     setSignDialogOpen(false);
   }
 

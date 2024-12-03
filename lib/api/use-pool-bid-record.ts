@@ -10,7 +10,9 @@ export interface IBiddingRecord {
 }
 
 export async function fetchPoolBidRecord(address: string) {
-  const record = await apiFetcher(WithApiHost(`${ApiPaths.pool}/${address}`));
+  const record = await apiFetcher(
+    WithApiHost(`${ApiPaths.poolRecords}/${address}`),
+  );
   return record as Array<IBiddingRecord>;
 }
 

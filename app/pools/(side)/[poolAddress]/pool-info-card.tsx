@@ -17,22 +17,24 @@ export default function PoolInfoCard({ poolAddress }: { poolAddress: string }) {
 
   const poolRaeDisplay = poolRae
     ? divide(String(poolRae), String(10 ** RAE.decimals))
-    : 0;
+    : "0";
 
   const myProfit = useMemo(() => {
     if (isPoolRaePending) return "0";
     if (!pool) return "0";
 
-    const all = add(poolRaeDisplay, pool.user.total_withdraw);
-    const profit = subtract(all, pool.user.total_staked);
+    const all = add(poolRaeDisplay, pool?.user.total_withdraw);
+    const profit = subtract(all, pool?.user.total_staked);
     return profit;
   }, [poolRaeDisplay, pool, isPoolRaePending]);
 
   const poolStakePercent = useMemo(() => {
     if (!pool) return "0";
+    const allTotal = pool?.base.total_staked;
+    if (Number(allTotal) === 0) return "0";
 
-    return divide(pool?.user.total_staked, pool?.base.capacity);
-  }, [pool]);
+    return divide(poolRaeDisplay, allTotal);
+  }, [poolRaeDisplay, pool]);
 
   return (
     <div className="bg-[#281A31] mx-6 mt-6 p-5">
@@ -54,13 +56,23 @@ export default function PoolInfoCard({ poolAddress }: { poolAddress: string }) {
           <div className="text-white opacity-60 text-base font-medium">
             Capacity Saturation
           </div>
-          {isPoolInfoPending ? (
-            <div className="flex items-center justify-end">
+          {isPoolInfoPending || !pool ? (
+            <div className="flex items-center">
+              <Skeleton className="w-[60px] h-6 my-2 mr-1" />
+              /
               <Skeleton className="w-[80px] h-6 my-2 ml-1" />
             </div>
           ) : (
             <div className="text-2xl text-right mt-[10px] text-white font-medium">
-              <span className="opacity-60">{pool?.base.capacity}</span>
+              <span>
+                {formatNumber(
+                  subtract(pool?.user.total_staked, pool?.user.total_withdraw),
+                )}
+              </span>
+              <span className="opacity-60">
+                {" "}
+                / {formatNumber(pool?.base.total_staked)}
+              </span>
             </div>
           )}
         </div>

@@ -84,6 +84,9 @@ export default function BidAction() {
         bidder: selectedPool || address!,
         auctionId: Number(auctionInfo!.id),
         amount: Number(amount),
+        asPool: Boolean(
+          selectedPool && !checkIsSameAddress(selectedPool, address),
+        ),
       },
       {
         onSuccess: () => {

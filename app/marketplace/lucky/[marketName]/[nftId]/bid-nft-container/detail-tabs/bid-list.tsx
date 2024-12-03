@@ -22,7 +22,7 @@ export default function BidList({ onlyMe }: { onlyMe: boolean }) {
     const bidArr = auctionInfo.bidders.map((bid, index) => {
       const bidValue = auctionInfo.bid_amounts[index];
       const bidPercent = divide(bidValue, auctionInfo.bidding_cap);
-      const isWinner = auctionInfo.winner === bid;
+      const isWinner = checkIsSameAddress(auctionInfo.winner, bid);
 
       return {
         // TODO: get avatar and time from backend

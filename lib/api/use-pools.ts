@@ -7,20 +7,20 @@ import { checkIsSameAddress } from "../utils/web3";
 export type IPoolStatus = "ACTIVE" | "LIQUIDATING";
 
 export interface IPoolBase {
-  name: string;
-  status: IPoolStatus;
   address: string;
-  creator_bonus: string;
-  creator: string;
-  delegator: string;
   create_at: string;
-  capacity: string;
+  creator: string;
+  creator_bonus: string;
+  delegator: string;
+  name: string;
+  status: string;
+  total_staked: string;
+  used_staked: string;
 }
 
 export async function fetchPools() {
   const result = await apiFetcher(WithApiHost(ApiPaths.pools));
-  console.log(result);
-  return [] as Array<IPoolBase>;
+  return result as Array<IPoolBase>;
   // return result as IPoolBase[];
 }
 
@@ -53,7 +53,7 @@ export function useCheckIsPoolCreator(addr: string | undefined) {
 
     return result.data
       .filter((pool) => pool.status === "ACTIVE")
-      .filter((pool) => pool.creator === addr);
+      .filter((pool) => checkIsSameAddress(pool.creator, addr));
   }, [addr, result.data]);
 
   return {

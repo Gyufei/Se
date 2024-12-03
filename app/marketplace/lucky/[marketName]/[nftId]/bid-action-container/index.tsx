@@ -17,6 +17,7 @@ import ClaimBidRae from "./claim-bid-rae";
 import RetrieveBidNFT from "./retrieve-bid-nft";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
 import { intersection } from "lodash";
+import { checkIsSameAddress } from "@/lib/utils/web3";
 
 export default function BidActionContainer() {
   const { address } = useAccount();
@@ -47,8 +48,8 @@ export default function BidActionContainer() {
   const claimRaeAmount = useMemo(() => {
     if (!isBidderCanClaimRae) return;
 
-    const bidderIndex = auctionInfo?.bidders.findIndex(
-      (b) => b === asBidderAddr!,
+    const bidderIndex = auctionInfo?.bidders.findIndex((b) =>
+      checkIsSameAddress(b, asBidderAddr!),
     );
     const bidAmount = auctionInfo?.bid_amounts[bidderIndex];
 

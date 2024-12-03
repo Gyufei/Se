@@ -4,6 +4,8 @@ import { apiFetcher } from "../fetcher";
 import { ApiPaths, WithApiHost } from "./api-paths";
 import { useQuery } from "@tanstack/react-query";
 import { checkIsSameAddress } from "../utils/web3";
+import { useAccount } from "wagmi";
+import { toLower } from "lodash";
 
 export interface IPoolInfo {
   total_staked: string;
@@ -17,39 +19,47 @@ export interface IBiddingRecord {
   bid_at: string;
 }
 
-export async function fetchPoolInfoOfUser(address: string) {
+export async function fetchPoolInfoOfUser(
+  poolAddr: string,
+  address: string | undefined,
+) {
+  if (!address) return undefined;
+
   const info = await apiFetcher(
-    WithApiHost(`${ApiPaths.poolUserInfo}/${address}`),
+    WithApiHost(`${ApiPaths.poolUserInfo}/${poolAddr}/${address}`),
   );
   return info as IPoolInfo;
 }
 
-export function usePoolInfoOfUser(address: string) {
+export function usePoolInfoOfUser(poolAddr: string) {
+  const { address } = useAccount();
+
   const result = useQuery({
-    queryKey: ["pool", address],
-    queryFn: () => fetchPoolInfoOfUser(address),
-    enabled: !!address,
+    queryKey: ["pool", poolAddr],
+    queryFn: () =>
+      fetchPoolInfoOfUser(poolAddr, address ? toLower(address) : undefined),
+    enabled: !!poolAddr && !!address,
   });
 
   return result;
 }
 
-export function usePoolInfo(address: string) {
+export function usePoolInfo(poolAddr: string) {
   const { data: pools, isPending: isPoolsPending } = usePools();
   const { data: poolInfoOfUser, isPending: isPoolPending } =
-    usePoolInfoOfUser(address);
+    usePoolInfoOfUser(poolAddr);
 
   const poolAllInfo = useMemo(() => {
     if (!pools?.length || !poolInfoOfUser) return undefined;
 
-    const poolBase = pools.find((p) => checkIsSameAddress(p.address, address));
+    const poolBase = pools.find((p) => checkIsSameAddress(p.address, poolAddr));
     if (!poolBase) return undefined;
 
     return {
       base: poolBase,
       user: poolInfoOfUser,
     };
-  }, [pools, address, poolInfoOfUser]);
+  }, [pools, poolAddr, poolInfoOfUser]);
 
   return {
     data: poolAllInfo,

@@ -22,6 +22,6 @@ export const ApiPaths = {
   auction: "/market/auction",
   raePrice: "/rae/price",
   pools: "/pools",
-  pool: "/pool",
-  poolUserInfo: "/pool/delegate/user",
+  poolRecords: "/pool/records",
+  poolUserInfo: "/pool/delegate",
 };

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils/common";
-import { formatPercent } from "@/lib/utils/number";
+import { formatNumber, formatPercent } from "@/lib/utils/number";
 import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
 import { truncateAddr } from "@/lib/utils/web3";
 import { formatDistanceToNowStrict } from "date-fns";
@@ -30,10 +30,10 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
     <div className="w-full mt-10">
       <div className="text-white text-left leading-[18px] text-sm font-medium opacity-60 flex px-5 mb-[15px]">
         <div className="w-[190px]">Pool</div>
-        <div className="w-[100px]">Capacity</div>
+        <div className="w-[120px]">Total Staked</div>
         <div className="w-[110px]">Created By</div>
-        <div className="w-[130px]">Created Bonus</div>
-        <div className="w-[120px]">Delegator</div>
+        <div className="w-[120px]">Created Bonus</div>
+        <div className="w-[110px]">Delegator</div>
         <div className="w-[65px]">LifeTime</div>
         <div></div>
       </div>
@@ -68,14 +68,16 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
                 </span>
               </div>
             </div>
-            <div className="w-[100px]">{pool.capacity} RAE</div>
+            <div className="w-[120px]">
+              {formatNumber(pool.total_staked)} RAE
+            </div>
             <div className="w-[110px]">
               {truncateAddr(pool.creator, [4, 4])}
             </div>
-            <div className="w-[130px]">
+            <div className="w-[120px]">
               {formatPercent(divide(pool.creator_bonus, String(10 ** 4)))}
             </div>
-            <div className="w-[120px]">{pool.delegator}</div>
+            <div className="w-[110px]">{pool.delegator}</div>
             <div className="w-[65px] text-right">
               {replaceTimeUnitToSingleChar(
                 formatDistanceToNowStrict(Number(pool.create_at) * 1000),

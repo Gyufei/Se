@@ -6,7 +6,7 @@ export default function Page() {
   // const marketName = pageParams.marketName;
 
   return (
-    <div className="flex min-w-[1440px] overflow-x-aut">
+    <div className="flex min-w-[1440px] max-w-[1920px] mx-auto">
       <CollectionDisplay />
       <BuyBag />
     </div>

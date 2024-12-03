@@ -59,6 +59,8 @@ export default function SortSelect({
         className="flex w-[220px] flex-col items-stretch rounded-none border-0 bg-[#382743] space-y-[5px] p-[5px]"
       >
         {sortNames.map((name) => {
+          // TODO: add rarity sort
+          if (name === "rarity") return null;
           return sortDirs.map((direction) => (
             <div
               key={name}

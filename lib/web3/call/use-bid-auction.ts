@@ -4,6 +4,7 @@ import {
   CommonWriteContractRestParams,
   useCommonWriteContract,
 } from "../helper/use-common-write-contract";
+import { DelegatePoolABI } from "@/lib/abi/DelegatePool";
 
 export function useBidAuction() {
   const { chainConfig } = useChainConfig();
@@ -15,20 +16,29 @@ export function useBidAuction() {
       bidder: string;
       auctionId: number;
       amount: number;
+      asPool: boolean;
     },
     rest: CommonWriteContractRestParams,
   ) => {
     try {
-      const { bidder, auctionId, amount } = args || {};
+      const { bidder, auctionId, amount, asPool } = args || {};
 
-      const abiAddress = chainConfig.contracts.LuckyMarkets;
+      const delegatePoolAbiAddress = chainConfig.contracts.DelegatePool;
+      const luckyMarketAbiAddress = chainConfig.contracts.LuckyMarkets;
 
-      const callParams = {
-        abi: LuckyMarketsABI,
-        address: abiAddress as any,
-        functionName: "bidAuction",
-        args: [bidder, BigInt(auctionId), BigInt(amount)],
-      };
+      const callParams = asPool
+        ? {
+            abi: DelegatePoolABI,
+            address: delegatePoolAbiAddress as any,
+            functionName: "bidAuction",
+            args: [bidder, BigInt(auctionId), BigInt(amount)],
+          }
+        : {
+            abi: LuckyMarketsABI,
+            address: luckyMarketAbiAddress as any,
+            functionName: "bidAuction",
+            args: [bidder, BigInt(auctionId), BigInt(amount)],
+          };
 
       mutation.writeContract(callParams, rest);
     } catch (e: any) {

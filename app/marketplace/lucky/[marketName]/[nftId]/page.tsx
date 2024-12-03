@@ -17,7 +17,7 @@ export default function Page({
 
   return (
     <LuckyNFTPageProvider marketName={marketName} nftId={nftId}>
-      <div className="flex min-w-[1440px] overflow-x-auto">
+      <div className="flex min-w-[1440px] max-w-[1920px] mx-auto">
         <BidNftContainer />
         <BidActionContainer />
       </div>
