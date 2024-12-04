@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { INFT } from "@/lib/api/use-market-nfts";
-import Image from "next/image";
+import { AddressImg } from "./address-img";
 
 export default function NFTInfo({
   isPending,
@@ -16,12 +16,7 @@ export default function NFTInfo({
           {isPending ? (
             <Skeleton className="h-[20px] w-[20px]" />
           ) : (
-            <Image
-              src="/images/mock-nft.png"
-              width={20}
-              height={20}
-              alt="eth"
-            />
+            <AddressImg address={nft?.token_address} width={20} height={20} />
           )}
         </div>
         {isPending ? (

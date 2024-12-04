@@ -1,15 +1,15 @@
 import { useMemo } from "react";
-import Image from "next/image";
 import { checkIsSameAddress, truncateAddr } from "@/lib/utils/web3";
 import { formatDistanceToNowStrict } from "date-fns";
 import { cn } from "@/lib/utils/common";
-import { random, range } from "lodash";
+import { range } from "lodash";
 import { useLuckyNFTPageContext } from "../../page-context";
 import { divide } from "safebase";
 import { useAccount } from "wagmi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCheckIsPool } from "@/lib/api/use-pools";
 import Empty from "@/app/_common/empty";
+import { AddressImg } from "@/app/_common/address-img";
 
 export default function BidList({ onlyMe }: { onlyMe: boolean }) {
   const { address } = useAccount();
@@ -19,17 +19,14 @@ export default function BidList({ onlyMe }: { onlyMe: boolean }) {
     if (isAuctionPending) return [];
     if (!auctionInfo) return [];
 
-    const bidArr = auctionInfo.bidders.map((bid, index) => {
-      const bidValue = auctionInfo.bid_amounts[index];
-      const bidPercent = divide(bidValue, auctionInfo.bidding_cap);
-      const isWinner = checkIsSameAddress(auctionInfo.winner, bid);
+    const bidArr = auctionInfo.bidder_infos.map((bidInfo) => {
+      const bidPercent = divide(bidInfo.bid_amount, auctionInfo.bidding_cap);
+      const isWinner = checkIsSameAddress(auctionInfo.winner, bidInfo.bidder);
 
       return {
-        // TODO: get avatar and time from backend
-        avatar: "/images/mock-avatar.png",
-        at: new Date().getTime() - 1000 * 60 * 60 * random(18, 24),
-        address: bid,
-        bidValue,
+        at: Number(bidInfo.bid_at) * 1000,
+        address: bidInfo.bidder,
+        bidValue: bidInfo.bid_amount,
         isWinner,
         bidPercent,
       };
@@ -80,12 +77,11 @@ function BidItem({ bid }: { bid: Record<string, any> }) {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <Image
-        src={bid.avatar}
+      <AddressImg
+        className="rounded-full"
+        address={bid.address}
         width={48}
         height={48}
-        className="rounded-full"
-        alt="avatar"
       />
       <div className="flex flex-col flex-1 space-y-[10px] font-medium">
         <div className="text-white text-lg flex justify-between items-center">

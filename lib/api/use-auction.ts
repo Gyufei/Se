@@ -19,6 +19,7 @@ export interface IAuction {
   bidders: string[];
   bid_amounts: string[];
   bid_withdrawn: boolean[];
+  bid_at: string[];
   sell_withdrawn: boolean;
   status: "NOTEXIST" | "BIDDING" | "COMPLETED" | "FAILED";
   auction_type: "NORMAL" | "REFUNDABLE";
@@ -26,6 +27,7 @@ export interface IAuction {
     bidder: string;
     bid_amount: string;
     bid_withdrawn: boolean;
+    bid_at: string;
   }[];
 }
 
@@ -40,6 +42,7 @@ export async function fetchAuction(marketName: string, auctionId?: string) {
     bidder,
     bid_amount: result.bid_amounts[index],
     bid_withdrawn: result.bid_withdrawn[index],
+    bid_at: result.bid_at[index],
   }));
 
   const newRes = {

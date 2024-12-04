@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { useQuickPageContext } from "../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { range } from "lodash";
+import { AddressImg } from "@/app/_common/address-img";
 
 export default function CollectionInfo() {
   const { marketInfo, isMarketPending } = useQuickPageContext();
@@ -21,11 +22,10 @@ export default function CollectionInfo() {
           {isMarketPending ? (
             <Skeleton className="w-[120px] h-[120px]" />
           ) : (
-            <Image
-              src="/images/mock-nft.png"
+            <AddressImg
+              address={marketInfo?.nft_info?.token_address}
               width={120}
               height={120}
-              alt="NFT"
             />
           )}
         </div>

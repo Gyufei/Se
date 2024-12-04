@@ -4,13 +4,13 @@ import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
 import { truncateAddr } from "@/lib/utils/web3";
 import { formatDistanceToNowStrict } from "date-fns";
 import { range, upperCase } from "lodash";
-import Image from "next/image";
 import { useMemo } from "react";
 import { IPoolStatus, usePools } from "@/lib/api/use-pools";
 import { Skeleton } from "@/components/ui/skeleton";
 import { divide } from "safebase";
 import { useRouter } from "next/navigation";
 import Empty from "../_common/empty";
+import { AddressImg } from "../_common/address-img";
 
 export default function PoolTable({ status }: { status: IPoolStatus }) {
   const { data: pools, isPending: isPoolPending } = usePools();
@@ -35,7 +35,7 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
         <div className="w-[120px]">Created Bonus</div>
         <div className="w-[110px]">Delegator</div>
         <div className="w-[65px]">LifeTime</div>
-        <div></div>
+        {status === "ACTIVE" && <div></div>}
       </div>
       {isPoolPending ? (
         range(3).map((i) => (
@@ -48,12 +48,11 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
             key={i}
           >
             <div className="w-[190px] flex items-center gap-x-[15px] text-sma font-medium text-white">
-              <Image
-                src="/images/mock-nft.png"
+              <AddressImg
+                className="rounded-full"
+                address={pool.address}
                 width={40}
                 height={40}
-                className="rounded-full"
-                alt={pool.name}
               />
               <div className=" flex flex-col items-start space-y-[6px]">
                 <span>{pool.name}</span>
@@ -83,12 +82,14 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
                 formatDistanceToNowStrict(Number(pool.create_at) * 1000),
               )}
             </div>
-            <div
-              onClick={() => handlePoolClick(pool.address)}
-              className="flex-1 cursor-pointer items-center text-center underline decoration-green underline-offset-4"
-            >
-              Delegate
-            </div>
+            {status === "ACTIVE" && (
+              <div
+                onClick={() => handlePoolClick(pool.address)}
+                className="flex-1 cursor-pointer items-center text-center underline decoration-green underline-offset-4"
+              >
+                Delegate
+              </div>
+            )}
           </div>
         ))
       ) : (

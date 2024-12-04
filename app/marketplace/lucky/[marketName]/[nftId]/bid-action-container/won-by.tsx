@@ -1,8 +1,9 @@
 import { truncateAddr } from "@/lib/utils/web3";
-import Image from "next/image";
-import { useLuckyNFTPageContext } from "../page-context";
 import { useCheckIsPool } from "@/lib/api/use-pools";
+import { AddressImg } from "@/app/_common/address-img";
 import { Skeleton } from "@/components/ui/skeleton";
+
+import { useLuckyNFTPageContext } from "../page-context";
 
 export default function WonBy() {
   const { isAuctionPending, auctionInfo } = useLuckyNFTPageContext();
@@ -13,7 +14,6 @@ export default function WonBy() {
     auctionInfo?.winner,
   );
 
-  // TODO: add pool or User avatar
   return (
     <div className="p-5 bg-[#281a31] mt-6">
       <div className="text-base text-white font-medium">Vault was won by</div>
@@ -25,12 +25,7 @@ export default function WonBy() {
           </>
         ) : (
           <>
-            <Image
-              src="/images/mock-avatar.png"
-              alt="avatar"
-              width={24}
-              height={24}
-            />
+            <AddressImg address={winner} width={24} height={24} />
             <span className="text-white text-base font-medium">
               {isPool ? "Pool" : "Wallet"}: {truncateAddr(winner, [5, 5])}
             </span>
