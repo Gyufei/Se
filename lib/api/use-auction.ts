@@ -22,6 +22,11 @@ export interface IAuction {
   sell_withdrawn: boolean;
   status: "NOTEXIST" | "BIDDING" | "COMPLETED" | "FAILED";
   auction_type: "NORMAL" | "REFUNDABLE";
+  bidder_infos: {
+    bidder: string;
+    bid_amount: string;
+    bid_withdrawn: boolean;
+  }[];
 }
 
 export async function fetchAuction(marketName: string, auctionId?: string) {
@@ -31,9 +36,16 @@ export async function fetchAuction(marketName: string, auctionId?: string) {
     WithApiHost(`${ApiPaths.auction}/${marketName}/${auctionId}`),
   );
 
+  const bidderInfos = result.bidders.map((bidder: string, index: number) => ({
+    bidder,
+    bid_amount: result.bid_amounts[index],
+    bid_withdrawn: result.bid_withdrawn[index],
+  }));
+
   const newRes = {
     ...result,
     id: auctionId,
+    bidder_infos: bidderInfos,
   };
 
   return newRes as IAuction;

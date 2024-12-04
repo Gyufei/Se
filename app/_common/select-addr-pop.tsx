@@ -9,22 +9,30 @@ import { checkIsSameAddress, truncateAddr } from "@/lib/utils/web3";
 import { cn } from "@/lib/utils/common";
 import { capitalize } from "lodash";
 
-export default function SelectPoolPop({
-  pools,
-  selectedPool,
-  setSelectedPool,
+export interface AddrOptions {
+  address: string;
+  type: "pool" | "wallet";
+}
+
+export default function SelectAddrPop({
+  addrs,
+  selectedAddr: selectedAddr,
+  setSelectedAddr: setSelectedAddr,
+  selectedType,
+  setSelectedType,
 }: {
-  pools: { address: string; type: string }[];
-  selectedPool: string | null;
-  setSelectedPool: (pool: string) => void;
+  addrs: Array<AddrOptions>;
+  selectedAddr: string | null;
+  setSelectedAddr: (pool: string) => void;
+  selectedType: "pool" | "wallet" | null;
+  setSelectedType: (type: "pool" | "wallet" | null) => void;
 }) {
-  const [selectedPoolType, setSelectedPoolType] = useState<string | null>(null);
   const [popOpen, setPopOpen] = useState(false);
 
   function handleSelectPool(addr: string) {
-    setSelectedPool(addr);
-    setSelectedPoolType(
-      pools.find((p) => checkIsSameAddress(p.address, addr))?.type || null,
+    setSelectedAddr(addr);
+    setSelectedType(
+      addrs.find((p) => checkIsSameAddress(p.address, addr))?.type || null,
     );
     setPopOpen(false);
   }
@@ -32,10 +40,10 @@ export default function SelectPoolPop({
   return (
     <Popover open={popOpen} onOpenChange={setPopOpen}>
       <PopoverTrigger className="flex-1 items-center h-12 bg-[#382743] border-none rounded-none flex justify-center space-x-[5px]">
-        {selectedPool ? (
+        {selectedAddr ? (
           <span className="text-white text-base font-medium">
-            {selectedPoolType && capitalize(selectedPoolType)}:&nbsp;
-            {truncateAddr(selectedPool || "")}
+            {selectedType && capitalize(selectedType)}:&nbsp;
+            {truncateAddr(selectedAddr || "")}
           </span>
         ) : (
           <span className="text-white opacity-50 text-base font-medium">
@@ -51,7 +59,7 @@ export default function SelectPoolPop({
         />
       </PopoverTrigger>
       <PopoverContent className="w-[220px] border-none rounded-none bg-[#382743] p-[5px]">
-        {pools.map((pool) => (
+        {addrs.map((pool) => (
           <div
             className="text-white cursor-pointer h-10 mt-[5px] flex items-center px-4 text-base font-medium hover:bg-[#281A31] data-[state=checked]:bg-[#281A31]"
             key={pool.address}

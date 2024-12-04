@@ -40,6 +40,8 @@ export function useBidAuction() {
             args: [bidder, BigInt(auctionId), BigInt(amount)],
           };
 
+      console.log("callParams", callParams);
+
       mutation.writeContract(callParams, rest);
     } catch (e: any) {
       console.log("tx error", e);

@@ -5,12 +5,12 @@ import { RAE } from "@/lib/const/rae";
 import { useTokenBalance } from "@/lib/web3/helper/use-token-balance";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/utils/number";
-import { divide, multiply } from "safebase";
+import { divide, multiply, subtract } from "safebase";
 import { useApprove } from "@/lib/web3/use-approve";
 import { useBidAuction } from "@/lib/web3/call/use-bid-auction";
 import { useQueryClient } from "@tanstack/react-query";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
-import SelectPoolPop from "@/app/_common/select-pool-pop";
+import SelectAddrPop, { AddrOptions } from "@/app/_common/select-addr-pop";
 import { useSetAtom } from "jotai";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useAccount } from "wagmi";
@@ -27,23 +27,7 @@ export default function BidAction() {
   const { isMarketAndNftPending, isAuctionPending, auctionInfo } =
     useLuckyNFTPageContext();
   const { data: asPoolCreator } = useCheckIsPoolCreator(address);
-
   const canBidAsPool = asPoolCreator?.isAPoolCreator;
-  const pools = useMemo(() => {
-    if (!canBidAsPool) return [];
-
-    const pools = asPoolCreator.pools.map((pool) => ({
-      address: pool.address,
-      type: "pool",
-    }));
-
-    pools.unshift({
-      address: address!,
-      type: "wallet",
-    });
-
-    return pools;
-  }, [canBidAsPool, asPoolCreator, address]);
 
   const { isShouldApprove, isApproving, approveAction, approveBtnText } =
     useApprove(RAE.address, RAE.symbol);
@@ -61,50 +45,50 @@ export default function BidAction() {
   const { writeContract, isPending: isBidding } = useBidAuction();
 
   const [bidAmount, setBidAmount] = useState("");
-  const [selectedPool, setSelectedPool] = useState<string | null>(null);
+  const [selectedAddr, setSelectedAddr] = useState<string | null>(null);
+  const [selectedAddrType, setSelectedAddrType] = useState<
+    "pool" | "wallet" | null
+  >(null);
 
-  function handleBid() {
-    if (isShouldApprove) {
-      approveAction();
-      return;
+  const addrOptions = useMemo(() => {
+    if (!canBidAsPool) return [];
+
+    const addrs = asPoolCreator.pools.map((pool) => ({
+      address: pool.address,
+      type: "pool",
+    }));
+
+    addrs.unshift({
+      address: address!,
+      type: "wallet",
+    });
+
+    return addrs as Array<AddrOptions>;
+  }, [canBidAsPool, asPoolCreator, address]);
+
+  const bidder = useMemo(() => {
+    if (!canBidAsPool) return address;
+
+    return selectedAddr;
+  }, [canBidAsPool, selectedAddr, address]);
+
+  const isPoolAddr = useMemo(() => {
+    if (!canBidAsPool) return false;
+
+    return selectedAddrType === "pool";
+  }, [canBidAsPool, selectedAddrType]);
+
+  const selectedAddrBalance = useMemo(() => {
+    if (!isPoolAddr || !selectedAddr) {
+      return raeDisplay;
     }
 
-    if (checkIsSameAddress(selectedPool || address, auctionInfo?.seller)) {
-      setGlobalMsg({
-        type: "error",
-        message: "Auction seller cannot bid",
-      });
-      return;
-    }
-
-    const amount = multiply(bidAmount, String(10 ** RAE.decimals));
-
-    writeContract(
-      {
-        bidder: selectedPool || address!,
-        auctionId: Number(auctionInfo!.id),
-        amount: Number(amount),
-        asPool: Boolean(
-          selectedPool && !checkIsSameAddress(selectedPool, address),
-        ),
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: [raeQueryKey] });
-          setGlobalMsg({
-            type: "success",
-            message: "Bid successfully",
-          });
-        },
-        onError: (e: any) => {
-          setGlobalMsg({
-            type: "error",
-            message: e.message || "Bid failed",
-          });
-        },
-      },
+    const poolInfo = asPoolCreator.pools.find((pool) =>
+      checkIsSameAddress(pool.address, selectedAddr),
     );
-  }
+
+    return subtract(poolInfo?.total_staked, poolInfo?.used_staked);
+  }, [isPoolAddr, selectedAddr, raeDisplay, asPoolCreator]);
 
   const btnProps = useMemo(() => {
     if (isMarketAndNftPending || isAuctionPending || isRaePending) {
@@ -128,7 +112,14 @@ export default function BidAction() {
       };
     }
 
-    if (Number(raeDisplay) < Number(bidAmount)) {
+    if (!bidder) {
+      return {
+        text: "Select a address",
+        disabled: true,
+      };
+    }
+
+    if (Number(selectedAddrBalance) < Number(bidAmount)) {
       return {
         text: "Insufficient balance",
         disabled: true,
@@ -145,7 +136,7 @@ export default function BidAction() {
     if (canBidAsPool) {
       return {
         text: "Bid as",
-        disabled: !selectedPool,
+        disabled: !selectedAddr,
       };
     }
 
@@ -159,13 +150,55 @@ export default function BidAction() {
     isShouldApprove,
     isApproving,
     approveBtnText,
-    raeDisplay,
     bidAmount,
+    selectedAddrBalance,
     isBidding,
+    bidder,
     isRaePending,
-    selectedPool,
+    selectedAddr,
     canBidAsPool,
   ]);
+
+  function handleBid() {
+    if (isShouldApprove) {
+      approveAction();
+      return;
+    }
+
+    if (checkIsSameAddress(selectedAddr || address, auctionInfo?.seller)) {
+      setGlobalMsg({
+        type: "error",
+        message: "Auction seller cannot bid",
+      });
+      return;
+    }
+
+    const amount = multiply(bidAmount, String(10 ** RAE.decimals));
+
+    writeContract(
+      {
+        bidder: bidder!,
+        auctionId: Number(auctionInfo!.id),
+        amount: Number(amount),
+        asPool: isPoolAddr,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [raeQueryKey] });
+          setGlobalMsg({
+            type: "success",
+            message: "Bid successfully",
+          });
+        },
+        onError: (e: any) => {
+          setGlobalMsg({
+            type: "error",
+            message: e.message || "Bid failed",
+          });
+        },
+      },
+    );
+  }
 
   const handleInput = (value: string) => {
     setBidAmount(value);
@@ -181,13 +214,13 @@ export default function BidAction() {
         <span className="text-base font-medium text-white">Bid Amount</span>
         <span>
           <span className="text-white opacity-60 text-xs font-medium">
-            Balance:
+            {isPoolAddr && "Pool"} Balance:
           </span>
           {isRaePending ? (
             <Skeleton className="w-12 h-4" />
           ) : (
             <span className="text-white text-xs font-medium inline-block ml-1">
-              {formatNumber(raeDisplay)} RAE
+              {formatNumber(selectedAddrBalance)} RAE
             </span>
           )}
         </span>
@@ -216,10 +249,12 @@ export default function BidAction() {
           {btnProps.text}
         </ShouldConnectBtn>
         {canBidAsPool && (
-          <SelectPoolPop
-            pools={pools}
-            selectedPool={selectedPool}
-            setSelectedPool={setSelectedPool}
+          <SelectAddrPop
+            addrs={addrOptions}
+            selectedAddr={selectedAddr}
+            setSelectedAddr={setSelectedAddr}
+            selectedType={selectedAddrType}
+            setSelectedType={setSelectedAddrType}
           />
         )}
       </div>

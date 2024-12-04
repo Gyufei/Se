@@ -16,7 +16,7 @@ import { useRaePrice } from "@/lib/api/use-rae-price";
 import ClaimBidRae from "./claim-bid-rae";
 import RetrieveBidNFT from "./retrieve-bid-nft";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
-import { intersection } from "lodash";
+import { toLower } from "lodash";
 import { checkIsSameAddress } from "@/lib/utils/web3";
 
 export default function BidActionContainer() {
@@ -25,39 +25,62 @@ export default function BidActionContainer() {
     useLuckyNFTPageContext();
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
   const { data: asPoolCreator } = useCheckIsPoolCreator(address);
-  const addressArr = [...asPoolCreator.poolAddrs, address];
 
   const isBidding = auctionInfo?.status === "BIDDING";
   const isCompleted = auctionInfo?.status === "COMPLETED";
   const isFailed = auctionInfo?.status === "FAILED";
 
-  // TODO: if bid many time as diff pool creator, how we get the bidder?
-  const asBidderAddrs = intersection(auctionInfo?.bidders, addressArr);
-  const asBidderAddr = asBidderAddrs[0];
-  const isBidder = asBidderAddrs.length > 0;
+  const addressArr = useMemo(
+    () => [...asPoolCreator.poolAddrs, toLower(address)],
+    [asPoolCreator.poolAddrs, address],
+  );
 
-  const isWinner =
-    isCompleted && isBidder && addressArr.includes(auctionInfo?.winner);
+  const isBidder = auctionInfo?.bidders.some((b) => addressArr.includes(b));
 
-  const isBidderCanClaimRae =
-    isFailed &&
-    isBidder &&
-    !isWinner &&
-    auctionInfo?.auction_type === "REFUNDABLE";
+  const isWinner = isCompleted && addressArr.includes(auctionInfo?.winner);
 
-  const claimRaeAmount = useMemo(() => {
-    if (!isBidderCanClaimRae) return;
+  const winnerInfo = useMemo(() => {
+    if (!auctionInfo || !isCompleted) return;
 
-    const bidderIndex = auctionInfo?.bidders.findIndex((b) =>
-      checkIsSameAddress(b, asBidderAddr!),
+    const winnerAddr = auctionInfo?.winner;
+    if (!winnerAddr) return;
+
+    const info = auctionInfo?.bidder_infos.find((b) => b.bidder === winnerAddr);
+    return info;
+  }, [auctionInfo, isCompleted]);
+
+  const canClaimBidderInfo = useMemo(() => {
+    if (
+      !auctionInfo ||
+      !isFailed ||
+      auctionInfo?.auction_type !== "REFUNDABLE" ||
+      !isBidder
+    ) {
+      return;
+    }
+
+    // TODO: if bid many time as diff pool creator, how we get the bidder?
+    const info = auctionInfo?.bidder_infos.find(
+      (b) => addressArr.includes(b.bidder) && !b.bid_withdrawn,
     );
-    const bidAmount = auctionInfo?.bid_amounts[bidderIndex];
 
-    return bidAmount;
-  }, [isBidderCanClaimRae, auctionInfo, asBidderAddr]);
+    return info;
+  }, [auctionInfo, addressArr, isFailed, isBidder]);
 
-  const isCreatorCanClaimNFT =
-    isFailed && addressArr.includes(auctionInfo?.seller);
+  const canClaimCreatorInfo = useMemo(() => {
+    if (!auctionInfo || !isFailed) return;
+
+    const isCreator = addressArr.some((addr) =>
+      checkIsSameAddress(addr, auctionInfo?.seller),
+    );
+
+    if (!isCreator) return;
+
+    return {
+      creator: auctionInfo?.seller,
+      withdrawn: auctionInfo?.sell_withdrawn,
+    };
+  }, [auctionInfo, isFailed, addressArr]);
 
   const nftPrice = useMemo(() => {
     if (isRaePricePending || isAuctionPending) return "0";
@@ -68,37 +91,33 @@ export default function BidActionContainer() {
     <div className="w-[580px] px-6 py-[46px] bg-[#1d0e27]">
       <NFTInfo isPending={isMarketAndNftPending} nft={nftInfo} />
       <NftSeller isPending={isAuctionPending} seller={auctionInfo?.seller} />
-      {isBidding ? (
-        <>
-          <NFTPrice
-            isPending={isAuctionPending || isRaePricePending}
-            price={nftPrice}
-          />
-          <BidActionBlock />
-        </>
-      ) : (
+      <NFTPrice
+        isPending={isAuctionPending || isRaePricePending}
+        price={nftPrice}
+      />
+      {isBidding && <BidActionBlock />}
+      {isCompleted && (
         <>
           <WonBy />
           <WinnerPrice />
-          <OptimisticBuyout />
-          {isBidder && <BidResult success={!!isWinner} />}
-          {isWinner && (
-            <ClaimBidNFT
-              auctionId={auctionInfo.id}
-              winner={auctionInfo.winner!}
-            />
-          )}
-          {isCreatorCanClaimNFT && (
-            <RetrieveBidNFT auctionId={auctionInfo.id} />
-          )}
-          {isBidderCanClaimRae && (
-            <ClaimBidRae
-              auctionId={auctionInfo.id}
-              claimNum={claimRaeAmount || "0"}
-              bidder={asBidderAddr}
-            />
-          )}
         </>
+      )}
+      {!isBidding && <OptimisticBuyout />}
+      {(isCompleted || isFailed) && isBidder && (
+        <BidResult success={!!isWinner} />
+      )}
+      {winnerInfo && !winnerInfo?.bid_withdrawn && (
+        <ClaimBidNFT auctionId={auctionInfo!.id} winner={auctionInfo!.winner} />
+      )}
+      {canClaimCreatorInfo && !canClaimCreatorInfo.withdrawn && (
+        <RetrieveBidNFT auctionId={auctionInfo!.id} />
+      )}
+      {canClaimBidderInfo && !canClaimBidderInfo?.bid_withdrawn && (
+        <ClaimBidRae
+          auctionId={auctionInfo!.id}
+          claimNum={canClaimBidderInfo.bid_amount || "0"}
+          bidder={canClaimBidderInfo?.bidder}
+        />
       )}
     </div>
   );
