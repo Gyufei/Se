@@ -52,7 +52,7 @@ export default function BidActionContainer() {
   const canClaimBidderInfo = useMemo(() => {
     if (
       !auctionInfo ||
-      !isFailed ||
+      !(isFailed || isCompleted) ||
       auctionInfo?.auction_type !== "REFUNDABLE" ||
       !isBidder
     ) {
@@ -65,7 +65,7 @@ export default function BidActionContainer() {
     );
 
     return info;
-  }, [auctionInfo, addressArr, isFailed, isBidder]);
+  }, [auctionInfo, addressArr, isCompleted, isFailed, isBidder]);
 
   const canClaimCreatorInfo = useMemo(() => {
     if (!auctionInfo || !isFailed) return;

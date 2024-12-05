@@ -3,7 +3,7 @@ import { formatNumber, formatPercent } from "@/lib/utils/number";
 import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
 import { truncateAddr } from "@/lib/utils/web3";
 import { formatDistanceToNowStrict } from "date-fns";
-import { range, upperCase } from "lodash";
+import { capitalize, range } from "lodash";
 import { useMemo } from "react";
 import { IPoolStatus, usePools } from "@/lib/api/use-pools";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,7 +63,7 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
                     pool.status === "ACTIVE" && "bg-[#AAED4A15] text-green",
                   )}
                 >
-                  {upperCase(pool.status)}
+                  {capitalize(pool.status)}
                 </span>
               </div>
             </div>
