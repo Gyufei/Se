@@ -20,8 +20,9 @@ export default function ListingDetail() {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
-  const { nftType, selectedNft, market } = useMyNFTCollectionsPageContext();
-  const guidePrice = market?.guide_price;
+  const { nftType, selectedNft, selectedNftMarket } =
+    useMyNFTCollectionsPageContext();
+  const guidePrice = selectedNftMarket?.guide_price;
 
   const {
     isShouldApprove: isShouldApproveNft,

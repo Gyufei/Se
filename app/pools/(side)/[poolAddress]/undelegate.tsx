@@ -90,7 +90,7 @@ export default function Undelegate({
         <div className="text-white text-base opacity-60">Undelegate</div>
         <div className="text-white text-xs font-medium">
           <span className="opacity-60">Max: </span>
-          <span>{formatNumber(poolRaeBalance.value)} RAE</span>
+          <span>{formatNumber(poolRaeBalance.value) || 0} RAE</span>
         </div>
       </div>
       <div className="flex justify-between">

@@ -19,7 +19,7 @@ export default function PriceAndOperation({
   isPending: boolean;
   nft: INFT | undefined;
 }) {
-  const { isCanBuy, isCanList, isCanVault } = useNftStatus(nft);
+  const { isCanBuy, isCanList, isCanVault, isVault } = useNftStatus(nft);
   const { data: raePrice, isPending: isRaePricePending } = useRaePrice();
 
   const priceValue = useMemo(() => {
@@ -59,6 +59,7 @@ export default function PriceAndOperation({
           {isCanBuy && <AddToBagBtn nft={nft} />}
           {isCanList && <ListOntoQuickBtn nft={nft} />}
           {isCanVault && <VaultOntoLuckyBtn nft={nft} />}
+          {isVault && <ViewVaultBtn nft={nft} />}
         </div>
       )}
     </div>
@@ -118,6 +119,20 @@ function VaultOntoLuckyBtn({ nft }: { nft: INFT }) {
   return (
     <ShouldConnectBtn className="flex-1" onClick={handleVault}>
       Vault onto Lucky Market
+    </ShouldConnectBtn>
+  );
+}
+
+function ViewVaultBtn({ nft }: { nft: INFT }) {
+  const router = useRouter();
+
+  function handleViewVault() {
+    router.push(`/marketplace/lucky/${nft.market_name}/${nft.token_id}`);
+  }
+
+  return (
+    <ShouldConnectBtn className="flex-1" onClick={handleViewVault}>
+      View Vault
     </ShouldConnectBtn>
   );
 }

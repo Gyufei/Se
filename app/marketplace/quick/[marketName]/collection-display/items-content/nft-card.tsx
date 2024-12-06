@@ -1,8 +1,7 @@
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { capitalize } from "lodash";
-import Image from "next/image";
-import { useMarketActivity } from "@/lib/api/use-market-activity";
 import { INFT } from "@/lib/api/use-market-nfts";
 import { cn } from "@/lib/utils/common";
 import { useCartContext } from "../../cart-context";
@@ -117,15 +116,10 @@ function NoListBtn() {
 
 function ViewVaultBtn({ nft }: { nft: INFT }) {
   const router = useRouter();
-  const { data: activities } = useMarketActivity(nft.market_name, nft.token_id);
-
-  const auctionId = activities?.[0]?.auction_id;
 
   function handleViewVault(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
-
-    if (!auctionId) return;
-    router.push(`/marketplace/lucky/${nft.market_name}/${auctionId}`);
+    router.push(`/marketplace/lucky/${nft.market_name}/${nft.token_id}`);
   }
 
   return (

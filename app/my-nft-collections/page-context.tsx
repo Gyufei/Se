@@ -15,7 +15,7 @@ import {
 import { useAccount } from "wagmi";
 
 export type MyNFTCollectionsPageContextType = {
-  market: IMarket | null;
+  selectedNftMarket: IMarket | null;
   myNfts: INFT[];
   poolNfts: INFT[];
   isPending: boolean;
@@ -67,7 +67,8 @@ export function MyNFTCollectionsPageContextProvider({
 
   const isPending = isMarketsPending || isNftsPending;
 
-  const market = markets?.find((m) => m.market_name === marketName) || null;
+  const selectedNftMarket =
+    markets?.find((m) => m.market_name === selectedNft?.market_name) || null;
 
   const checkIsSameNft = useCallback(
     (nft: INFT) => nft.token_id === nftId && nft.market_name === marketName,
@@ -110,7 +111,7 @@ export function MyNFTCollectionsPageContextProvider({
   return (
     <MyNFTCollectionsPageContext.Provider
       value={{
-        market,
+        selectedNftMarket,
         myNfts,
         poolNfts,
         isPending,

@@ -37,7 +37,7 @@ export default function TrendingAssets() {
     <>
       <div className="mt-[100px]">
         <TrendingTitle marketType="Lucky" />
-        <div className="flex mt-5 items-center justify-between">
+        <div className="flex mt-5 items-center justify-start gap-x-5">
           {isMarketsPending || isLuckyNftsPending || !luckyNfts3.length
             ? range(3).map((i) => (
                 <Skeleton key={i} className="w-80 h-[172px]" />
@@ -49,7 +49,7 @@ export default function TrendingAssets() {
       </div>
       <div className="mt-[100px]">
         <TrendingTitle marketType="Quick" />
-        <div className="flex mt-5 items-center justify-between">
+        <div className="flex mt-5 items-center justify-start gap-x-5">
           {isMarketsPending || isQuickNftsPending || !quickNfts3.length
             ? range(3).map((i) => (
                 <Skeleton key={i} className="w-80 h-[172px]" />
