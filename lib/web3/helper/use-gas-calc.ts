@@ -1,3 +1,4 @@
+import { round } from "lodash";
 import { multiply } from "safebase";
 import { useAccount, useGasPrice, usePublicClient } from "wagmi";
 
@@ -10,11 +11,11 @@ export function useGasCalc() {
   function getGasPrice(gas?: number) {
     switch (Number(gas)) {
       case 0.05:
-        return multiply(rawGasPrice, String(1.05));
+        return multiply(String(rawGasPrice), String(1.05));
       case 0.1:
-        return multiply(rawGasPrice, String(1.1));
+        return multiply(String(rawGasPrice), String(1.1));
       case 0.15:
-        return multiply(rawGasPrice, String(1.15));
+        return multiply(String(rawGasPrice), String(1.15));
 
       default:
         return rawGasPrice;
@@ -27,22 +28,22 @@ export function useGasCalc() {
   ) => {
     try {
       const estGas = await publicClient!.estimateContractGas({
-        from: address,
         ...callParams,
+        account: address,
       } as any);
 
       const gasPrice = getGasPrice(gas);
-      const gasLimit = multiply(Number(estGas), String(130 / 100)).toFixed();
-      const maxPriorityFeePerGas = Math.ceil(multiply(Number(gasPrice), 0.05));
+      const gasLimit = multiply(String(estGas), String(130 / 100));
+      const maxPriorityFeePerGas = multiply(String(gasPrice), String(0.05));
 
       const gasParams: {
         maxFeePerGas?: bigint;
         gas?: bigint;
         maxPriorityFeePerGas?: bigint;
       } = {
-        maxFeePerGas: gasPrice,
-        gas: BigInt(gasLimit),
-        maxPriorityFeePerGas: BigInt(maxPriorityFeePerGas),
+        maxFeePerGas: BigInt(round(gasPrice)),
+        gas: BigInt(round(gasLimit)),
+        maxPriorityFeePerGas: BigInt(round(maxPriorityFeePerGas)),
       };
 
       console.log(gasParams);

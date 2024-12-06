@@ -123,7 +123,7 @@ export default function BuyBag() {
       };
     }
 
-    if (Number(raeDisplay) < totalPriceValue) {
+    if (Number(raeDisplay) < Number(total)) {
       return {
         text: "Insufficient balance",
         disabled: true,
@@ -149,7 +149,7 @@ export default function BuyBag() {
     isPending,
     raeDisplay,
     count,
-    totalPriceValue,
+    total,
   ]);
 
   return (

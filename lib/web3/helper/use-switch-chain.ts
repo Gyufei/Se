@@ -14,7 +14,6 @@ export function useCorrectChain() {
         return true;
       }
 
-      console.log("chainId", chainId);
       if (Number(chainId) !== Number(chainConfig.network)) {
         return switchChainAsync({ chainId });
       }

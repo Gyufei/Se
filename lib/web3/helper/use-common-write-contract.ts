@@ -1,6 +1,7 @@
-import { useWriteContract } from "wagmi";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useCorrectChain } from "./use-switch-chain";
 import { useGasCalc } from "./use-gas-calc";
+import { useEffect, useRef } from "react";
 
 export interface CommonWriteContractRestParams {
   onSuccess?: () => void;
@@ -13,6 +14,32 @@ export function useCommonWriteContract() {
 
   const { switchToTargetChain } = useCorrectChain();
   const { getGasParams } = useGasCalc();
+
+  const successFnRef = useRef<() => void | undefined>();
+  const errorFnRef = useRef<(_e: any) => void | undefined>();
+
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error,
+  } = useWaitForTransactionReceipt({
+    hash: mutation.data,
+    query: {
+      enabled: !!mutation.data,
+    },
+  });
+
+  useEffect(() => {
+    if (isConfirmed && successFnRef.current) {
+      successFnRef.current();
+    }
+  }, [isConfirmed]);
+
+  useEffect(() => {
+    if ((mutation.error || error) && errorFnRef.current) {
+      errorFnRef.current(mutation.error || error);
+    }
+  }, [error, mutation.error]);
 
   async function overrideWriteContract(
     callParams: Parameters<typeof mutation.writeContract>[0],
@@ -33,10 +60,10 @@ export function useCommonWriteContract() {
         },
         {
           onSuccess: () => {
-            rest?.onSuccess?.();
+            successFnRef.current = rest?.onSuccess;
           },
-          onError: (e: any) => {
-            rest?.onError?.(e);
+          onError: () => {
+            errorFnRef.current = rest?.onError;
           },
         },
       );
@@ -48,5 +75,7 @@ export function useCommonWriteContract() {
   return {
     ...mutation,
     writeContract: overrideWriteContract,
+    isPending: mutation.isPending || (mutation.data && isConfirming),
+    isSuccess: isConfirmed,
   };
 }
