@@ -1,14 +1,17 @@
 "use client";
+import PathBreadcrumb from "@/app/_common/path-breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 
 export function NFTNameAndImage({
-  name,
+  nftName,
   img,
+  marketName,
   isPending,
 }: {
-  name: string;
-  img: string;
+  nftName: string | undefined;
+  marketName: string | undefined;
+  img: string | undefined;
   isPending: boolean;
 }) {
   if (isPending) {
@@ -22,9 +25,17 @@ export function NFTNameAndImage({
 
   return (
     <>
-      <div className="text-white text-xl font-medium mt-12">{name}</div>
+      <PathBreadcrumb
+        paths={[`${marketName}`, `#${nftName}`]}
+        isLoadings={[isPending, isPending]}
+        href={[`/marketplace/quick/${marketName}`, null]}
+      />
       <div className="mt-5">
-        <Image src={img} width={580} height={580} alt="nft" />
+        {img ? (
+          <Image src={img} width={580} height={580} alt="nft" />
+        ) : (
+          <Skeleton className="w-full h-[580px]" />
+        )}
       </div>
     </>
   );

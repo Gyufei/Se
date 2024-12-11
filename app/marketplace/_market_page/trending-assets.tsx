@@ -21,28 +21,28 @@ export default function TrendingAssets() {
   const { data: quickNfts, isPending: isQuickNftsPending } =
     useMarketsNfts(quickMarkets);
 
-  const luckyNfts3 = sampleSize(
+  const luckyNfts1 = sampleSize(
     luckyNfts.filter((n) => n.status === "VAULTED"),
-    3,
+    1,
   );
 
-  const quickNfts3 = sampleSize(
+  const quickNfts1 = sampleSize(
     quickNfts.filter((n) => n.status === "LISTED"),
-    3,
+    1,
   );
 
-  console.log(luckyNfts3, quickNfts3);
+  console.log(luckyNfts1, quickNfts1);
 
   return (
     <>
       <div className="mt-[100px]">
         <TrendingTitle marketType="Lucky" />
         <div className="flex mt-5 items-center justify-start gap-x-5">
-          {isMarketsPending || isLuckyNftsPending || !luckyNfts3.length
+          {isMarketsPending || isLuckyNftsPending || !luckyNfts1.length
             ? range(3).map((i) => (
                 <Skeleton key={i} className="w-80 h-[172px]" />
               ))
-            : luckyNfts3.map((n) => (
+            : luckyNfts1.map((n) => (
                 <AssetItem key={n?.token_id} marketType="lucky" nft={n} />
               ))}
         </div>
@@ -50,11 +50,11 @@ export default function TrendingAssets() {
       <div className="mt-[100px]">
         <TrendingTitle marketType="Quick" />
         <div className="flex mt-5 items-center justify-start gap-x-5">
-          {isMarketsPending || isQuickNftsPending || !quickNfts3.length
+          {isMarketsPending || isQuickNftsPending || !quickNfts1.length
             ? range(3).map((i) => (
                 <Skeleton key={i} className="w-80 h-[172px]" />
               ))
-            : quickNfts3.map((n) => (
+            : quickNfts1.map((n) => (
                 <AssetItem key={n?.token_id} marketType="quick" nft={n} />
               ))}
         </div>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import PathBreadcrumb from "./path-breadcrumb";
+import PathBreadcrumb from "@/app/_common/path-breadcrumb";
 import DetailTabs from "./detail-tabs";
 import { useLuckyNFTPageContext } from "../page-context";
 import { Skeleton } from "@/components/ui/skeleton";

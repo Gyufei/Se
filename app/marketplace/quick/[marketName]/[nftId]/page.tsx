@@ -26,7 +26,8 @@ export default function Page({
     <div className="w-[580px] mx-auto">
       <NFTNameAndImage
         isPending={isPending}
-        name={`${nft?.market_name} #${nft?.token_id}`}
+        marketName={marketInfo?.market_name}
+        nftName={nft?.token_id}
         img={nft?.token_uri || ""}
       />
       <PriceAndOperation isPending={isPending} nft={nft} />

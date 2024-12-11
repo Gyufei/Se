@@ -2,10 +2,15 @@
 import { PersonalAndPoolBtns } from "./personal-and-pool-btns";
 import NftList from "./nft-list";
 import { NftOwnerType, useMyNFTCollectionsPageContext } from "../page-context";
+import { useAccount } from "wagmi";
+import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
 
 export default function NftListDisplay() {
+  const { address } = useAccount();
   const { nftType, setNftType, myNfts, poolNfts, setSelectedNft, isPending } =
     useMyNFTCollectionsPageContext();
+
+  const { data: asPoolCreator } = useCheckIsPoolCreator(address);
 
   function handleTypeChange(type: NftOwnerType) {
     if (type === nftType) return;
@@ -20,15 +25,17 @@ export default function NftListDisplay() {
         <div className="text-white text-4xl font-medium">
           My NFT Collections
         </div>
-        <PersonalAndPoolBtns
-          isPending={isPending}
-          type={nftType}
-          setType={handleTypeChange}
-          typeNumbers={{
-            personal: myNfts.length,
-            pool: poolNfts.length,
-          }}
-        />
+        {asPoolCreator.isAPoolCreator && (
+          <PersonalAndPoolBtns
+            isPending={isPending}
+            type={nftType}
+            setType={handleTypeChange}
+            typeNumbers={{
+              personal: myNfts.length,
+              pool: poolNfts.length,
+            }}
+          />
+        )}
         <NftList type={nftType} />
       </div>
     </div>

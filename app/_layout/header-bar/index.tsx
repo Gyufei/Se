@@ -7,7 +7,7 @@ export default function HeaderBar() {
   return (
     <header className="flex bg-[#12021d] justify-between h-16 px-6 py-3 min-w-[1440px]">
       <Link
-        href="/"
+        href="/marketplace"
         className="cursor-pointer text-white text-[28px] font-semibold"
       >
         TESSERA

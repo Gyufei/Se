@@ -16,7 +16,7 @@ export default function BagItem({
   const [isHover, setIsHover] = useState(false);
   const { data: raePrice, isPending: isRaePricePending } = useRaePrice();
 
-  const priceValue = multiply(nft.price, raePrice);
+  const priceValue = multiply(nft.price, raePrice?.price);
 
   return (
     <div

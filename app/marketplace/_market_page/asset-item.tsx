@@ -37,7 +37,7 @@ export default function AssetItem({
     >
       <div>
         <div className="text-2xl text-white font-semibold">
-          {nft.market_name} #{nft.token_id}
+          {nft.market_name}
         </div>
         <div
           onClick={handleGo}
@@ -51,7 +51,7 @@ export default function AssetItem({
             alt=""
           />
           <span className="text-sm text-white font-semibold">
-            Jump to {nft?.market_name}
+            Jump to {marketType === "lucky" ? "Vaults" : "Collections"}
           </span>
         </div>
       </div>

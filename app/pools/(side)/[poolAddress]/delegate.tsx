@@ -76,14 +76,16 @@ export default function Delegate({
 
     if (!depositNum) {
       return {
-        text: "Enter a number",
+        // text: "Enter a number",
+        text: "Deposit",
         disabled: true,
       };
     }
 
     if (Number(depositNum) > raeBalance.value) {
       return {
-        text: "Insufficient balance",
+        // text: "Insufficient balance",
+        text: "Deposit",
         disabled: true,
       };
     }
@@ -117,7 +119,7 @@ export default function Delegate({
           {raeBalance.isPending ? (
             <Skeleton className="w-12 h-4" />
           ) : (
-            <span>&nbsp;{formatNumber(raeBalance.value)} RAE</span>
+            <span>&nbsp;{formatNumber(raeBalance.value || 0)} RAE</span>
           )}
         </div>
       </div>

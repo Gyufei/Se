@@ -59,14 +59,16 @@ export default function Undelegate({
   const btnProps = useMemo(() => {
     if (!withdrawNum) {
       return {
-        text: "Enter a number",
+        // text: "Enter a number",
+        text: "Withdraw",
         disabled: true,
       };
     }
 
     if (Number(withdrawNum) > Number(poolRaeBalance.value)) {
       return {
-        text: "Insufficient balance",
+        // text: "Insufficient balance",
+        text: "Withdraw",
         disabled: true,
       };
     }

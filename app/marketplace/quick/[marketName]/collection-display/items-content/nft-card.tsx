@@ -42,6 +42,17 @@ export default function NFTCard({ nft }: { nft: INFT }) {
           isHover && "scale-[1.15]",
         )}
       />
+      {(isListed || isVault) && (
+        <div
+          className={cn(
+            "absolute top-1 right-1 h-5 flex px-2 items-center text-white text-xs",
+            isListed && "bg-[#71458E]",
+            isVault && "bg-[#DB734A]",
+          )}
+        >
+          {capitalize(nft.status)}
+        </div>
+      )}
       <div
         className={cn(
           "h-[60px] pt-5 px-[15px] bg-[#1D0E27] pb-[15px] absolute w-full bottom-0 transition-all duration-500 ease-in-out",
@@ -49,18 +60,9 @@ export default function NFTCard({ nft }: { nft: INFT }) {
         )}
       >
         <div className="flex justify-between items-center">
-          <span>{nft.name}</span>
-          {(isListed || isVault) && (
-            <div
-              className={cn(
-                "h-5 flex px-2 items-center text-white text-xs",
-                isListed && "bg-[#71458E]",
-                isVault && "bg-[#DB734A]",
-              )}
-            >
-              {capitalize(nft.status)}
-            </div>
-          )}
+          <span>
+            {nft.name} #{nft.token_id}
+          </span>
         </div>
         <>
           {isHover && (

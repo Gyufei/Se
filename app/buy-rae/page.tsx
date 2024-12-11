@@ -49,7 +49,7 @@ export default function Page() {
     [chainConfig],
   );
 
-  const [payAmount, setPayAmount] = useState("0");
+  const [payAmount, setPayAmount] = useState("");
   const [payToken, setPayToken] = useState<IToken>({
     symbol: "",
     url: "/icons/empty.svg",
@@ -67,7 +67,7 @@ export default function Page() {
     useApprove(payToken.address, payToken.symbol);
 
   const buyToken = RAE;
-  const [buyAmount, setBuyAmount] = useState("0");
+  const [buyAmount, setBuyAmount] = useState("");
 
   const [toOther, setToOther] = useState(false);
   const [toAddr, setToAddr] = useState("");
@@ -100,35 +100,40 @@ export default function Page() {
 
     if (!Number(payAmount) && !Number(buyAmount)) {
       return {
-        text: "Enter An Amount",
+        // text: "Enter An Amount",
+        text: "Buy",
         disabled: true,
       };
     }
 
     if (payBalance < Number(payAmount)) {
       return {
-        text: "Insufficient Balance",
+        // text: "Insufficient Balance",
+        text: "Buy",
         disabled: true,
       };
     }
 
     if (toOther && !toAddr) {
       return {
-        text: "Input Recipient",
+        // text: "Input Recipient",
+        text: "Buy",
         disabled: true,
       };
     }
 
     if (toOther && toAddr && !isAddress(toAddr, { strict: false })) {
       return {
-        text: "Invalid Recipient",
+        // text: "Invalid Recipient",
+        text: "Buy",
         disabled: true,
       };
     }
 
     if (isTxPending) {
       return {
-        text: "Swap...",
+        // text: "Swap...",
+        text: "Buying...",
         disabled: true,
       };
     }
@@ -253,7 +258,7 @@ export default function Page() {
             ) : (
               <NumericalInput
                 className="mr-2 mt-[10px] h-[50px] w-full text-left text-3xl text-white bg-transparent placeholder:opacity-50 placeholder:text-2xl"
-                placeholder="Input Sell Amount"
+                placeholder="0"
                 value={payAmount}
                 onUserInput={handlePayChange}
               />
@@ -277,7 +282,7 @@ export default function Page() {
             ) : (
               <NumericalInput
                 className="mr-1 mt-[10px] w-full h-[50px] text-left text-3xl text-white bg-transparent placeholder:opacity-50 placeholder:text-2xl"
-                placeholder="Input Buy Amount"
+                placeholder="0"
                 value={buyAmount}
                 onUserInput={handleBuyInput}
               />

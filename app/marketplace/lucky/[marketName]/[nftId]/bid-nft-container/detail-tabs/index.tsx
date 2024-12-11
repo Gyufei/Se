@@ -33,14 +33,14 @@ export default function DetailTabs() {
       </TabsList>
       <TabsContent
         value={tabs[0]}
-        className="flex flex-1 flex-col data-[state=inactive]:hidden"
+        className="flex min-h-[480px] flex-1 flex-col data-[state=inactive]:hidden"
         forceMount={true}
       >
         <DescContent />
       </TabsContent>
       <TabsContent
         value={tabs[1]}
-        className="flex flex-1 flex-col data-[state=inactive]:hidden"
+        className="flex min-h-[480px] flex-1 flex-col data-[state=inactive]:hidden"
         forceMount={true}
       >
         <BidContent />

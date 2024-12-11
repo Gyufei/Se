@@ -130,30 +130,32 @@ export default function NftList({ type }: { type: NftOwnerType }) {
         )}
       </div>
 
-      <Pagination
-        totalPages={pageNfts?.length || 0}
-        edgePageCount={3}
-        middlePagesSiblingCount={1}
-        currentPage={currentPage}
-        setCurrentPage={handlePageChange}
-        className="justify-start"
-      >
-        <Pagination.PrevButton />
-        <nav className="mx-2 flex items-center justify-center">
-          <ul className="flex items-center gap-2">
-            {isPending ? (
-              range(3).map((i) => <Skeleton key={i} className="h-5 w-5" />)
-            ) : (
-              <Pagination.PageButton
-                activeClassName=""
-                inactiveClassName=""
-                className=""
-              />
-            )}
-          </ul>
-        </nav>
-        <Pagination.NextButton />
-      </Pagination>
+      {displayNftList?.length > 0 && (
+        <Pagination
+          totalPages={pageNfts?.length || 0}
+          edgePageCount={3}
+          middlePagesSiblingCount={1}
+          currentPage={currentPage}
+          setCurrentPage={handlePageChange}
+          className="justify-start"
+        >
+          <Pagination.PrevButton />
+          <nav className="mx-2 flex items-center justify-center">
+            <ul className="flex items-center gap-2">
+              {isPending ? (
+                range(3).map((i) => <Skeleton key={i} className="h-5 w-5" />)
+              ) : (
+                <Pagination.PageButton
+                  activeClassName=""
+                  inactiveClassName=""
+                  className=""
+                />
+              )}
+            </ul>
+          </nav>
+          <Pagination.NextButton />
+        </Pagination>
+      )}
     </div>
   );
 }

@@ -32,8 +32,8 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
         <div className="w-[190px]">Pool</div>
         <div className="w-[120px]">Total Staked</div>
         <div className="w-[110px]">Created By</div>
-        <div className="w-[120px]">Created Bonus</div>
-        <div className="w-[110px]">Delegator</div>
+        <div className="w-[120px]">Creator Bonus</div>
+        <div className="w-[110px]">Delegators</div>
         <div className="w-[65px]">LifeTime</div>
         {status === "ACTIVE" && <div></div>}
       </div>

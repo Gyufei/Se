@@ -19,28 +19,32 @@ export default function Page() {
   const btnProps = useMemo(() => {
     if (!poolName) {
       return {
-        text: "Enter A Name",
+        // text: "Enter A Name",
+        text: "Confirm",
         disabled: true,
       };
     }
 
     if (!bonus) {
       return {
-        text: "Enter A Bonus",
+        // text: "Enter A Bonus",
+        text: "Confirm",
         disabled: true,
       };
     }
 
     if (Number(bonus) >= 100) {
       return {
-        text: "Invalid creator bonus",
+        // text: "Invalid creator bonus",
+        text: "Confirm",
         disabled: true,
       };
     }
 
     if (isTxPending) {
       return {
-        text: "Creating...",
+        // text: "Creating...",
+        text: "Confirming...",
         disabled: true,
       };
     }

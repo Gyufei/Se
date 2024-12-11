@@ -41,7 +41,7 @@ function OnlyMeSwitch({
 
 function BuyRaeBtn() {
   return (
-    <Link href="/buy">
+    <Link href="/buy-rae">
       <button className="px-5 h-10 flex items-center bg-green space-x-1">
         <Image
           src="/icons/lighting.svg"
