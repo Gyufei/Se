@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { multiply } from "safebase";
 import { useAccount } from "wagmi";
 
 import NFTPrice from "@/app/_common/nft-price";
@@ -12,7 +11,6 @@ import OptimisticBuyout from "./optimistic-buyout";
 import WinnerPrice from "./winner-price";
 import WonBy from "./won-by";
 import { useLuckyNFTPageContext } from "../page-context";
-import { useRaePrice } from "@/lib/api/use-rae-price";
 import ClaimBidRae from "./claim-bid-rae";
 import RetrieveBidNFT from "./retrieve-bid-nft";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
@@ -23,7 +21,6 @@ export default function BidActionContainer() {
   const { address } = useAccount();
   const { nftInfo, isMarketAndNftPending, isAuctionPending, auctionInfo } =
     useLuckyNFTPageContext();
-  const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
   const { data: asPoolCreator } = useCheckIsPoolCreator(address);
 
   const isBidding = auctionInfo?.status === "BIDDING";
@@ -82,18 +79,14 @@ export default function BidActionContainer() {
     };
   }, [auctionInfo, isFailed, addressArr]);
 
-  const nftPrice = useMemo(() => {
-    if (isRaePricePending || isAuctionPending) return "0";
-    return multiply(auctionInfo?.bidding_cap, raePriceData?.price);
-  }, [auctionInfo, raePriceData, isRaePricePending, isAuctionPending]);
-
   return (
     <div className="w-[580px] px-6 py-[46px] bg-[#1d0e27]">
       <NFTInfo isPending={isMarketAndNftPending} nft={nftInfo} />
       <NftSeller isPending={isAuctionPending} seller={auctionInfo?.seller} />
       <NFTPrice
-        isPending={isAuctionPending || isRaePricePending}
-        price={nftPrice}
+        isPending={isAuctionPending}
+        price={nftInfo?.price}
+        unit="RAE"
       />
       {isBidding && <BidActionBlock />}
       {isCompleted && (

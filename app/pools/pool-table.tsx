@@ -11,6 +11,7 @@ import { divide } from "safebase";
 import { useRouter } from "next/navigation";
 import Empty from "../_common/empty";
 import { AddressImg } from "../_common/address-img";
+import { escapeHtml } from "@/lib/utils/url";
 
 export default function PoolTable({ status }: { status: IPoolStatus }) {
   const { data: pools, isPending: isPoolPending } = usePools();
@@ -55,7 +56,9 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
                 height={40}
               />
               <div className=" flex flex-col items-start space-y-[6px]">
-                <span>{pool.name}</span>
+                <span className="w-[130px] truncate">
+                  {escapeHtml(pool.name)}
+                </span>
                 <span
                   className={cn(
                     "flex items-center justify-center px-2 text-xs",

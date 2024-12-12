@@ -9,10 +9,11 @@ import { usePoolUndelegate } from "@/lib/web3/call/use-pool-undelegate";
 import { RAE } from "@/lib/const/rae";
 import { useSetAtom } from "jotai";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
+import ErrorMessage from "@/app/_common/error-message";
 
 export default function Undelegate({
   poolId,
-  poolRae: poolRaeBalance,
+  poolRae,
   raeQueryKey,
 }: {
   poolId: string;
@@ -29,8 +30,33 @@ export default function Undelegate({
   const { writeContract, isPending: isUndelegatePending } = usePoolUndelegate();
 
   const [withdrawNum, setWithdrawNum] = useState("");
+  const [numError, setNumError] = useState("");
+
+  function handleInputNum(v: string) {
+    setWithdrawNum(v);
+    checkNum(v);
+  }
+
+  function checkNum(vNum: string) {
+    if (!vNum) {
+      setNumError("Enter a number");
+      return false;
+    }
+
+    if (Number(vNum) > Number(poolRae.value)) {
+      setNumError("Insufficient balance");
+      return false;
+    }
+
+    setNumError("");
+    return true;
+  }
 
   function handleUndelegate() {
+    if (!checkNum(withdrawNum)) {
+      return;
+    }
+
     writeContract(
       {
         poolId: poolId,
@@ -39,7 +65,7 @@ export default function Undelegate({
       {
         onSuccess: () => {
           setWithdrawNum("");
-          queryClient.invalidateQueries({ queryKey: poolRaeBalance.queryKey });
+          queryClient.invalidateQueries({ queryKey: poolRae.queryKey });
           queryClient.invalidateQueries({ queryKey: raeQueryKey });
           setGlobalMsg({
             type: "success",
@@ -57,22 +83,6 @@ export default function Undelegate({
   }
 
   const btnProps = useMemo(() => {
-    if (!withdrawNum) {
-      return {
-        // text: "Enter a number",
-        text: "Withdraw",
-        disabled: true,
-      };
-    }
-
-    if (Number(withdrawNum) > Number(poolRaeBalance.value)) {
-      return {
-        // text: "Insufficient balance",
-        text: "Withdraw",
-        disabled: true,
-      };
-    }
-
     if (isUndelegatePending) {
       return {
         text: "Withdrawing...",
@@ -84,7 +94,7 @@ export default function Undelegate({
       text: "Withdraw",
       disabled: false,
     };
-  }, [withdrawNum, isUndelegatePending, poolRaeBalance.value]);
+  }, [isUndelegatePending]);
 
   return (
     <div className="px-5 pt-5">
@@ -92,18 +102,19 @@ export default function Undelegate({
         <div className="text-white text-base opacity-60">Undelegate</div>
         <div className="text-white text-xs font-medium">
           <span className="opacity-60">Max: </span>
-          <span>{formatNumber(poolRaeBalance.value) || 0} RAE</span>
+          <span>{formatNumber(poolRae.value) || 0} RAE</span>
         </div>
       </div>
       <div className="flex justify-between">
         <NumericalInput
           className="bg-[#1D0E27] text-base leading-5 text-white h-12 px-4 py-3"
           value={withdrawNum}
-          onUserInput={setWithdrawNum}
+          onUserInput={handleInputNum}
           placeholder="0"
         />
         <RaeToken />
       </div>
+      <ErrorMessage error={numError} />
 
       <ShouldConnectBtn
         disabled={btnProps.disabled}

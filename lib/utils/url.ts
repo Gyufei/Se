@@ -8,3 +8,7 @@ export function removeQueryParams(paramsToRemove: string[]) {
 
   window.history.replaceState({}, document.title, currentUrl.href);
 }
+
+export function escapeHtml(unsafe: string) {
+  return unsafe.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}

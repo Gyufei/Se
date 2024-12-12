@@ -7,11 +7,13 @@ export default function NFTPrice({
   isPending = false,
   priceName = "Price",
   className,
+  unit = "USD",
 }: {
-  price: string;
+  price: string | undefined;
   isPending?: boolean;
   priceName?: string;
   className?: string;
+  unit?: "USD" | "RAE";
 }) {
   return (
     <div
@@ -25,7 +27,9 @@ export default function NFTPrice({
         {isPending ? (
           <Skeleton className="w-[150px] h-[30px] mt-[10px]" />
         ) : (
-          <div className="text-[30px] text-white mt-[10px]">${price}</div>
+          <div className="text-[30px] text-white mt-[10px]">
+            {unit === "USD" ? `$${price || "0"}` : `${price || "0"} RAE`}
+          </div>
         )}
       </div>
       <RaePrice />

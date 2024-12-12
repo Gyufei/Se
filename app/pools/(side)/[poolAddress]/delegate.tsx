@@ -12,6 +12,7 @@ import { useApprove } from "@/lib/web3/use-approve";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
+import ErrorMessage from "@/app/_common/error-message";
 
 export default function Delegate({
   poolId,
@@ -28,16 +29,42 @@ export default function Delegate({
 }) {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
-  const [depositNum, setDepositNum] = useState("");
 
   const { isShouldApprove, isApproving, approveAction, approveBtnText } =
     useApprove(RAE.address, RAE.symbol);
 
   const { writeContract, isPending: isDelegatePending } = usePoolDelegate();
 
+  const [depositNum, setDepositNum] = useState("");
+  const [numError, setNumError] = useState("");
+
+  function handleInputNum(v: string) {
+    setDepositNum(v);
+    checkNum(v);
+  }
+
+  function checkNum(vNum: string) {
+    if (!vNum) {
+      setNumError("Enter a number");
+      return false;
+    }
+
+    if (Number(vNum) > raeBalance.value) {
+      setNumError("Insufficient balance");
+      return false;
+    }
+
+    setNumError("");
+    return true;
+  }
+
   function handleDelegate() {
     if (isShouldApprove) {
       approveAction();
+      return;
+    }
+
+    if (!checkNum(depositNum)) {
       return;
     }
 
@@ -74,22 +101,6 @@ export default function Delegate({
       };
     }
 
-    if (!depositNum) {
-      return {
-        // text: "Enter a number",
-        text: "Deposit",
-        disabled: true,
-      };
-    }
-
-    if (Number(depositNum) > raeBalance.value) {
-      return {
-        // text: "Insufficient balance",
-        text: "Deposit",
-        disabled: true,
-      };
-    }
-
     if (isDelegatePending) {
       return {
         text: "Depositing...",
@@ -101,14 +112,7 @@ export default function Delegate({
       text: "Deposit",
       disabled: false,
     };
-  }, [
-    depositNum,
-    isShouldApprove,
-    isApproving,
-    approveBtnText,
-    isDelegatePending,
-    raeBalance.value,
-  ]);
+  }, [isShouldApprove, isApproving, approveBtnText, isDelegatePending]);
 
   return (
     <div className="px-5 pb-5 border-b-2 border-[#ffffff10]">
@@ -127,11 +131,12 @@ export default function Delegate({
         <NumericalInput
           className="bg-[#1D0E27] text-base leading-5 text-white h-12 px-4 py-3"
           value={depositNum}
-          onUserInput={setDepositNum}
+          onUserInput={handleInputNum}
           placeholder="0"
         />
         <RaeToken />
       </div>
+      <ErrorMessage error={numError} />
 
       <ShouldConnectBtn
         disabled={btnProps.disabled}

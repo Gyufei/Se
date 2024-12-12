@@ -1,6 +1,7 @@
 import { divide } from "safebase";
 import { useLuckyNFTPageContext } from "../../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils/common";
 
 export default function BidProgress() {
   const { auctionInfo, isAuctionPending } = useLuckyNFTPageContext();
@@ -43,11 +44,21 @@ function ArrowProgress({ percent }: { percent: number }) {
   return (
     <div className="relative w-full mt-5">
       <div
-        className="w-full h-2 rounded-[4px]"
+        className="w-full flex items-center justify-between rounded"
         style={{
           background: "linear-gradient(270deg, #77EF00 0%, #FE0027 100%)",
+          flexBasis: `${percent * 100}%`,
         }}
-      ></div>
+      >
+        <div
+          className={cn("h-2 rounded-l bg-transparent")}
+          style={{
+            // background: "linear-gradient(270deg, #77EF00 0%, #FE0027 100%)",
+            flexBasis: `${percent * 100}%`,
+          }}
+        ></div>
+        <div className={cn("h-2 bg-[#382743] rounded-r grow")}></div>
+      </div>
 
       <div
         className="absolute flex flex-col items-center -top-[14px]"

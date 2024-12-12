@@ -40,6 +40,8 @@ export default function CloseCountdown() {
     return () => clearInterval(interval);
   }, [endAt, isAuctionPending]);
 
+  if (hours === 0 && minutes === 0 && seconds === 0) return null;
+
   return (
     <div className="pt-5 pb-6 px-5 flex flex-col items-center border-b-[2px] border-b-[#ffffff10]">
       <div className="text-white opacity-60 font-medium">
