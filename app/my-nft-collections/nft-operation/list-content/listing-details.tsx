@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRaePrice } from "@/lib/api/use-rae-price";
 import { useApproveNft } from "@/lib/web3/use-approve-nft";
 import { covertErrorMsg } from "@/lib/utils/error";
+import ErrorMessage from "@/app/_common/error-message";
 
 export default function ListingDetail() {
   const queryClient = useQueryClient();
@@ -48,12 +49,33 @@ export default function ListingDetail() {
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
 
   const [sellPrice, setSellPrice] = useState("");
+  const [sellPriceError, setSellPriceError] = useState("");
 
   const sellPriceValue = useMemo(() => {
     if (isRaePricePending || !raePriceData || !sellPrice) return "";
 
     return multiply(sellPrice, raePriceData.price);
   }, [raePriceData, sellPrice, isRaePricePending]);
+
+  function handleInputPrice(v: string) {
+    setSellPrice(v);
+    checkPrice(v);
+  }
+
+  function checkPrice(v: string) {
+    if (!v) {
+      setSellPriceError("Price is required");
+      return false;
+    }
+
+    if (Number(v) > Number(guidePrice || 0)) {
+      setSellPriceError(`price greater than guide price: ${guidePrice}`);
+      return false;
+    }
+
+    setSellPriceError("");
+    return true;
+  }
 
   function handleList() {
     if (!selectedNft) {
@@ -69,6 +91,8 @@ export default function ListingDetail() {
       approveActionNft();
       return;
     }
+
+    if (!checkPrice(sellPrice)) return;
 
     writeContract(
       {
@@ -113,20 +137,6 @@ export default function ListingDetail() {
       };
     }
 
-    if (!sellPrice) {
-      return {
-        text: "Enter a price",
-        disabled: true,
-      };
-    }
-
-    if (Number(sellPrice) > Number(guidePrice || 0)) {
-      return {
-        text: `price greater than guide price: ${guidePrice}`,
-        disabled: true,
-      };
-    }
-
     if (isListing) {
       return {
         text: "Listing...",
@@ -146,8 +156,6 @@ export default function ListingDetail() {
     isApprovingRae,
     approveBtnTextRae,
     isListing,
-    sellPrice,
-    guidePrice,
   ]);
 
   return (
@@ -155,13 +163,13 @@ export default function ListingDetail() {
       <div className="bg-[#281A31] p-5 mt-5">
         <div className="text-xl font-medium text-white">Listing Details</div>
 
-        <div className="flex items-end justify-between mt-5">
+        <div className="flex items-end justify-between mt-5 relative">
           <div className="flex items-center mt-[15px]">
             <NumericalInput
               className="h-12 w-[236px] rounded-none leading-[48px] px-4 bg-[#1D0E27] text-white text-left focus:border-focus disabled:cursor-not-allowed disabled:bg-[#F0F1F5]"
               placeholder="0"
               value={sellPrice}
-              onUserInput={(v) => setSellPrice(v)}
+              onUserInput={(v) => handleInputPrice(v)}
             />
             {isRaePricePending ? (
               <Skeleton className="w-[60px] h-[20px] ml-5" />
@@ -176,6 +184,10 @@ export default function ListingDetail() {
 
           <RaeToken />
         </div>
+        <ErrorMessage
+          className="absolute bottom-[15px] ml-0"
+          error={sellPriceError}
+        />
       </div>
       <div className="flex items-center justify-between mt-5 space-x-5">
         <ShouldConnectBtn

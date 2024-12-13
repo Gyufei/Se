@@ -15,6 +15,7 @@ import { useRaePrice } from "@/lib/api/use-rae-price";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useApproveNft } from "@/lib/web3/use-approve-nft";
 import { covertErrorMsg } from "@/lib/utils/error";
+import ErrorMessage from "@/app/_common/error-message";
 
 export default function CreateBidding() {
   const queryClient = useQueryClient();
@@ -46,14 +47,70 @@ export default function CreateBidding() {
 
   const [days, setDays] = useState("");
   const [hours, setHours] = useState("");
+  const [durationError, setDurationError] = useState("");
   const [taxRate, setTaxRate] = useState("");
+  const [taxRateError, setTaxRateError] = useState("");
   const [bidCap, setBidCap] = useState("");
+  const [bidCapError, setBidCapError] = useState("");
 
   const bidCapValue = useMemo(() => {
     if (isRaePricePending || !raePriceData || !bidCap) return "";
 
     return multiply(bidCap, raePriceData.price);
   }, [raePriceData, bidCap, isRaePricePending]);
+
+  function handleDaysChange(v: string) {
+    setDays(v);
+    checkDuration(v, hours);
+  }
+  function handleHoursChange(v: string) {
+    setHours(v);
+    checkDuration(days, v);
+  }
+  function handleTaxRateChange(v: string) {
+    setTaxRate(v);
+    checkTaxRate(v);
+  }
+
+  function handleBidCapChange(v: string) {
+    setBidCap(v);
+    checkBidCap(v);
+  }
+
+  function checkDuration(d: string, h: string) {
+    if (!d && !h) {
+      setDurationError("Enter duration");
+      return false;
+    }
+    setDurationError("");
+    return true;
+  }
+
+  function checkTaxRate(v: string) {
+    if (Number(v) >= 100) {
+      setTaxRateError("Invalid tax rate");
+      return false;
+    }
+    setTaxRateError("");
+    return true;
+  }
+
+  function checkBidCap(v: string) {
+    if (!v) {
+      setBidCapError("Enter bidding cap");
+      return false;
+    }
+    setBidCapError("");
+    return true;
+  }
+
+  function checkToConfirm() {
+    const isDurationValid = checkDuration(days, hours);
+    const isTaxRateValid = checkTaxRate(taxRate);
+    const isBidCapValid = checkBidCap(bidCap);
+
+    return isDurationValid && isTaxRateValid && isBidCapValid;
+  }
 
   function handleConfirm() {
     if (!selectedNft) return;
@@ -68,6 +125,8 @@ export default function CreateBidding() {
       return;
     }
 
+    if (!checkToConfirm()) return;
+
     const bidDuration = Number(
       add(
         multiply(days || "0", String(24 * 60 * 60)),
@@ -80,7 +139,7 @@ export default function CreateBidding() {
         nftAddr: selectedNft.token_address,
         tokenId: Number(selectedNft.token_id),
         biddingCap: Number(multiply(bidCap, String(10 ** RAE.decimals))),
-        taxRate: Number(multiply(taxRate, String(10 ** 2))),
+        taxRate: Number(multiply(taxRate || "0", String(10 ** 2))),
         bidDuration,
         minBidAmount: 0,
         auctionType: "NORMAL",
@@ -122,34 +181,6 @@ export default function CreateBidding() {
       };
     }
 
-    if (!days && !hours) {
-      return {
-        text: "Enter duration",
-        disabled: true,
-      };
-    }
-
-    if (!taxRate) {
-      return {
-        text: "Enter tax rate",
-        disabled: true,
-      };
-    }
-
-    if (Number(taxRate) >= 100) {
-      return {
-        text: "Invalid tax rate",
-        disabled: true,
-      };
-    }
-
-    if (!bidCap) {
-      return {
-        text: "Enter bidding cap",
-        disabled: true,
-      };
-    }
-
     if (isCreating) {
       return {
         text: "Vaulting...",
@@ -158,14 +189,10 @@ export default function CreateBidding() {
     }
 
     return {
-      text: "Vault onto Lucky Market",
+      text: "Vault",
       disabled: false,
     };
   }, [
-    days,
-    hours,
-    taxRate,
-    bidCap,
     isShouldApproveNft,
     isApprovingNft,
     approveBtnTextNft,
@@ -180,14 +207,14 @@ export default function CreateBidding() {
       <div className="bg-[#281A31] p-5 mt-5">
         <div className="text-xl font-medium text-white">Bidding Details</div>
         <div className="flex items-center justify-between mt-9">
-          <div className="flex items-center space-x-5">
+          <div className="relative flex items-center space-x-5">
             <div className="flex flex-col">
               <span className="text-base text-white opacity-60">Days</span>
               <NumericalInput
                 className="h-12 w-[118px] mt-[15px] rounded-none leading-[48px] px-4 bg-[#1D0E27] text-white text-left focus:border-focus disabled:cursor-not-allowed disabled:bg-[#F0F1F5]"
                 placeholder="0"
                 value={days}
-                onUserInput={(v) => setDays(v)}
+                onUserInput={(v) => handleDaysChange(v)}
               />
             </div>
 
@@ -197,12 +224,16 @@ export default function CreateBidding() {
                 className="h-12 w-[118px] mt-[15px] rounded-none leading-[48px] px-4 bg-[#1D0E27] text-white text-left focus:border-focus disabled:cursor-not-allowed disabled:bg-[#F0F1F5]"
                 placeholder="0"
                 value={hours}
-                onUserInput={(v) => setHours(v)}
+                onUserInput={(v) => handleHoursChange(v)}
               />
             </div>
+            <ErrorMessage
+              error={durationError}
+              className="absolute -bottom-[22px] !ml-0"
+            />
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col relative">
             <span className="text-base text-white opacity-60">
               Tax Rate (%)
             </span>
@@ -210,12 +241,16 @@ export default function CreateBidding() {
               className="h-12 w-[90px] mt-[15px] rounded-none leading-[48px] px-4 bg-[#1D0E27] text-white text-left focus:border-focus disabled:cursor-not-allowed disabled:bg-[#F0F1F5]"
               placeholder="0"
               value={taxRate}
-              onUserInput={(v) => setTaxRate(v)}
+              onUserInput={(v) => handleTaxRateChange(v)}
+            />
+            <ErrorMessage
+              className="absolute -bottom-[22px] ml-0 whitespace-nowrap"
+              error={taxRateError}
             />
           </div>
         </div>
 
-        <div className="flex items-end justify-between mt-5">
+        <div className="flex relative items-end justify-between mt-5">
           <div className="flex flex-col">
             <span className="text-base text-white opacity-60">Bidding Cap</span>
             <div className="flex items-center mt-[15px]">
@@ -223,7 +258,7 @@ export default function CreateBidding() {
                 className="h-12 w-[236px] rounded-none leading-[48px] px-4 bg-[#1D0E27] text-white text-left focus:border-focus disabled:cursor-not-allowed disabled:bg-[#F0F1F5]"
                 placeholder="0"
                 value={bidCap}
-                onUserInput={(v) => setBidCap(v)}
+                onUserInput={(v) => handleBidCapChange(v)}
               />
               {isRaePricePending ? (
                 <Skeleton className="w-[60px] h-[20px] ml-5" />
@@ -235,6 +270,10 @@ export default function CreateBidding() {
                 )
               )}
             </div>
+            <ErrorMessage
+              className="absolute -bottom-[20px] ml-0"
+              error={bidCapError}
+            />
           </div>
 
           <RaeToken />

@@ -7,6 +7,9 @@ import {
   useWriteContract,
 } from "wagmi";
 import { useChainConfig } from "./use-chain-config";
+import { covertErrorMsg } from "../utils/error";
+import { useSetAtom } from "jotai";
+import { GlobalMessageAtom } from "../state/global-message";
 
 export function useApproveNft(
   nftAddr: string | undefined,
@@ -15,6 +18,7 @@ export function useApproveNft(
 ) {
   const { chainConfig } = useChainConfig();
   const spender = chainConfig.contracts.TesseraRouter;
+  const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
   const { address: walletAccount } = useAccount();
 
@@ -41,6 +45,7 @@ export function useApproveNft(
       enabled: isCanApprove,
     },
   });
+
   const isApproved = !!allowanceMutation.data;
   const isApprovedLoading = allowanceMutation.isLoading;
 
@@ -102,7 +107,10 @@ export function useApproveNft(
         },
       );
     } catch (e) {
-      console.error("approveAction error: =>", e);
+      setGlobalMsg({
+        type: "error",
+        message: covertErrorMsg(e, "Approve failed"),
+      });
     }
   }
 

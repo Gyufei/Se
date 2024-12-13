@@ -11,6 +11,7 @@ export default function VaultContent() {
         isPending={isPending}
         price={selectedNft?.price || ""}
         className="mt-3"
+        unit="RAE"
       />
       <CreateBidding />
     </>

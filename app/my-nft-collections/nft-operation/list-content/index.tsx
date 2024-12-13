@@ -12,6 +12,7 @@ export default function ListContent() {
         price={selectedNft?.price || ""}
         priceName="Last Floor Price"
         className="mt-3"
+        unit="RAE"
       />
       <ListingDetail />
     </>

@@ -8,9 +8,13 @@ import {
 } from "wagmi";
 import { USDTAbi } from "@/lib/abi/USDT";
 import { useChainConfig } from "./use-chain-config";
+import { useSetAtom } from "jotai";
+import { GlobalMessageAtom } from "../state/global-message";
+import { covertErrorMsg } from "../utils/error";
 
 export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
   const { chainConfig } = useChainConfig();
+  const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
   const allowAmount: number = 0;
   const spender = chainConfig.contracts.TesseraRouter;
@@ -61,7 +65,6 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
   }, [confirmMutation.isSuccess]);
 
   const isShouldApprove = useMemo(() => {
-    console.log(`isCanApprove: ${isCanApprove} allowance: ${allowance}`);
     if (!isCanApprove) return false;
 
     if (isAllowanceLoading) return false;
@@ -114,7 +117,10 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
         },
       );
     } catch (e) {
-      console.error("approveAction error: =>", e);
+      setGlobalMsg({
+        type: "error",
+        message: covertErrorMsg(e, "Approve failed"),
+      });
     }
   }
 
