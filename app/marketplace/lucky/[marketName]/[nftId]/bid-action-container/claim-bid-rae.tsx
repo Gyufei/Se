@@ -1,5 +1,6 @@
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
+import { covertErrorMsg } from "@/lib/utils/error";
 import { useRetrieveBid } from "@/lib/web3/call/use-retrieve-bid";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
@@ -36,7 +37,7 @@ export default function ClaimBidRae({
         onError: (e: any) => {
           setGlobalMsg({
             type: "error",
-            message: e.message || "Claim failed",
+            message: covertErrorMsg(e, "Claim failed"),
           });
         },
       },

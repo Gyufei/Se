@@ -17,6 +17,7 @@ import { useAccount } from "wagmi";
 import { useLuckyNFTPageContext } from "../../page-context";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
 import { checkIsSameAddress } from "@/lib/utils/web3";
+import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function BidAction() {
   const queryClient = useQueryClient();
@@ -193,7 +194,7 @@ export default function BidAction() {
         onError: (e: any) => {
           setGlobalMsg({
             type: "error",
-            message: e.message || "Bid failed",
+            message: covertErrorMsg(e, "Bid failed"),
           });
         },
       },

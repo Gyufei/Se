@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { erc20Abi, isAddress } from "viem";
-import { readContract } from "@wagmi/core";
 import {
   useAccount,
-  useConfig,
+  useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -14,25 +13,11 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
   const { chainConfig } = useChainConfig();
 
   const allowAmount: number = 0;
-  const config = useConfig();
   const spender = chainConfig.contracts.TesseraRouter;
 
   const { address: walletAccount } = useAccount();
 
-  const [allowance, setAllowance] = useState<number | null>(null);
-  const [isAllowanceLoading, setIsAllowanceLoading] = useState(false);
-
-  const mutation = useWriteContract();
-  const confirmMutation = useWaitForTransactionReceipt({
-    hash: mutation.data,
-    query: {
-      enabled: !!mutation.data,
-    },
-  });
-  const isApproving =
-    mutation.isPending || (mutation.isSuccess && confirmMutation.isPending);
-
-  const shouldWithApprove = useMemo(() => {
+  const isCanApprove = useMemo(() => {
     if (!tokenAddr || !isAddress(tokenAddr)) return false;
 
     if (tokenSymbol === "ETH") return false;
@@ -42,49 +27,53 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
     return true;
   }, [walletAccount, spender, tokenAddr, tokenSymbol]);
 
-  const readAllowance = useCallback(async () => {
-    if (!shouldWithApprove) return;
+  const mutation = useWriteContract();
+  const confirmMutation = useWaitForTransactionReceipt({
+    hash: mutation.data,
+    query: {
+      enabled: !!mutation.data,
+    },
+  });
+  const allowanceMutation = useReadContract({
+    abi: erc20Abi,
+    address: tokenAddr as any,
+    functionName: "allowance",
+    args: [walletAccount!, spender as any],
+    query: {
+      enabled: isCanApprove,
+    },
+  });
 
-    setIsAllowanceLoading(true);
+  const isApproving =
+    mutation.isPending ||
+    (mutation.isSuccess && confirmMutation.isPending) ||
+    (confirmMutation.isSuccess &&
+      (allowanceMutation.isPending || allowanceMutation.isRefetching));
 
-    try {
-      const res = await readContract(config, {
-        abi: erc20Abi,
-        address: tokenAddr as any,
-        functionName: "allowance",
-        args: [walletAccount!, spender as any],
-      });
-
-      setAllowance(Number(res) / 10 ** 18);
-    } catch (e) {
-      console.error("readAllowance error: =>", e);
-    } finally {
-      setIsAllowanceLoading(false);
-    }
-  }, [shouldWithApprove, walletAccount, config, spender, tokenAddr]);
-
-  useEffect(() => {
-    readAllowance();
-  }, [readAllowance]);
+  const allowance = allowanceMutation.data;
+  const isAllowanceLoading = allowanceMutation.isLoading;
 
   useEffect(() => {
     if (confirmMutation.isSuccess) {
-      readAllowance();
+      allowanceMutation?.refetch();
     }
-  }, [confirmMutation.isSuccess, readAllowance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmMutation.isSuccess]);
 
   const isShouldApprove = useMemo(() => {
-    if (!shouldWithApprove) return false;
-    if (allowance == null || isAllowanceLoading) return false;
+    console.log(`isCanApprove: ${isCanApprove} allowance: ${allowance}`);
+    if (!isCanApprove) return false;
 
-    if (allowance === 0) return true;
-    if (allowance < allowAmount) return true;
+    if (isAllowanceLoading) return false;
+    if (allowance == null || isAllowanceLoading) return false;
+    if (Number(allowance) === 0) return true;
+    if (Number(allowance) < allowAmount) return true;
 
     return false;
-  }, [allowance, allowAmount, shouldWithApprove, isAllowanceLoading]);
+  }, [allowance, allowAmount, isCanApprove, isAllowanceLoading]);
 
   const approveBtnText = useMemo(() => {
-    if (!shouldWithApprove) return "";
+    if (!isCanApprove) return "";
 
     if (isApproving) {
       return `Approving ${tokenSymbol}...`;
@@ -95,11 +84,11 @@ export function useApprove(tokenAddr: string | undefined, tokenSymbol: string) {
     }
 
     return "";
-  }, [shouldWithApprove, isShouldApprove, tokenSymbol, isApproving]);
+  }, [isCanApprove, isShouldApprove, tokenSymbol, isApproving]);
 
   async function approveAction() {
     try {
-      if (!shouldWithApprove) return () => {};
+      if (!isCanApprove) return () => {};
 
       const isUSDT = tokenSymbol === "USDT";
       const amountMax =

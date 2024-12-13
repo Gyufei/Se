@@ -41,12 +41,11 @@ export function useGasCalc() {
         gas?: bigint;
         maxPriorityFeePerGas?: bigint;
       } = {
-        maxFeePerGas: BigInt(round(gasPrice)),
-        gas: BigInt(round(gasLimit)),
-        maxPriorityFeePerGas: BigInt(round(maxPriorityFeePerGas)),
+        maxFeePerGas: BigInt(round(Number(gasPrice))),
+        gas: BigInt(round(Number(gasLimit))),
+        maxPriorityFeePerGas: BigInt(round(Number(maxPriorityFeePerGas))),
       };
 
-      console.log(gasParams);
       return gasParams;
     } catch (e) {
       console.error("calc gas error: =>", e);

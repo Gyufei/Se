@@ -14,6 +14,7 @@ import { useMyNFTCollectionsPageContext } from "../../page-context";
 import { useRaePrice } from "@/lib/api/use-rae-price";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useApproveNft } from "@/lib/web3/use-approve-nft";
+import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function CreateBidding() {
   const queryClient = useQueryClient();
@@ -99,7 +100,7 @@ export default function CreateBidding() {
         onError: (e: any) => {
           setGlobalMsg({
             type: "error",
-            message: e.message || "Vault failed",
+            message: covertErrorMsg(e, "Vault failed"),
           });
         },
       },

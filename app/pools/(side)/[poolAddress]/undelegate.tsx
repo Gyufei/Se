@@ -10,6 +10,7 @@ import { RAE } from "@/lib/const/rae";
 import { useSetAtom } from "jotai";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import ErrorMessage from "@/app/_common/error-message";
+import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function Undelegate({
   poolId,
@@ -75,7 +76,7 @@ export default function Undelegate({
         onError: (e: any) => {
           setGlobalMsg({
             type: "error",
-            message: e.message || "Undelegate failed",
+            message: covertErrorMsg(e, "Undelegate failed"),
           });
         },
       },

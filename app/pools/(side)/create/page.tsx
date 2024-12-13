@@ -9,6 +9,7 @@ import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { escapeHtml } from "@/lib/utils/url";
 import ErrorMessage from "@/app/_common/error-message";
+import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function Page() {
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
@@ -86,13 +87,13 @@ export default function Page() {
           queryClient.invalidateQueries({ queryKey: ["pools"] });
           setGlobalMsg({
             type: "success",
-            message: "Swap successfully",
+            message: "Create pool successfully",
           });
         },
         onError: (e: any) => {
           setGlobalMsg({
             type: "error",
-            message: e.message || "Create pool failed",
+            message: covertErrorMsg(e, "Create pool failed"),
           });
         },
       },

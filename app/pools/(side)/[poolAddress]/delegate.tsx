@@ -13,6 +13,7 @@ import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import ErrorMessage from "@/app/_common/error-message";
+import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function Delegate({
   poolId,
@@ -86,7 +87,7 @@ export default function Delegate({
         onError: (e: any) => {
           setGlobalMsg({
             type: "error",
-            message: e.message || "Delegate failed",
+            message: covertErrorMsg(e, "Delegate failed"),
           });
         },
       },

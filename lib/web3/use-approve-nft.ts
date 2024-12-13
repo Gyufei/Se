@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { erc721Abi, isAddress } from "viem";
-import { readContract } from "@wagmi/core";
 import {
   useAccount,
-  useConfig,
+  useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { useChainConfig } from "./use-chain-config";
-import { checkIsSameAddress } from "../utils/web3";
 
 export function useApproveNft(
   nftAddr: string | undefined,
@@ -16,13 +14,16 @@ export function useApproveNft(
   nftName: string | undefined,
 ) {
   const { chainConfig } = useChainConfig();
-  const config = useConfig();
   const spender = chainConfig.contracts.TesseraRouter;
 
   const { address: walletAccount } = useAccount();
 
-  const [isApproved, setIsApproved] = useState<boolean>(false);
-  const [isApprovedLoading, setIsApprovedLoading] = useState(false);
+  const isCanApprove = useMemo(() => {
+    if (!nftAddr || !isAddress(nftAddr) || !nftId) return false;
+    if (!walletAccount || !spender) return false;
+
+    return true;
+  }, [walletAccount, spender, nftAddr, nftId]);
 
   const mutation = useWriteContract();
   const confirmMutation = useWaitForTransactionReceipt({
@@ -31,57 +32,41 @@ export function useApproveNft(
       enabled: !!mutation.data,
     },
   });
+  const allowanceMutation = useReadContract({
+    abi: erc721Abi,
+    address: nftAddr as any,
+    functionName: "allowance" as any,
+    args: [walletAccount!, spender as any],
+    query: {
+      enabled: isCanApprove,
+    },
+  });
+  const isApproved = !!allowanceMutation.data;
+  const isApprovedLoading = allowanceMutation.isLoading;
+
   const isApproving =
-    mutation.isPending || (mutation.isSuccess && confirmMutation.isPending);
-
-  const shouldWithApprove = useMemo(() => {
-    if (!nftAddr || !isAddress(nftAddr) || !nftId) return false;
-    if (!walletAccount || !spender) return false;
-
-    return true;
-  }, [walletAccount, spender, nftAddr, nftId]);
-
-  const readAllowance = useCallback(async () => {
-    if (!shouldWithApprove) return;
-
-    setIsApprovedLoading(true);
-
-    try {
-      const res = await readContract(config, {
-        abi: erc721Abi,
-        address: nftAddr as any,
-        functionName: "getApproved",
-        args: [BigInt(nftId!)],
-      });
-
-      setIsApproved(checkIsSameAddress(res, spender));
-    } catch (e) {
-      console.error("readAllowance error: =>", e);
-    } finally {
-      setIsApprovedLoading(false);
-    }
-  }, [shouldWithApprove, config, nftAddr, nftId, spender]);
-
-  useEffect(() => {
-    readAllowance();
-  }, [readAllowance]);
+    mutation.isPending ||
+    (mutation.isSuccess && confirmMutation.isPending) ||
+    (confirmMutation.isSuccess &&
+      (allowanceMutation.isPending || allowanceMutation.isRefetching));
 
   useEffect(() => {
     if (confirmMutation.isSuccess) {
-      readAllowance();
+      allowanceMutation?.refetch();
     }
-  }, [confirmMutation.isSuccess, readAllowance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmMutation.isSuccess]);
 
   const isShouldApprove = useMemo(() => {
-    if (!shouldWithApprove) return false;
+    if (!isCanApprove) return false;
     if (isApproved || isApprovedLoading) return false;
-
     if (!isApproved) return true;
+
     return false;
-  }, [isApproved, shouldWithApprove, isApprovedLoading]);
+  }, [isApproved, isCanApprove, isApprovedLoading]);
 
   const approveBtnText = useMemo(() => {
-    if (!shouldWithApprove) return "";
+    if (!isCanApprove) return "";
 
     if (isApproving) {
       return `Approving ${nftName}...`;
@@ -92,11 +77,11 @@ export function useApproveNft(
     }
 
     return "";
-  }, [shouldWithApprove, isShouldApprove, nftName, isApproving]);
+  }, [isCanApprove, isShouldApprove, nftName, isApproving]);
 
   async function approveAction() {
     try {
-      if (!shouldWithApprove) return () => {};
+      if (!isCanApprove) return () => {};
 
       const callParams = {
         abi: erc721Abi,

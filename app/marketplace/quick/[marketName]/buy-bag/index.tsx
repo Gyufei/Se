@@ -17,6 +17,7 @@ import { useRaePrice } from "@/lib/api/use-rae-price";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMarketActivity } from "@/lib/api/use-market-activity";
 import { useQuickPageContext } from "../page-context";
+import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function BuyBag() {
   const queryClient = useQueryClient();
@@ -94,7 +95,7 @@ export default function BuyBag() {
         onError: (e: any) => {
           setMsg({
             type: "error",
-            msg: e.message || "Buy failed",
+            msg: covertErrorMsg(e, "Buy failed"),
           });
         },
       },

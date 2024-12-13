@@ -50,8 +50,6 @@ export default function ItemsContent() {
     return sortArr;
   }, [marketNfts, sortName, sortDirection, searchText, filterTypes]);
 
-  console.log(displayNfts);
-
   return (
     <>
       <div className="flex justify-between mt-10">

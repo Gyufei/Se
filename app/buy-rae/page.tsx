@@ -28,6 +28,7 @@ import SwapPriceDisplay from "./swap-price-display";
 import ToOtherAddr from "./to-other-addr";
 import TokenSelect from "./token-select";
 import { checkIsSameAddress } from "@/lib/utils/web3";
+import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function Page() {
   const { address: myAddress } = useAccount();
@@ -232,7 +233,7 @@ export default function Page() {
         onError: (e: any) => {
           setGlobalMsg({
             type: "error",
-            message: e.message || "Swap failed",
+            message: covertErrorMsg(e, "Swap failed"),
           });
         },
       },

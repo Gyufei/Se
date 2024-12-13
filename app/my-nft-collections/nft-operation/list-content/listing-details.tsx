@@ -15,6 +15,7 @@ import { useMyNFTCollectionsPageContext } from "../../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRaePrice } from "@/lib/api/use-rae-price";
 import { useApproveNft } from "@/lib/web3/use-approve-nft";
+import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function ListingDetail() {
   const queryClient = useQueryClient();
@@ -90,7 +91,7 @@ export default function ListingDetail() {
         onError: (e: any) => {
           setGlobalMsg({
             type: "error",
-            message: e.message || "List failed",
+            message: covertErrorMsg(e, "List failed"),
           });
         },
       },
