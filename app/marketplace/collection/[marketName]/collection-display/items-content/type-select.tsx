@@ -8,6 +8,7 @@ import {
 import { cn } from "@/lib/utils/common";
 import { INFT } from "@/lib/api/use-market-nfts";
 import { removeQueryParams } from "@/lib/utils/url";
+import { compact } from "lodash";
 
 export interface IFilterOption {
   label: string;
@@ -93,6 +94,7 @@ export default function FilterTypeSelect({
 
   function changeCurrentSearchParams(key: string, value: string) {
     const searchParams = new URLSearchParams(window.location.search);
+
     if (value) {
       searchParams.set(key, value);
     } else {
@@ -112,8 +114,10 @@ export default function FilterTypeSelect({
     if (!typeLabel) return;
 
     const types = typeLabel?.split(",");
-    const fValue = (types || [])?.map(
-      (type) => filterOptions.find((option) => option.label === type)?.value,
+    const fValue = compact(
+      (types || [])?.map(
+        (type) => filterOptions.find((option) => option.label === type)?.value,
+      ),
     );
 
     if (fValue.length) {

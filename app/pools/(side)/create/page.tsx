@@ -23,9 +23,14 @@ export default function Page() {
   const [bonusError, setBonusError] = useState("");
 
   function handlePoolNameInput(v: string) {
-    const vEscaped = escapeHtml(v);
-    setPoolName(vEscaped);
-    checkPoolName(vEscaped);
+    const namePattern = /^[A-Za-z\-']+( [A-Za-z\-']+)*/;
+
+    if (!v || namePattern.test(v)) {
+      const vEscaped = escapeHtml(v);
+
+      setPoolName(vEscaped);
+      checkPoolName(vEscaped);
+    }
   }
 
   function handleBonusInput(v: string) {
@@ -44,8 +49,8 @@ export default function Page() {
       return false;
     }
 
-    if (pValue.length > 20) {
-      setPoolError("Name must be less than 20 characters");
+    if (pValue.length > 30) {
+      setPoolError("Name must be less than 30 characters");
       return false;
     }
 
@@ -87,7 +92,7 @@ export default function Page() {
           queryClient.invalidateQueries({ queryKey: ["pools"] });
           setGlobalMsg({
             type: "success",
-            message: "Create pool successfully",
+            message: "Pool created successfully",
           });
         },
         onError: (e: any) => {
@@ -129,8 +134,10 @@ export default function Page() {
           onChange={(e) => handlePoolNameInput(e.target.value)}
           className="w-full h-12 text-base leading-5 bg-[#1D0E27] rounded-md px-4 py-3"
           placeholder="Name"
+          maxLength={30}
+          minLength={3}
         />
-        <ErrorMessage error={poolError} />
+        <ErrorMessage className="ml-0" error={poolError} />
         <div className="mt-[23px] mb-[15px] text-white opacity-60 text-base font-medium">
           Creator Bonus
         </div>

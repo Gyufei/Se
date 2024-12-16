@@ -21,7 +21,6 @@ export interface IPoolBase {
 export async function fetchPools() {
   const result = await apiFetcher(WithApiHost(ApiPaths.pools));
   return result as Array<IPoolBase>;
-  // return result as IPoolBase[];
 }
 
 export function usePools() {

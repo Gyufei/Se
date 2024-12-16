@@ -18,6 +18,7 @@ import { useLuckyNFTPageContext } from "../../page-context";
 import { useCheckIsPoolCreator } from "@/lib/api/use-pools";
 import { checkIsSameAddress } from "@/lib/utils/web3";
 import { covertErrorMsg } from "@/lib/utils/error";
+import ErrorMessage from "@/app/_common/error-message";
 
 export default function BidAction() {
   const queryClient = useQueryClient();
@@ -46,10 +47,12 @@ export default function BidAction() {
   const { writeContract, isPending: isBidding } = useBidAuction();
 
   const [bidAmount, setBidAmount] = useState("");
-  const [selectedAddr, setSelectedAddr] = useState<string | null>(null);
-  const [selectedAddrType, setSelectedAddrType] = useState<
-    "pool" | "wallet" | null
-  >(null);
+  const [bidAmountError, setBidAmountError] = useState("");
+  const [bidAddr, setBidAddr] = useState<string | null>(null);
+  const [bidAddrType, setBidAddrType] = useState<"pool" | "wallet" | null>(
+    null,
+  );
+  const [bidAddrError, setBidAddrError] = useState("");
 
   const addrOptions = useMemo(() => {
     if (!canBidAsPool) return [];
@@ -70,26 +73,26 @@ export default function BidAction() {
   const bidder = useMemo(() => {
     if (!canBidAsPool) return address;
 
-    return selectedAddr;
-  }, [canBidAsPool, selectedAddr, address]);
+    return bidAddr;
+  }, [canBidAsPool, bidAddr, address]);
 
   const isPoolAddr = useMemo(() => {
     if (!canBidAsPool) return false;
 
-    return selectedAddrType === "pool";
-  }, [canBidAsPool, selectedAddrType]);
+    return bidAddrType === "pool";
+  }, [canBidAsPool, bidAddrType]);
 
   const selectedAddrBalance = useMemo(() => {
-    if (!isPoolAddr || !selectedAddr) {
+    if (!isPoolAddr || !bidAddr) {
       return raeDisplay;
     }
 
     const poolInfo = asPoolCreator.pools.find((pool) =>
-      checkIsSameAddress(pool.address, selectedAddr),
+      checkIsSameAddress(pool.address, bidAddr),
     );
 
     return subtract(poolInfo?.total_staked, poolInfo?.used_staked);
-  }, [isPoolAddr, selectedAddr, raeDisplay, asPoolCreator]);
+  }, [isPoolAddr, bidAddr, raeDisplay, asPoolCreator]);
 
   const btnProps = useMemo(() => {
     if (isMarketAndNftPending || isAuctionPending || isRaePending) {
@@ -106,27 +109,6 @@ export default function BidAction() {
       };
     }
 
-    if (Number(bidAmount) === 0) {
-      return {
-        text: "Enter an amount",
-        disabled: true,
-      };
-    }
-
-    if (!bidder) {
-      return {
-        text: "Select a address",
-        disabled: true,
-      };
-    }
-
-    if (Number(selectedAddrBalance) < Number(bidAmount)) {
-      return {
-        text: "Insufficient balance",
-        disabled: true,
-      };
-    }
-
     if (isBidding) {
       return {
         text: "Bidding...",
@@ -137,7 +119,7 @@ export default function BidAction() {
     if (canBidAsPool) {
       return {
         text: "Bid as",
-        disabled: !selectedAddr,
+        disabled: false,
       };
     }
 
@@ -151,14 +133,45 @@ export default function BidAction() {
     isShouldApprove,
     isApproving,
     approveBtnText,
-    bidAmount,
-    selectedAddrBalance,
     isBidding,
-    bidder,
     isRaePending,
-    selectedAddr,
     canBidAsPool,
   ]);
+
+  function checkBidAmount(bidValue: string) {
+    if (Number(bidValue) === 0) {
+      setBidAmountError("Enter an amount");
+      return false;
+    }
+
+    if (Number(bidValue) > Number(auctionInfo?.bidding_cap)) {
+      setBidAmountError("Bid amount exceeds the bidding cap");
+      return false;
+    }
+
+    if (Number(selectedAddrBalance) < Number(bidValue)) {
+      setBidAmountError("Insufficient balance");
+      return false;
+    }
+
+    setBidAmountError("");
+    return true;
+  }
+
+  function checkBidAddr(addr: string | null) {
+    if (!addr) {
+      setBidAddrError("Select a address");
+      return false;
+    }
+
+    if (checkIsSameAddress(addr, auctionInfo?.seller)) {
+      setBidAddrError("Auction seller cannot bid");
+      return false;
+    }
+
+    setBidAddrError("");
+    return true;
+  }
 
   function handleBid() {
     if (isShouldApprove) {
@@ -166,7 +179,15 @@ export default function BidAction() {
       return;
     }
 
-    if (checkIsSameAddress(selectedAddr || address, auctionInfo?.seller)) {
+    if (!checkBidAmount(bidAmount)) {
+      return;
+    }
+
+    if (!checkBidAddr(bidAddr)) {
+      return;
+    }
+
+    if (checkIsSameAddress(bidAddr || address, auctionInfo?.seller)) {
       setGlobalMsg({
         type: "error",
         message: "Auction seller cannot bid",
@@ -201,12 +222,30 @@ export default function BidAction() {
     );
   }
 
-  const handleInput = (value: string) => {
+  function handleInput(value: string) {
     setBidAmount(value);
-  };
+    checkBidAmount(value);
+  }
+
+  function handleSelectBidAddr(addr: string | null) {
+    setBidAddr(addr);
+    checkBidAmount(bidAmount);
+    checkBidAddr(addr);
+  }
 
   function handleBuyMax() {
-    setBidAmount(raeDisplay);
+    if (Number(raeDisplay) === 0) {
+      setBidAmount("0");
+      return;
+    }
+
+    const leftBid = subtract(auctionInfo?.bidding_cap, auctionInfo?.total_bids);
+    if (Number(selectedAddrBalance) > Number(leftBid)) {
+      setBidAmount(leftBid);
+      return;
+    }
+
+    setBidAmount(selectedAddrBalance);
   }
 
   return (
@@ -227,7 +266,7 @@ export default function BidAction() {
         </span>
       </div>
 
-      <div className="flex justify-between items-center mt-5">
+      <div className="flex justify-between items-center mt-5 relative">
         <AmountInput amount={bidAmount} setAmount={handleInput} />
 
         <div className="flex items-center">
@@ -239,9 +278,13 @@ export default function BidAction() {
           </div>
           <RaeToken />
         </div>
+        <ErrorMessage
+          className="absolute -bottom-[20px]"
+          error={bidAmountError}
+        />
       </div>
 
-      <div className="flex items-center justify-between mt-5 space-x-5">
+      <div className="flex items-center justify-between mt-5 space-x-5 relative">
         <ShouldConnectBtn
           disabled={btnProps.disabled}
           className="w-full"
@@ -250,13 +293,19 @@ export default function BidAction() {
           {btnProps.text}
         </ShouldConnectBtn>
         {canBidAsPool && (
-          <SelectAddrPop
-            addrs={addrOptions}
-            selectedAddr={selectedAddr}
-            setSelectedAddr={setSelectedAddr}
-            selectedType={selectedAddrType}
-            setSelectedType={setSelectedAddrType}
-          />
+          <>
+            <SelectAddrPop
+              addrs={addrOptions}
+              selectedAddr={bidAddr}
+              setSelectedAddr={handleSelectBidAddr}
+              selectedType={bidAddrType}
+              setSelectedType={setBidAddrType}
+            />
+            <ErrorMessage
+              className="absolute -top-[30px] right-[68px]"
+              error={bidAddrError}
+            />
+          </>
         )}
       </div>
     </div>

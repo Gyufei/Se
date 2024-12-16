@@ -195,7 +195,7 @@ export default function ListingDetail() {
           <RaeToken />
         </div>
         <ErrorMessage
-          className="absolute bottom-[15px] ml-0"
+          className="absolute bottom-[15px]"
           error={sellPriceError}
         />
       </div>

@@ -1,9 +1,9 @@
-import { IMarket, useMarketByName } from "@/lib/api/use-markets";
-import { INFT, useMarketNfts } from "@/lib/api/use-market-nfts";
+import { IMarket } from "@/lib/api/use-markets";
+import { INFT } from "@/lib/api/use-market-nfts";
 import { createContext, useContext } from "react";
-import { useMarketActivity } from "@/lib/api/use-market-activity";
-import { useAuction } from "@/lib/api/use-auction";
 import { IAuction } from "@/lib/api/use-auction";
+import { useNftAuction } from "@/lib/api/use-nft-auction";
+import { useCollectionPageContext } from "../../page-context";
 
 const LuckyNFTPageContext = createContext<
   | {
@@ -13,7 +13,6 @@ const LuckyNFTPageContext = createContext<
       nftInfo: INFT | undefined;
       isMarketAndNftPending: boolean;
 
-      auctionId: string | undefined;
       auctionInfo: IAuction | undefined;
       isAuctionPending: boolean;
     }
@@ -22,44 +21,33 @@ const LuckyNFTPageContext = createContext<
 
 export function LuckyNFTPageProvider({
   marketName,
-  nftId,
+  vaultNftId,
   children,
 }: {
   marketName: string;
-  nftId: string;
+  vaultNftId: string;
   children: React.ReactNode;
 }) {
-  const { data: marketInfo, isPending: isMarketPending } =
-    useMarketByName(marketName);
+  const { marketInfo, marketNfts, isMarketPending, isNftsPending } =
+    useCollectionPageContext();
 
-  const { data: marketNfts, isPending: isNftsPending } =
-    useMarketNfts(marketName);
-
-  const nftInfo = (marketNfts || []).find((n) => n.token_id === nftId);
+  const nftInfo = (marketNfts || []).find((n) => n.token_id === vaultNftId);
 
   const isMarketAndNftPending = isMarketPending || isNftsPending;
 
-  const { data: activities } = useMarketActivity(marketName, nftId);
-
-  const auctionId = activities?.[0]?.auction_id;
-
-  const { data: auctionInfo, isPending: isAucPending } = useAuction(
-    marketName,
-    auctionId,
-  );
+  const { data: auctionInfo, isPending: isAucPending } = useNftAuction(nftInfo);
 
   const isAuctionPending =
     isMarketAndNftPending ||
     nftInfo?.status !== "VAULTED" ||
-    !auctionId ||
+    !auctionInfo ||
     isAucPending;
 
   return (
-    <LuckyNFTPageContext.Provider
+    <LuckyNFTPageContext
       value={{
         marketName,
-        nftId,
-        auctionId,
+        nftId: vaultNftId,
         marketInfo,
         nftInfo,
         auctionInfo,
@@ -68,7 +56,7 @@ export function LuckyNFTPageProvider({
       }}
     >
       {children}
-    </LuckyNFTPageContext.Provider>
+    </LuckyNFTPageContext>
   );
 }
 

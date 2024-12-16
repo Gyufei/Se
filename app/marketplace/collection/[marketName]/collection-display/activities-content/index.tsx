@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
 
@@ -9,6 +8,7 @@ import { IActivity, useMarketActivity } from "@/lib/api/use-market-activity";
 import { useCollectionPageContext } from "../../page-context";
 import { capitalize, range } from "lodash";
 import { Skeleton } from "@/components/ui/skeleton";
+import NftFallbackImage  from "@/app/_common/nft-fallback-image";
 
 export default function ActivitiesContent() {
   const { marketInfo } = useCollectionPageContext();
@@ -39,16 +39,18 @@ export default function ActivitiesContent() {
         </div>
         <div className="w-[130px]"></div>
       </div>
-      {isActivitiesPending
-        ? range(3).map((i) => (
-            <Skeleton className="w-full h-16 mb-[15px]" key={i} />
-          ))
-        : displayActivities.map((activity, index) => (
-            <ActivityItem
-              key={activity.token_id + activity.event + index}
-              activity={activity}
-            />
-          ))}
+      <div className="min-h-[270px] max-h-[600px] overflow-y-auto no-scroll-bar overflow-x-hidden">
+        {isActivitiesPending
+          ? range(3).map((i) => (
+              <Skeleton className="w-full h-16 mb-[15px]" key={i} />
+            ))
+          : displayActivities.map((activity, index) => (
+              <ActivityItem
+                key={activity.token_id + activity.event + index}
+                activity={activity}
+              />
+            ))}
+      </div>
     </>
   );
 }
@@ -69,7 +71,7 @@ function ActivityItem({ activity }: { activity: IActivity }) {
           </>
         ) : (
           <>
-            <Image
+            <NftFallbackImage
               src={nft.token_uri}
               alt=""
               width={30}

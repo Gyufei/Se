@@ -236,7 +236,7 @@ export default function CreateBidding() {
             </div>
             <ErrorMessage
               error={durationError}
-              className="absolute -bottom-[22px] !ml-0"
+              className="absolute -bottom-[22px]"
             />
           </div>
 

@@ -1,10 +1,8 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useMemo } from "react";
 import { cn } from "@/lib/utils/common";
 
-const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
-
 function escapeRegExp(string: string): string {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 interface InputProps
@@ -13,13 +11,26 @@ interface InputProps
   onUserInput: (input: string) => void;
   error?: boolean;
   prependSymbol?: string;
+  decimal?: number;
 }
 
 const NumericalInput = forwardRef<HTMLInputElement, InputProps>(
   (
-    { value, onUserInput, placeholder, prependSymbol, ...rest }: InputProps,
+    {
+      value,
+      onUserInput,
+      decimal = 18,
+      placeholder,
+      prependSymbol,
+      ...rest
+    }: InputProps,
     ref,
   ) => {
+    const inputRegex = useMemo(
+      () => RegExp(`^\\d*(?:\\\\[.])?\\d{0,${decimal}}$`),
+      [decimal],
+    );
+
     const enforcer = (nextUserInput: string) => {
       if (
         nextUserInput === "" ||
@@ -79,4 +90,3 @@ NumericalInput.displayName = "NumericalInput";
 
 const MemoizedInput = React.memo(NumericalInput);
 export { MemoizedInput as NumericalInput };
-// const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group

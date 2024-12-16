@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { useState } from "react";
 import { INFT } from "@/lib/api/use-market-nfts";
 import { formatNumberWithUnit } from "@/lib/utils/number";
 import { useRaePrice } from "@/lib/api/use-rae-price";
 import { multiply } from "safebase";
 import { Skeleton } from "@/components/ui/skeleton";
+import NftFallbackImage  from "@/app/_common/nft-fallback-image";
 
 export default function BagItem({
   nft,
@@ -25,7 +25,12 @@ export default function BagItem({
       className="flex justify-between items-center p-3 hover:bg-[rgba(153,161,189,0.08)] rounded-xl transition-all duration-300 ease-in-out"
     >
       <div className="flex items-center">
-        <Image src={nft.token_uri} width={56} height={56} alt="nft" />
+        <NftFallbackImage
+          src={nft.token_uri}
+          width={56}
+          height={56}
+          alt="nft"
+        />
         <div className="ml-[15px]">
           <span className="text-white text-base font-medium">
             {nft.market_name} #{nft.token_id}

@@ -160,7 +160,7 @@ export const Pagination = ({ ...paginationProps }: IPaginationProps) => {
   const pagination = usePagination(paginationProps);
 
   return (
-    <PaginationContext.Provider value={pagination}>
+    <PaginationContext value={pagination}>
       <div
         className={cn(
           "mx-auto mt-4 flex items-center justify-center",
@@ -169,7 +169,7 @@ export const Pagination = ({ ...paginationProps }: IPaginationProps) => {
       >
         {paginationProps.children}
       </div>
-    </PaginationContext.Provider>
+    </PaginationContext>
   );
 };
 

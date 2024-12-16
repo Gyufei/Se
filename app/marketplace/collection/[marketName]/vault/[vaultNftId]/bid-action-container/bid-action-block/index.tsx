@@ -26,7 +26,7 @@ export default function BidActionBlock() {
 function Finished() {
   return (
     <div className="pt-6 pb-5 px-5 flex items-center justify-center">
-      <span className="text-white text-2xl font-medium">Auction Finished</span>
+      <span className="text-white text-2xl font-medium">Auction Aborted</span>
     </div>
   );
 }

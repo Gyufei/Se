@@ -127,7 +127,9 @@ function ViewVaultBtn({ nft }: { nft: INFT }) {
   const router = useRouter();
 
   function handleViewVault() {
-    router.push(`/marketplace/lucky/${nft.market_name}/${nft.token_id}`);
+    router.push(
+      `/marketplace/collection/${nft.market_name}/vault/${nft.token_id}`,
+    );
   }
 
   return (

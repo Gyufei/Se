@@ -1,19 +1,19 @@
 import { cn } from "@/lib/utils/common";
 import { formatNumber, formatPercent } from "@/lib/utils/number";
-import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
 import { truncateAddr } from "@/lib/utils/web3";
-import { formatDistanceToNowStrict } from "date-fns";
 import { capitalize, range } from "lodash";
 import { useMemo } from "react";
 import { IPoolStatus, usePools } from "@/lib/api/use-pools";
 import { Skeleton } from "@/components/ui/skeleton";
 import { divide } from "safebase";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Empty from "../_common/empty";
 import { AddressImg } from "../_common/address-img";
 import { escapeHtml } from "@/lib/utils/url";
+import { DurationDisplay } from "../_common/duration-display";
 
 export default function PoolTable({ status }: { status: IPoolStatus }) {
+  const params = useParams();
   const { data: pools, isPending: isPoolPending } = usePools();
   const router = useRouter();
 
@@ -22,6 +22,8 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
 
     return pools?.filter((pool) => pool.status === status);
   }, [status, pools]);
+
+  const selectedPool = params.poolAddress;
 
   function handlePoolClick(poolAddress: string) {
     router.push(`/pools/${poolAddress}`);
@@ -45,7 +47,10 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
       ) : showList.length ? (
         showList.map((pool, i) => (
           <div
-            className="h-20 bg-[#281A31] p-5 flex items-center mb-[15px]"
+            className={cn(
+              "h-20 bg-[#281A31] p-5 flex items-center mb-[15px]",
+              selectedPool === pool.address && "border border-green",
+            )}
             key={i}
           >
             <div className="w-[190px] flex items-center gap-x-[15px] text-sma font-medium text-white">
@@ -81,9 +86,7 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
             </div>
             <div className="w-[110px]">{pool.delegator}</div>
             <div className="w-[65px] text-right">
-              {replaceTimeUnitToSingleChar(
-                formatDistanceToNowStrict(Number(pool.create_at) * 1000),
-              )}
+              <DurationDisplay time={Number(pool.create_at) * 1000} />
             </div>
             {status === "ACTIVE" && (
               <div

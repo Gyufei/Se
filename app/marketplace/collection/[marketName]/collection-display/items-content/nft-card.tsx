@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { capitalize } from "lodash";
 import { INFT } from "@/lib/api/use-market-nfts";
@@ -7,12 +6,20 @@ import { cn } from "@/lib/utils/common";
 import { useCartContext } from "../../cart-context";
 import { checkIsExist } from "../../cart-reducer";
 import { useNftStatus } from "@/lib/common/use-nft-status";
+import { useNftAuction } from "@/lib/api/use-nft-auction";
+import NftFallbackImage  from "@/app/_common/nft-fallback-image";
 
 export default function NFTCard({ nft }: { nft: INFT }) {
   const router = useRouter();
   const { isListed, isVault, isPerson, isCanBuy } = useNftStatus(nft);
 
   const [isHover, setIsHover] = useState(false);
+  const { data: auctionInfo } = useNftAuction(nft);
+
+  const nftPrice = useMemo(() => {
+    if (isVault) return auctionInfo?.bidding_cap;
+    return nft.price;
+  }, [auctionInfo, nft.price, isVault]);
 
   function handleHover(hover: boolean) {
     if (!isCanBuy && !isVault && !isPerson) return;
@@ -32,7 +39,7 @@ export default function NFTCard({ nft }: { nft: INFT }) {
         handleGoDetail(nft);
       }}
     >
-      <Image
+      <NftFallbackImage
         src={nft.token_uri}
         width={200}
         height={200}
@@ -45,7 +52,7 @@ export default function NFTCard({ nft }: { nft: INFT }) {
       {(isListed || isVault) && (
         <div
           className={cn(
-            "absolute top-1 right-1 h-5 flex px-2 items-center text-white text-xs",
+            "absolute top-[10px] right-[10px] h-5 flex px-2 items-center text-white text-xs",
             isListed && "bg-[#71458E]",
             isVault && "bg-[#DB734A]",
           )}
@@ -55,14 +62,19 @@ export default function NFTCard({ nft }: { nft: INFT }) {
       )}
       <div
         className={cn(
-          "h-[60px] pt-5 px-[15px] bg-[#1D0E27] pb-[15px] absolute w-full bottom-0 transition-all duration-500 ease-in-out",
-          isHover && "h-[100px]",
+          "h-[88px] pt-5 px-[15px] bg-[#1D0E27] pb-[15px] absolute w-full bottom-0 transition-all duration-500 ease-in-out",
+          isHover && "h-[130px]",
         )}
       >
         <div className="flex justify-between items-center">
-          <span>
-            {nft.name} #{nft.token_id}
-          </span>
+          <div className="flex flex-col text-white ">
+            <span className="text-sm">
+              {nft.name} #{nft.token_id}
+            </span>
+            <span className="text-base font-medium mt-[10px]">
+              {nftPrice} RAE
+            </span>
+          </div>
         </div>
         <>
           {isHover && (
@@ -121,7 +133,9 @@ function ViewVaultBtn({ nft }: { nft: INFT }) {
 
   function handleViewVault(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
-    router.push(`/marketplace/lucky/${nft.market_name}/${nft.token_id}`);
+    router.push(
+      `/marketplace/collection/${nft.market_name}/vault/${nft.token_id}`,
+    );
   }
 
   return (

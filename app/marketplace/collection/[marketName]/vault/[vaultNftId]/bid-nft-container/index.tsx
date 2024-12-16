@@ -1,8 +1,8 @@
-import Image from "next/image";
 import PathBreadcrumb from "@/app/_common/path-breadcrumb";
 import DetailTabs from "./detail-tabs";
 import { useLuckyNFTPageContext } from "../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
+import NftFallbackImage  from "@/app/_common/nft-fallback-image";
 
 export default function DetailContainer() {
   const { nftInfo, isMarketAndNftPending } = useLuckyNFTPageContext();
@@ -25,7 +25,7 @@ export default function DetailContainer() {
               isLoadings={[false, isMarketAndNftPending]}
             />
 
-            <Image
+            <NftFallbackImage
               className="mt-5"
               src={nftInfo.token_uri}
               width={580}

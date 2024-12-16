@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { Pagination } from "@/components/ui/pagination/pagination";
 import { NftOwnerType, useMyNFTCollectionsPageContext } from "../page-context";
@@ -8,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { removeQueryParams } from "@/lib/utils/url";
 import Empty from "@/app/_common/empty";
 import Link from "next/link";
+import NftFallbackImage  from "@/app/_common/nft-fallback-image";
 
 function getPagesNfts(nfts: INFT[]) {
   if (!nfts?.length) return [[]];
@@ -115,7 +115,7 @@ export default function NftList({ type }: { type: NftOwnerType }) {
                     className="border-2 border-transparent cursor-pointer hover:border-green data-[active=true]:border-green h-[200px] w-[200px]"
                     style={{ marginTop: idx > 2 ? "80px" : "0" }}
                   >
-                    <Image
+                    <NftFallbackImage
                       src={nft.token_uri}
                       width={200}
                       height={200}

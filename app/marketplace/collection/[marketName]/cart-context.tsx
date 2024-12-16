@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  Reducer,
-  useContext,
-  useEffect,
-  useReducer,
-} from "react";
+import React, { createContext, useContext, useEffect, useReducer } from "react";
 
 import { INFT } from "@/lib/api/use-market-nfts";
 import { CartAction, CartReducer, ICartState } from "./cart-reducer";
@@ -75,7 +69,7 @@ export const CartContextProvider = ({
     clearCart();
   }, [marketName]);
 
-  const [state, dispatch] = useReducer<Reducer<ICartState, any>>(
+  const [state, dispatch] = useReducer(
     CartReducer,
     cloneDeep(DefaultCartState),
   );
@@ -99,11 +93,7 @@ export const CartContextProvider = ({
     ...state,
   };
 
-  return (
-    <CartContext.Provider value={contextValues}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext value={contextValues as any}>{children}</CartContext>;
 };
 
 export function useCartContext() {

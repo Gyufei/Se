@@ -8,15 +8,15 @@ import { LuckyNFTPageProvider } from "./page-context";
 export default function Page({
   params,
 }: {
-  params: Promise<{ marketName: string; nftId: string }>;
+  params: Promise<{ marketName: string; vaultNftId: string }>;
 }) {
   const pageParams = use(params);
 
   const marketName = pageParams.marketName;
-  const nftId = pageParams.nftId;
+  const vaultNftId = pageParams.vaultNftId;
 
   return (
-    <LuckyNFTPageProvider marketName={marketName} nftId={nftId}>
+    <LuckyNFTPageProvider marketName={marketName} vaultNftId={vaultNftId}>
       <div className="flex min-w-[1440px] max-w-[1920px] mx-auto">
         <BidNftContainer />
         <BidActionContainer />

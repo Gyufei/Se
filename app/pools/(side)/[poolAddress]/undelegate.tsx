@@ -44,6 +44,11 @@ export default function Undelegate({
       return false;
     }
 
+    if (Number(vNum) <= 0) {
+      setNumError("Should be greater than 0");
+      return false;
+    }
+
     if (Number(vNum) > Number(poolRae.value)) {
       setNumError("Insufficient balance");
       return false;

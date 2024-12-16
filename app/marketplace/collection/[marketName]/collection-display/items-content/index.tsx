@@ -68,7 +68,7 @@ export default function ItemsContent() {
           <SearchInput value={searchText} onChange={setSearchText} />
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-5 mt-5">
+      <div className="grid grid-cols-4 gap-5 mt-5 min-h-[270px] max-h-[600px] overflow-y-auto no-scroll-bar overflow-x-hidden">
         {isNftsPending
           ? range(8).map((i) => (
               <Skeleton key={i} className="w-[200px] h-[260px]" />

@@ -109,7 +109,7 @@ export function MyNFTCollectionsPageContextProvider({
   }
 
   return (
-    <MyNFTCollectionsPageContext.Provider
+    <MyNFTCollectionsPageContext
       value={{
         selectedNftMarket,
         myNfts,
@@ -122,7 +122,7 @@ export function MyNFTCollectionsPageContextProvider({
       }}
     >
       {children}
-    </MyNFTCollectionsPageContext.Provider>
+    </MyNFTCollectionsPageContext>
   );
 }
 

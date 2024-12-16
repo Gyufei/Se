@@ -10,8 +10,6 @@ export default function ErrorMessage({
   if (!error) return null;
 
   return (
-    <div className={cn("text-red text-sm ml-4 mt-[10px]", className)}>
-      {error}
-    </div>
+    <div className={cn("text-red text-sm mt-[10px]", className)}>{error}</div>
   );
 }

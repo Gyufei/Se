@@ -50,6 +50,11 @@ export default function Delegate({
       return false;
     }
 
+    if (Number(vNum) <= 0) {
+      setNumError("Should be greater than 0");
+      return false;
+    }
+
     if (Number(vNum) > raeBalance.value) {
       setNumError("Insufficient balance");
       return false;
@@ -137,7 +142,7 @@ export default function Delegate({
         />
         <RaeToken />
       </div>
-      <ErrorMessage error={numError} />
+      <ErrorMessage className="ml-0" error={numError} />
 
       <ShouldConnectBtn
         disabled={btnProps.disabled}

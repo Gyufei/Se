@@ -1,5 +1,6 @@
 "use client";
 
+import NftFallbackImage  from "@/app/_common/nft-fallback-image";
 import { INFT } from "@/lib/api/use-market-nfts";
 import { MarketType } from "@/lib/api/use-markets";
 import Image from "next/image";
@@ -15,26 +16,23 @@ export default function AssetItem({
   const router = useRouter();
 
   const handleGo = () => {
-    if (marketType === "lucky") {
-      router.push(
-        `/marketplace/${marketType}/${nft.market_name}/${nft.token_id}`,
-      );
-    } else {
-      router.push(`/marketplace/${marketType}/${nft.market_name}`);
-    }
+    router.push(
+      `/marketplace/collection/${nft.market_name}?type=${marketType === "lucky" ? "Vaulted" : "Listed"}`,
+    );
   };
 
   return (
     <div
-      className="w-80 h-[172px] flex justify-start items-end overflow-hidden p-6"
+      className="w-80 h-[172px] flex justify-start items-end overflow-hidden p-6 relative"
       style={{
         backgroundColor:
           "linear-gradient(180deg, rgba(18, 2, 29, 0) 0%, #12021D 100%)",
-        backgroundImage: `url('/images/home-asset-cover.svg'), url('${nft.token_uri}')`,
+        backgroundImage: `url('/images/home-asset-cover.svg')`,
         backgroundPosition: "bottom",
         backgroundSize: "cover",
       }}
     >
+      <NftFallbackImage className="z-[-1]" src={nft.token_uri} fill alt="nft" />
       <div>
         <div className="text-2xl text-white font-semibold">
           {nft.market_name}

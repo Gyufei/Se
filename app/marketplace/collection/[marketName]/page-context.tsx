@@ -29,7 +29,7 @@ export function CollectionPageProvider({
     useMarketNfts(marketName);
 
   return (
-    <CollectionPageContext.Provider
+    <CollectionPageContext
       value={{
         marketName,
         marketInfo,
@@ -39,7 +39,7 @@ export function CollectionPageProvider({
       }}
     >
       {children}
-    </CollectionPageContext.Provider>
+    </CollectionPageContext>
   );
 }
 
