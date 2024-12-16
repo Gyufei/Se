@@ -6,12 +6,12 @@ import { truncateAddr } from "@/lib/utils/web3";
 import EventSelect, { IEventType } from "./event-select";
 import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
 import { IActivity, useMarketActivity } from "@/lib/api/use-market-activity";
-import { useQuickPageContext } from "../../page-context";
+import { useCollectionPageContext } from "../../page-context";
 import { capitalize, range } from "lodash";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ActivitiesContent() {
-  const { marketInfo } = useQuickPageContext();
+  const { marketInfo } = useCollectionPageContext();
 
   const { data: activities, isPending: isActivitiesPending } =
     useMarketActivity(marketInfo?.market_name);
@@ -54,7 +54,7 @@ export default function ActivitiesContent() {
 }
 
 function ActivityItem({ activity }: { activity: IActivity }) {
-  const { marketNfts, isNftsPending } = useQuickPageContext();
+  const { marketNfts, isNftsPending } = useCollectionPageContext();
 
   const nft = marketNfts?.find((nft) => nft.token_id === activity.token_id);
   const actTime = Number(activity?.update_at || 0) * 1000;

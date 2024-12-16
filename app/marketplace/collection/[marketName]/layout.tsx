@@ -1,6 +1,6 @@
 import { use } from "react";
 import { CartContextProvider } from "./cart-context";
-import { QuickPageProvider } from "./page-context";
+import { CollectionPageProvider } from "./page-context";
 
 export default function Layout({
   children,
@@ -13,10 +13,10 @@ export default function Layout({
   const marketName = pageParams.marketName;
 
   return (
-    <QuickPageProvider marketName={marketName}>
+    <CollectionPageProvider marketName={marketName}>
       <CartContextProvider marketName={marketName}>
         {children}
       </CartContextProvider>
-    </QuickPageProvider>
+    </CollectionPageProvider>
   );
 }

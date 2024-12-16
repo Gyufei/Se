@@ -3,7 +3,7 @@ import { INFT } from "@/lib/api/use-market-nfts";
 import { replaceTimeUnitToSingleChar } from "@/lib/utils/time";
 import { truncateAddr } from "@/lib/utils/web3";
 import { formatDistanceToNowStrict } from "date-fns";
-import { useQuickPageContext } from "../page-context";
+import { useCollectionPageContext } from "../page-context";
 import { useMarketActivity } from "@/lib/api/use-market-activity";
 import { Skeleton } from "@/components/ui/skeleton";
 import { capitalize, range } from "lodash";
@@ -11,7 +11,7 @@ import Empty from "@/app/_common/empty";
 import { useMemo } from "react";
 
 export default function ActivityPanel({ nft }: { nft: INFT | undefined }) {
-  const { marketName } = useQuickPageContext();
+  const { marketName } = useCollectionPageContext();
   const { data: activities, isPending: isActivitiesPending } =
     useMarketActivity(marketName, nft?.token_id);
 

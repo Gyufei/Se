@@ -3,13 +3,13 @@ import SortSelect, { ISortDirection, ISortType } from "./sort-select";
 import SearchInput from "./search-input";
 import { range, sortBy } from "lodash";
 import NFTCard from "./nft-card";
-import { useQuickPageContext } from "../../page-context";
+import { useCollectionPageContext } from "../../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import FilterTypeSelect from "./type-select";
 import { INFT } from "@/lib/api/use-market-nfts";
 
 export default function ItemsContent() {
-  const { marketNfts, isNftsPending } = useQuickPageContext();
+  const { marketNfts, isNftsPending } = useCollectionPageContext();
 
   const [sortName, setSortName] = useState<ISortType>("price");
   const [sortDirection, setSortDirection] = useState<ISortDirection>("asc");

@@ -39,14 +39,14 @@ export function useApproveNft(
   const allowanceMutation = useReadContract({
     abi: erc721Abi,
     address: nftAddr as any,
-    functionName: "allowance" as any,
-    args: [walletAccount!, spender as any],
+    functionName: "getApproved",
+    args: [BigInt(nftId!)],
     query: {
       enabled: isCanApprove,
     },
   });
 
-  const isApproved = !!allowanceMutation.data;
+  const isApproved = allowanceMutation.data === spender;
   const isApprovedLoading = allowanceMutation.isLoading;
 
   const isApproving =

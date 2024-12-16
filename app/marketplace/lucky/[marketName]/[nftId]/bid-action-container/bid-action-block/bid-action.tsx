@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import AmountInput from "./amount-input";
 import RaeToken from "@/app/_common/rae-token";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 import { useTokenBalance } from "@/lib/web3/helper/use-token-balance";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/lib/utils/number";
@@ -233,7 +233,7 @@ export default function BidAction() {
         <div className="flex items-center">
           <div
             onClick={handleBuyMax}
-            className="cursor-pointer text-white text-sm font-medium underline decoration-green underline-offset-4"
+            className="cursor-pointer text-white text-sm font-medium tessera-underline"
           >
             Buy max
           </div>

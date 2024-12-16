@@ -6,7 +6,7 @@ import { formatNumber, formatPercent } from "@/lib/utils/number";
 import { truncateAddr } from "@/lib/utils/web3";
 import { usePoolRae } from "@/lib/web3/use-pool-rae";
 import { add, divide, subtract } from "safebase";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 
 export default function PoolInfoCard({ poolAddress }: { poolAddress: string }) {
   const { data: pool, isPending: isPoolInfoPending } = usePoolInfo(poolAddress);

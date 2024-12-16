@@ -88,7 +88,7 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
             {status === "ACTIVE" && (
               <div
                 onClick={() => handlePoolClick(pool.address)}
-                className="flex-1 cursor-pointer items-center text-center underline decoration-green underline-offset-4"
+                className="flex-1 cursor-pointer items-center text-center tessera-underline"
               >
                 Delegate
               </div>

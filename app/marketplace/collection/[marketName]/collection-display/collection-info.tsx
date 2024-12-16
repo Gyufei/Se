@@ -2,13 +2,13 @@
 import { cn } from "@/lib/utils/common";
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { useQuickPageContext } from "../page-context";
+import { useCollectionPageContext } from "../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { range } from "lodash";
 import { AddressImg } from "@/app/_common/address-img";
 
 export default function CollectionInfo() {
-  const { marketInfo, isMarketPending } = useQuickPageContext();
+  const { marketInfo, isMarketPending } = useCollectionPageContext();
 
   function handleOpen(link: string | undefined) {
     if (!link) return;
@@ -127,7 +127,7 @@ function DescDisplay({
       {isCollapse && (
         <span
           onClick={handleCollapse}
-          className="inline-block ml-1 cursor-pointer text-white text-sm font-medium underline decoration-green underline-offset-4"
+          className="inline-block ml-1 cursor-pointer text-white text-sm font-medium tessera-underline"
         >
           {showMore ? "Show less" : "Show more"}
         </span>

@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useApprove } from "@/lib/web3/use-approve";
 import { useBatchBuy } from "@/lib/web3/call/use-batch-buy";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 import { useTokenBalance } from "@/lib/web3/helper/use-token-balance";
 import { divide, multiply } from "safebase";
@@ -16,12 +16,12 @@ import { useCartContext } from "../cart-context";
 import { useRaePrice } from "@/lib/api/use-rae-price";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMarketActivity } from "@/lib/api/use-market-activity";
-import { useQuickPageContext } from "../page-context";
+import { useCollectionPageContext } from "../page-context";
 import { covertErrorMsg } from "@/lib/utils/error";
 
 export default function BuyBag() {
   const queryClient = useQueryClient();
-  const { marketName } = useQuickPageContext();
+  const { marketName } = useCollectionPageContext();
 
   const { cartItems, count, total, removeProduct, clearCart } =
     useCartContext() || {};

@@ -1,7 +1,7 @@
 "use client";
 
 import { formatNumberWithUnit, formatPercent } from "@/lib/utils/number";
-import { useQuickPageContext } from "../page-context";
+import { useCollectionPageContext } from "../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { divide, multiply } from "safebase";
 import { useMemo } from "react";
@@ -12,7 +12,7 @@ const labelTextClx =
 
 export default function CollectionPrice() {
   const { marketInfo, marketNfts, isMarketPending, isNftsPending } =
-    useQuickPageContext();
+    useCollectionPageContext();
 
   const price = marketInfo?.guide_price || "0";
   const items = marketNfts?.length || "0";

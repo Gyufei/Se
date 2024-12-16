@@ -2,7 +2,7 @@
 import RaeToken from "@/app/_common/rae-token";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 import { NumericalInput } from "@/components/ui/numerical-input";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useCreateAuction } from "@/lib/web3/call/use-create-auction";
 import { useApprove } from "@/lib/web3/use-approve";
@@ -16,12 +16,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useApproveNft } from "@/lib/web3/use-approve-nft";
 import { covertErrorMsg } from "@/lib/utils/error";
 import ErrorMessage from "@/app/_common/error-message";
+import { checkIsPlatformNFT } from "@/lib/helper/nft";
 
 export default function CreateBidding() {
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
   const { selectedNft } = useMyNFTCollectionsPageContext();
+  const isPlatformNFT = checkIsPlatformNFT(selectedNft);
 
   const {
     isShouldApprove: isShouldApproveNft,
@@ -71,12 +73,10 @@ export default function CreateBidding() {
     setTaxRate(v);
     checkTaxRate(v);
   }
-
   function handleBidCapChange(v: string) {
     setBidCap(v);
     checkBidCap(v);
   }
-
   function checkDuration(d: string, h: string) {
     if (!d && !h) {
       setDurationError("Enter duration");
@@ -85,7 +85,6 @@ export default function CreateBidding() {
     setDurationError("");
     return true;
   }
-
   function checkTaxRate(v: string) {
     if (Number(v) >= 100) {
       setTaxRateError("Invalid tax rate");
@@ -94,12 +93,20 @@ export default function CreateBidding() {
     setTaxRateError("");
     return true;
   }
-
   function checkBidCap(v: string) {
     if (!v) {
       setBidCapError("Enter bidding cap");
       return false;
     }
+
+    if (
+      isPlatformNFT &&
+      Number(v) > multiply(selectedNft?.price || "0", "1.5")
+    ) {
+      setBidCapError("Bidding cap cannot be greater than 150% of the price");
+      return false;
+    }
+
     setBidCapError("");
     return true;
   }

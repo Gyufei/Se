@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils/common";
 import { truncateAddr } from "@/lib/utils/web3";
 import SignInPop from "./sign-in-pop";
 import { useAtomValue, useSetAtom } from "jotai";
-import { SignInDialogOpen } from "@/lib/state/other";
+import { SignInDialogOpen } from "@/lib/state/dialog";
 import { useAccount, useAccountEffect } from "wagmi";
 import { AccessTokenAtom } from "@/lib/state/user";
 import { useConnectModal } from "@rainbow-me/rainbowkit";

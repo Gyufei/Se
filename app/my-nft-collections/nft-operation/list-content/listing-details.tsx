@@ -1,10 +1,10 @@
 "use client";
 import { useSetAtom } from "jotai";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import RaeToken from "@/app/_common/rae-token";
 import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 import { NumericalInput } from "@/components/ui/numerical-input";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { useApprove } from "@/lib/web3/use-approve";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ import { useRaePrice } from "@/lib/api/use-rae-price";
 import { useApproveNft } from "@/lib/web3/use-approve-nft";
 import { covertErrorMsg } from "@/lib/utils/error";
 import ErrorMessage from "@/app/_common/error-message";
+import { checkIsPlatformNFT } from "@/lib/helper/nft";
 
 export default function ListingDetail() {
   const queryClient = useQueryClient();
@@ -25,6 +26,8 @@ export default function ListingDetail() {
   const { nftType, selectedNft, selectedNftMarket } =
     useMyNFTCollectionsPageContext();
   const guidePrice = selectedNftMarket?.guide_price;
+
+  const isPlatformNFT = checkIsPlatformNFT(selectedNft);
 
   const {
     isShouldApprove: isShouldApproveNft,
@@ -47,6 +50,12 @@ export default function ListingDetail() {
   const { writeContract, isPending: isListing } = useListAsset();
 
   const { data: raePriceData, isPending: isRaePricePending } = useRaePrice();
+
+  useEffect(() => {
+    if (isPlatformNFT) {
+      setSellPrice(selectedNft?.price || "");
+    }
+  }, [isPlatformNFT, selectedNft?.price]);
 
   const [sellPrice, setSellPrice] = useState("");
   const [sellPriceError, setSellPriceError] = useState("");
@@ -166,7 +175,8 @@ export default function ListingDetail() {
         <div className="flex items-end justify-between mt-5 relative">
           <div className="flex items-center mt-[15px]">
             <NumericalInput
-              className="h-12 w-[236px] rounded-none leading-[48px] px-4 bg-[#1D0E27] text-white text-left focus:border-focus disabled:cursor-not-allowed disabled:bg-[#F0F1F5]"
+              disabled={isPlatformNFT}
+              className="h-12 w-[236px] rounded-none leading-[48px] px-4 bg-[#1D0E27] text-white text-left focus:border-focus disabled:cursor-not-allowed"
               placeholder="0"
               value={sellPrice}
               onUserInput={(v) => handleInputPrice(v)}

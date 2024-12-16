@@ -4,7 +4,7 @@ import { IMarket, useMarketByName } from "@/lib/api/use-markets";
 import { INFT, useMarketNfts } from "@/lib/api/use-market-nfts";
 import { createContext, useContext } from "react";
 
-const QuickPageContext = createContext<
+const CollectionPageContext = createContext<
   | {
       marketName: string;
       marketInfo: IMarket | undefined;
@@ -15,7 +15,7 @@ const QuickPageContext = createContext<
   | undefined
 >(undefined);
 
-export function QuickPageProvider({
+export function CollectionPageProvider({
   marketName,
   children,
 }: {
@@ -29,7 +29,7 @@ export function QuickPageProvider({
     useMarketNfts(marketName);
 
   return (
-    <QuickPageContext.Provider
+    <CollectionPageContext.Provider
       value={{
         marketName,
         marketInfo,
@@ -39,16 +39,16 @@ export function QuickPageProvider({
       }}
     >
       {children}
-    </QuickPageContext.Provider>
+    </CollectionPageContext.Provider>
   );
 }
 
-export function useQuickPageContext() {
-  const context = useContext(QuickPageContext);
+export function useCollectionPageContext() {
+  const context = useContext(CollectionPageContext);
 
   if (!context) {
     throw new Error(
-      "useQuickPageContext must be used within a QuickPageProvider",
+      "useCollectionPageContext must be used within a CollectionPageProvider",
     );
   }
 

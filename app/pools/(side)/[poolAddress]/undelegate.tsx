@@ -6,7 +6,7 @@ import { formatNumber } from "@/lib/utils/number";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { multiply } from "safebase";
 import { usePoolUndelegate } from "@/lib/web3/call/use-pool-undelegate";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 import { useSetAtom } from "jotai";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import ErrorMessage from "@/app/_common/error-message";

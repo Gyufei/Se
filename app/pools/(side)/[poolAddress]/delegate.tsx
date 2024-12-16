@@ -4,7 +4,7 @@ import ShouldConnectBtn from "@/app/_common/should-connect-btn";
 
 import { NumericalInput } from "@/components/ui/numerical-input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 import { formatNumber } from "@/lib/utils/number";
 import { multiply } from "safebase";
 import { usePoolDelegate } from "@/lib/web3/call/use-pool-delegate";

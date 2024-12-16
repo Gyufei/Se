@@ -7,6 +7,7 @@ import { chunk, flatten, groupBy, range } from "lodash";
 import { Skeleton } from "@/components/ui/skeleton";
 import { removeQueryParams } from "@/lib/utils/url";
 import Empty from "@/app/_common/empty";
+import Link from "next/link";
 
 function getPagesNfts(nfts: INFT[]) {
   if (!nfts?.length) return [[]];
@@ -96,9 +97,12 @@ export default function NftList({ type }: { type: NftOwnerType }) {
         ) : displayNftList?.length ? (
           displayNftList.map((market, idx) => (
             <div className="mb-10" key={idx}>
-              <div className="text-xl font-medium text-white">
+              <Link
+                href={`/marketplace/collection/${market.market_name}`}
+                className="text-xl font-medium text-white tessera-underline cursor-pointer hover:text-green transition-colors"
+              >
                 {market.market_name}
-              </div>
+              </Link>
               <div className="mt-[15px] pr-[10px] grid grid-cols-3 gap-x-5">
                 {market.nfts.map((nft, idx) => (
                   <div
@@ -139,7 +143,7 @@ export default function NftList({ type }: { type: NftOwnerType }) {
           setCurrentPage={handlePageChange}
           className="justify-start"
         >
-          <Pagination.PrevButton />
+          {currentPage > 1 && <Pagination.PrevButton />}
           <nav className="mx-2 flex items-center justify-center">
             <ul className="flex items-center gap-2">
               {isPending ? (
@@ -153,7 +157,7 @@ export default function NftList({ type }: { type: NftOwnerType }) {
               )}
             </ul>
           </nav>
-          <Pagination.NextButton />
+          {currentPage < pageNfts?.length - 1 && <Pagination.NextButton />}
         </Pagination>
       )}
     </div>

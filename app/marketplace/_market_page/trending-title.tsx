@@ -9,7 +9,7 @@ export default function TrendingTitle({ marketType }: { marketType: string; }) {
       </div>
       <div className="flex items-center text-base text-white">
         <span>Got questions?</span>
-        <span className="inline-block ml-1 underline decoration-green underline-offset-4">
+        <span className="inline-block ml-1 tessera-underline">
           Check our FAQ
         </span>
       </div>

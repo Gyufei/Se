@@ -9,7 +9,7 @@ import { useSetAtom } from "jotai";
 import { cn } from "@/lib/utils/common";
 import { useRaePrice } from "@/lib/api/use-rae-price";
 import { useTokens } from "@/lib/api/use-tokens";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
 import { IToken } from "@/lib/types/token";
 import { useChainConfig } from "@/lib/web3/use-chain-config";

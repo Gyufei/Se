@@ -1,3 +1,5 @@
+"use client";
+
 import { Suspense } from "react";
 import ListDisplay from "./list-display";
 import NftOperation from "./nft-operation";

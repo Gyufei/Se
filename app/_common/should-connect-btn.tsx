@@ -1,4 +1,4 @@
-import { SignInDialogOpen } from "@/lib/state/other";
+import { SignInDialogOpen } from "@/lib/state/dialog";
 import { AccessTokenAtom } from "@/lib/state/user";
 import { cn } from "@/lib/utils/common";
 import { useConnectModal } from "@rainbow-me/rainbowkit";

@@ -5,7 +5,7 @@ import PriceAndOperation from "./price-and-operation";
 import ActivityPanel from "./activity-panel";
 import DetailsPanel from "./details-panel";
 import DescPanel from "./desc-panel";
-import { useQuickPageContext } from "../page-context";
+import { useCollectionPageContext } from "../page-context";
 
 export default function Page({
   params,
@@ -16,7 +16,7 @@ export default function Page({
   const nftId = pageParams.nftId;
 
   const { marketInfo, isMarketPending, marketNfts, isNftsPending } =
-    useQuickPageContext();
+    useCollectionPageContext();
 
   const nft = marketNfts?.find((nft) => nft.token_id === nftId);
 

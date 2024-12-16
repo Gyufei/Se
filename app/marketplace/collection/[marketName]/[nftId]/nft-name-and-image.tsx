@@ -28,7 +28,7 @@ export function NFTNameAndImage({
       <PathBreadcrumb
         paths={[`${marketName}`, `#${nftName}`]}
         isLoadings={[isPending, isPending]}
-        href={[`/marketplace/quick/${marketName}`, null]}
+        href={[`/marketplace/collection/${marketName}`, null]}
       />
       <div className="mt-5">
         {img ? (

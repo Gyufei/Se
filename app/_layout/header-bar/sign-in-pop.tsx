@@ -1,6 +1,6 @@
 "use client";
 import { GlobalMessageAtom } from "@/lib/state/global-message";
-import { SignInDialogOpen } from "@/lib/state/other";
+import { SignInDialogOpen } from "@/lib/state/dialog";
 import { AccessTokenAtom } from "@/lib/state/user";
 import { useAtom, useSetAtom } from "jotai";
 import Image from "next/image";

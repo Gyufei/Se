@@ -20,7 +20,7 @@ export default function NFTCard({ nft }: { nft: INFT }) {
   }
 
   function handleGoDetail(nft: INFT) {
-    router.push(`/marketplace/quick/${nft.market_name}/${nft.token_id}`);
+    router.push(`/marketplace/collection/${nft.market_name}/${nft.token_id}`);
   }
 
   return (

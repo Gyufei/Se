@@ -4,7 +4,7 @@ import { useTokenBalance } from "@/lib/web3/helper/use-token-balance";
 import { divide } from "safebase";
 import Delegate from "./delegate";
 import Undelegate from "./undelegate";
-import { RAE } from "@/lib/const/rae";
+import { RAE } from "@/lib/const/platform";
 import { usePoolRae } from "@/lib/web3/use-pool-rae";
 
 export default function PoolAction({
