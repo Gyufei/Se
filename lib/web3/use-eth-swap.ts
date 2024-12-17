@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTokens } from "../api/use-tokens";
 import useGetAmountInOut from "./helper/use-get-amount-in-out";
 import { useRaePrice } from "../api/use-rae-price";
 import { divide, multiply } from "safebase";
-import { debounce } from "../utils/debounceFn";
 
 export function useEthSwap() {
   const slippage = 0.01;
@@ -23,55 +22,66 @@ export function useEthSwap() {
     return tokens?.find((token) => token.symbol === "USDT");
   }, [tokens]);
 
-  async function ethOutTo(ehtAmount: string) {
-    if (!EthToken?.address || !USDTToken?.address || isRaePricePending) return;
-    const amount = multiply(ehtAmount, String(10 ** EthToken.decimals));
+  const ethOutTo = useCallback(
+    async (ehtAmount: string) => {
+      if (!EthToken?.address || !USDTToken?.address || isRaePricePending)
+        return;
+      const amount = multiply(ehtAmount, String(10 ** EthToken.decimals));
 
-    const usdtAmountOut = await getAmountOut(
-      amount,
-      EthToken.address,
-      USDTToken.address,
-    );
+      const usdtAmountOut = await getAmountOut(
+        amount,
+        EthToken.address,
+        USDTToken.address,
+      );
 
-    const usdtAmountFmt = divide(
-      String(usdtAmountOut),
-      String(10 ** USDTToken.decimals),
-    );
+      const usdtAmountFmt = divide(
+        String(usdtAmountOut),
+        String(10 ** USDTToken.decimals),
+      );
 
-    setEthPrice(divide(usdtAmountFmt, ehtAmount));
+      setEthPrice(divide(usdtAmountFmt, ehtAmount));
 
-    const raeAmount = divide(usdtAmountFmt, raePrice);
+      const raeAmount = divide(usdtAmountFmt, raePrice);
 
-    const raeAmountWithSlippage = multiply(raeAmount, String(1 - slippage));
+      const raeAmountWithSlippage = multiply(raeAmount, String(1 - slippage));
 
-    return raeAmountWithSlippage;
-  }
+      return raeAmountWithSlippage;
+    },
+    [raePrice, isRaePricePending, EthToken, USDTToken, getAmountOut],
+  );
 
-  async function raeInTo(raeAmount: string) {
-    if (!EthToken?.address || !USDTToken?.address || isRaePricePending) return;
-    const raeAmountWithSlippage = multiply(raeAmount, String(1 + slippage));
-    const usdtAmount = multiply(raeAmountWithSlippage, raePrice);
-    const usdtTokenAmount = multiply(
-      usdtAmount,
-      String(10 ** USDTToken.decimals),
-    );
+  const raeInTo = useCallback(
+    async (raeAmount: string) => {
+      if (!EthToken?.address || !USDTToken?.address || isRaePricePending)
+        return;
+      const raeAmountWithSlippage = multiply(raeAmount, String(1 + slippage));
+      const usdtAmount = multiply(raeAmountWithSlippage, raePrice);
+      const usdtTokenAmount = multiply(
+        usdtAmount,
+        String(10 ** USDTToken.decimals),
+      );
 
-    const amountIn = await getAmountIn(
-      usdtTokenAmount,
-      USDTToken.address,
-      EthToken.address,
-    );
+      const amountIn = await getAmountIn(
+        usdtTokenAmount,
+        USDTToken.address,
+        EthToken.address,
+      );
 
-    const amountFmt = divide(String(amountIn), String(10 ** EthToken.decimals));
+      const amountFmt = divide(
+        String(amountIn),
+        String(10 ** EthToken.decimals),
+      );
 
-    setEthPrice(divide(usdtAmount, amountFmt));
+      setEthPrice(divide(usdtAmount, amountFmt));
 
-    return amountFmt;
-  }
+      return amountFmt;
+    },
+    [raePrice, isRaePricePending, EthToken, USDTToken, getAmountIn],
+  );
 
   return {
     ethPrice,
-    ethOutTo: debounce(ethOutTo, 500),
-    raeInTo: debounce(raeInTo, 500),
+    ethOutTo,
+    raeInTo,
   };
 }

@@ -3,8 +3,17 @@ import numeral from "numeral";
 export function formatNumber(value: number | string | undefined): string {
   if (!value) return "";
 
+  if (Number(value) === 0) return "0";
+
   if (Number(value) < 0.01) {
-    return value.toString();
+    const [integer, decimal] = String(value).split(".");
+    const nonZeroDecimalIndex = decimal.split("").findIndex((d) => d !== "0");
+    const nonZeroDecimal = decimal.slice(
+      0,
+      nonZeroDecimalIndex < 6 ? 6 : nonZeroDecimalIndex,
+    );
+
+    return `${integer}.${nonZeroDecimal}`;
   }
 
   return numeral(value).format("0,0.[00]");

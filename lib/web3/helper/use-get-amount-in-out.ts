@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useConfig } from "wagmi";
 import { UniswapRouterABI } from "@/lib/abi/UniswapRouter";
 import { readContract } from "@wagmi/core";
@@ -8,35 +9,33 @@ export default function useGetAmountInOut() {
   const { chainConfig } = useChainConfig();
   const abiAddress = chainConfig.contracts.UniswapV2Router;
 
-  async function getAmountOut(
-    payAmount: string,
-    payTokenAddr: string,
-    buyTokenAddr: string,
-  ) {
-    const result = await readContract(config, {
-      abi: UniswapRouterABI,
-      address: abiAddress as any,
-      functionName: "getAmountsOut",
-      args: [BigInt(payAmount), [payTokenAddr as any, buyTokenAddr as any]],
-    });
+  const getAmountOut = useCallback(
+    async (payAmount: string, payTokenAddr: string, buyTokenAddr: string) => {
+      const result = await readContract(config, {
+        abi: UniswapRouterABI,
+        address: abiAddress as any,
+        functionName: "getAmountsOut",
+        args: [BigInt(payAmount), [payTokenAddr as any, buyTokenAddr as any]],
+      });
 
-    return result[1];
-  }
+      return result[1];
+    },
+    [config, abiAddress],
+  );
 
-  async function getAmountIn(
-    buyAmount: string,
-    payTokenAddr: string,
-    buyTokenAddr: string,
-  ) {
-    const result = await readContract(config, {
-      abi: UniswapRouterABI,
-      address: abiAddress as any,
-      functionName: "getAmountsIn",
-      args: [BigInt(buyAmount), [buyTokenAddr as any, payTokenAddr as any]],
-    });
+  const getAmountIn = useCallback(
+    async (buyAmount: string, payTokenAddr: string, buyTokenAddr: string) => {
+      const result = await readContract(config, {
+        abi: UniswapRouterABI,
+        address: abiAddress as any,
+        functionName: "getAmountsIn",
+        args: [BigInt(buyAmount), [buyTokenAddr as any, payTokenAddr as any]],
+      });
 
-    return result[0];
-  }
+      return result[0];
+    },
+    [config, abiAddress],
+  );
 
   return {
     getAmountOut,

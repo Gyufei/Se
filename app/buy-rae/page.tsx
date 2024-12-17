@@ -29,6 +29,7 @@ import ToOtherAddr from "./to-other-addr";
 import TokenSelect from "./token-select";
 import { checkIsSameAddress } from "@/lib/utils/web3";
 import { covertErrorMsg } from "@/lib/utils/error";
+import { debounce } from "lodash";
 
 export default function Page() {
   const { address: myAddress } = useAccount();
@@ -155,55 +156,73 @@ export default function Page() {
     isApproving,
   ]);
 
+  const calcPayToAmount = useCallback(
+    async (value: string, isNative: boolean) => {
+      if (Number(value) === 0) {
+        setBuyAmount(value);
+        return;
+      }
+
+      if (isNative) {
+        const amountOut = await ethOutTo(value);
+        setBuyAmount(amountOut || "0");
+      } else {
+        const amount = divide(value, raePrice);
+        setBuyAmount(amount || "0");
+      }
+
+      setIsOutLoading(false);
+    },
+    [ethOutTo, raePrice],
+  );
+
+  const calcShouldPay = useCallback(
+    async (value: string, isNative: boolean) => {
+      if (Number(value) === 0) {
+        setBuyAmount(value);
+        return;
+      }
+
+      if (isNative) {
+        const amountOut = await raeInTo(value);
+        setPayAmount(amountOut || "0");
+      } else {
+        const amount = multiply(value, raePrice);
+        setPayAmount(amount || "0");
+      }
+
+      setIsInLoading(false);
+    },
+    [raePrice, raeInTo],
+  );
+
+  const debounceCalcPayToAmount = useMemo(
+    () => debounce(calcPayToAmount, 1000),
+    [calcPayToAmount],
+  );
+
+  const debounceCalcShouldPay = useMemo(
+    () => debounce(calcShouldPay, 1000),
+    [calcShouldPay],
+  );
+
   async function handlePayTokenChange(t: IToken) {
     setPayToken(t);
-    calcPayToAmount(payAmount, checkIsNative(t));
+    await calcPayToAmount(payAmount, checkIsNative(t));
   }
 
   async function handlePayChange(value: string) {
     setIsOutLoading(true);
     setPayAmount(value);
 
-    await calcPayToAmount(value, isNativePayToken);
-    setIsOutLoading(false);
-  }
-
-  async function calcPayToAmount(value: string, isNative: boolean) {
-    if (Number(value) === 0) {
-      setBuyAmount(value);
-      return;
-    }
-
-    if (isNative) {
-      const amountOut = await ethOutTo(value);
-      setBuyAmount(amountOut || "0");
-    } else {
-      const amount = divide(value, raePrice);
-      setBuyAmount(amount || "0");
-    }
+    debounceCalcPayToAmount(value, isNativePayToken);
   }
 
   async function handleBuyInput(value: string) {
     setIsInLoading(true);
     setBuyAmount(value);
 
-    await calcShouldPay(value, isNativePayToken);
-    setIsInLoading(false);
-  }
-
-  async function calcShouldPay(value: string, isNative: boolean) {
-    if (Number(value) === 0) {
-      setBuyAmount(value);
-      return;
-    }
-
-    if (isNative) {
-      const amountOut = await raeInTo(value);
-      setPayAmount(amountOut || "0");
-    } else {
-      const amount = multiply(value, raePrice);
-      setPayAmount(amount || "0");
-    }
+    debounceCalcShouldPay(value, isNativePayToken);
   }
 
   function handleConfirm() {
