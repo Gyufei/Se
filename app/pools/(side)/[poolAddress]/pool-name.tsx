@@ -18,7 +18,7 @@ export default function PoolName({ poolAddress }: { poolAddress: string }) {
         {isPoolInfoPending ? (
           <Skeleton className="ml-2 w-[100px] h-6 my-2 mt-[10px]" />
         ) : (
-          <div className="ml-2 truncate">{poolName}</div>
+          <div className="ml-2 truncate pr-6">{poolName}</div>
         )}
       </div>
     </div>

@@ -133,7 +133,7 @@ export default function Delegate({
           )}
         </div>
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between relative">
         <NumericalInput
           className="bg-[#1D0E27] text-base leading-5 text-white h-12 px-4 py-3"
           value={depositNum}
@@ -141,8 +141,11 @@ export default function Delegate({
           placeholder="0"
         />
         <RaeToken />
+        <ErrorMessage
+          className="ml-0 absolute -bottom-[18px]"
+          error={numError}
+        />
       </div>
-      <ErrorMessage className="ml-0" error={numError} />
 
       <ShouldConnectBtn
         disabled={btnProps.disabled}

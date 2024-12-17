@@ -48,10 +48,11 @@ export default function PoolTable({ status }: { status: IPoolStatus }) {
         showList.map((pool, i) => (
           <div
             className={cn(
-              "h-20 bg-[#281A31] p-5 flex items-center mb-[15px]",
+              "h-20 bg-[#281A31] p-5 flex items-center mb-[15px] cursor-pointer",
               selectedPool === pool.address && "border border-green",
             )}
             key={i}
+            onClick={() => handlePoolClick(pool.address)}
           >
             <div className="w-[190px] flex items-center gap-x-[15px] text-sma font-medium text-white">
               <AddressImg

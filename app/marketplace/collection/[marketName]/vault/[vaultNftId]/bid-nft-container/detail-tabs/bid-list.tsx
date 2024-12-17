@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCheckIsPool } from "@/lib/api/use-pools";
 import Empty from "@/app/_common/empty";
 import { AddressImg } from "@/app/_common/address-img";
+import { formatPercent, maybeSmallNumber } from "@/lib/utils/number";
 
 export default function BidList({ onlyMe }: { onlyMe: boolean }) {
   const { address } = useAccount();
@@ -93,7 +94,7 @@ function BidItem({ bid }: { bid: Record<string, any> }) {
               <span>{truncateAddr(bid.address, [5, 5])}</span>
             </div>
           )}
-          <div>{bid.bidValue} RAEs</div>
+          <div>{maybeSmallNumber(bid.bidValue, 0.01)} RAEs</div>
         </div>
 
         <div className="flex justify-between text-xs text-white">
@@ -104,7 +105,7 @@ function BidItem({ bid }: { bid: Record<string, any> }) {
             </span>
           </div>
           <span className="opacity-60">
-            {bid.bidPercent * 100}% of the vault
+            {formatPercent(bid.bidPercent)} of the vault
           </span>
         </div>
       </div>

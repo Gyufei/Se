@@ -2,6 +2,7 @@ import { divide } from "safebase";
 import { useLuckyNFTPageContext } from "../../page-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/common";
+import { formatNumber, maybeSmallNumber } from "@/lib/utils/number";
 
 export default function BidProgress() {
   const { auctionInfo, isAuctionPending } = useLuckyNFTPageContext();
@@ -22,7 +23,7 @@ export default function BidProgress() {
           </>
         ) : (
           <>
-            {hasBid} / {totalBid} RAE
+            {maybeSmallNumber(hasBid, 0.0001)} / {formatNumber(totalBid)} RAE
           </>
         )}
       </div>

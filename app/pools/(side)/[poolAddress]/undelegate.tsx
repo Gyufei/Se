@@ -111,7 +111,7 @@ export default function Undelegate({
           <span>{formatNumber(poolRae.value) || 0} RAE</span>
         </div>
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between relative">
         <NumericalInput
           className="bg-[#1D0E27] text-base leading-5 text-white h-12 px-4 py-3"
           value={withdrawNum}
@@ -119,8 +119,11 @@ export default function Undelegate({
           placeholder="0"
         />
         <RaeToken />
+        <ErrorMessage
+          className="ml-0 absolute -bottom-[18px]"
+          error={numError}
+        />
       </div>
-      <ErrorMessage error={numError} />
 
       <ShouldConnectBtn
         disabled={btnProps.disabled}

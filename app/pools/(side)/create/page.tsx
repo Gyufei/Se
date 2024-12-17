@@ -125,7 +125,7 @@ export default function Page() {
       <div className="text-[30px] font-medium text-white pb-5 px-6 border-b-2 border-[#ffffff10]">
         Create Pool
       </div>
-      <div className="bg-[#281A31] mx-6 mt-6 p-5">
+      <div className="bg-[#281A31] mx-6 mt-6 p-5 relative">
         <div className="mb-[15px] text-white opacity-60 text-base font-medium">
           Name
         </div>
@@ -137,7 +137,7 @@ export default function Page() {
           maxLength={30}
           minLength={3}
         />
-        <ErrorMessage className="ml-0" error={poolError} />
+        <ErrorMessage className="ml-0 absolute top-[98px]" error={poolError} />
         <div className="mt-[23px] mb-[15px] text-white opacity-60 text-base font-medium">
           Creator Bonus
         </div>
@@ -150,7 +150,10 @@ export default function Page() {
           />
           <span className="absolute text-base opacity-40 right-4 top-3">%</span>
         </div>
-        <ErrorMessage error={bonusError} />
+        <ErrorMessage
+          className="ml-0 absolute -bottom-[94px]"
+          error={bonusError}
+        />
         <ShouldConnectBtn
           disabled={btnProps?.disabled}
           className="mt-5 mb-[25px] w-full"

@@ -64,15 +64,15 @@ export default function PoolInfoCard({ poolAddress }: { poolAddress: string }) {
             </div>
           ) : (
             <div className="text-2xl text-right mt-[10px] text-white font-medium">
-              <span>
+              <span>N/A</span>
+              {/* <span>
                 {formatNumber(
                   subtract(pool?.user.total_staked, pool?.user.total_withdraw),
                 )}
               </span>
               <span className="opacity-60">
-                {" "}
                 / {formatNumber(pool?.base.total_staked)}
-              </span>
+              </span> */}
             </div>
           )}
         </div>
