@@ -30,6 +30,7 @@ import TokenSelect from "./token-select";
 import { checkIsSameAddress } from "@/lib/utils/web3";
 import { covertErrorMsg } from "@/lib/utils/error";
 import { debounce } from "lodash";
+import ErrorMessage from "../_common/error-message";
 
 export default function Page() {
   const { address: myAddress } = useAccount();
@@ -70,7 +71,6 @@ export default function Page() {
 
   const buyToken = RAE;
   const [buyAmount, setBuyAmount] = useState("");
-
   const [toOther, setToOther] = useState(false);
   const [toAddr, setToAddr] = useState("");
 
@@ -78,6 +78,7 @@ export default function Page() {
   const [isInLoading, setIsInLoading] = useState(false);
 
   const [gas, setGas] = useState(0.05);
+  const [errorTip, setErrorTip] = useState("");
 
   const isNativePayToken = useMemo(
     () => checkIsNative(payToken),
@@ -100,41 +101,8 @@ export default function Page() {
       };
     }
 
-    if (!Number(payAmount) && !Number(buyAmount)) {
-      return {
-        // text: "Enter An Amount",
-        text: "Buy",
-        disabled: true,
-      };
-    }
-
-    if (payBalance < Number(payAmount)) {
-      return {
-        // text: "Insufficient Balance",
-        text: "Buy",
-        disabled: true,
-      };
-    }
-
-    if (toOther && !toAddr) {
-      return {
-        // text: "Input Recipient",
-        text: "Buy",
-        disabled: true,
-      };
-    }
-
-    if (toOther && toAddr && !isAddress(toAddr, { strict: false })) {
-      return {
-        // text: "Invalid Recipient",
-        text: "Buy",
-        disabled: true,
-      };
-    }
-
     if (isTxPending) {
       return {
-        // text: "Swap...",
         text: "Buying...",
         disabled: true,
       };
@@ -144,25 +112,10 @@ export default function Page() {
       text: "Buy",
       disabled: false,
     };
-  }, [
-    isShouldApprove,
-    approveBtnText,
-    payAmount,
-    buyAmount,
-    payBalance,
-    toAddr,
-    toOther,
-    isTxPending,
-    isApproving,
-  ]);
+  }, [isShouldApprove, approveBtnText, isTxPending, isApproving]);
 
   const calcPayToAmount = useCallback(
     async (value: string, isNative: boolean) => {
-      if (Number(value) === 0) {
-        setBuyAmount(value);
-        return;
-      }
-
       if (isNative) {
         const amountOut = await ethOutTo(value);
         setBuyAmount(amountOut || "0");
@@ -178,11 +131,6 @@ export default function Page() {
 
   const calcShouldPay = useCallback(
     async (value: string, isNative: boolean) => {
-      if (Number(value) === 0) {
-        setBuyAmount(value);
-        return;
-      }
-
       if (isNative) {
         const amountOut = await raeInTo(value);
         setPayAmount(amountOut || "0");
@@ -211,9 +159,17 @@ export default function Page() {
     await calcPayToAmount(payAmount, checkIsNative(t));
   }
 
-  async function handlePayChange(value: string) {
+  async function handlePayInput(value: string) {
     setIsOutLoading(true);
     setPayAmount(value);
+
+    checkError("1", value, toOther, toAddr);
+
+    if (Number(value) === 0) {
+      setBuyAmount(value);
+      setIsOutLoading(false);
+      return;
+    }
 
     debounceCalcPayToAmount(value, isNativePayToken);
   }
@@ -222,12 +178,69 @@ export default function Page() {
     setIsInLoading(true);
     setBuyAmount(value);
 
+    checkError(value, "1", toOther, toAddr);
+
+    if (Number(value) === 0) {
+      setPayAmount(value);
+      setIsInLoading(false);
+      return;
+    }
+
     debounceCalcShouldPay(value, isNativePayToken);
+  }
+
+  function handleOtherChange(value: boolean) {
+    setToOther(value);
+    checkError(buyAmount, payAmount, value, toAddr);
+  }
+
+  function handleOtherAddrChange(value: string) {
+    setToAddr(value);
+    checkError(buyAmount, payAmount, toOther, value);
+  }
+
+  function checkError(
+    buyValue: string,
+    payValue: string,
+    toOtherArg: boolean,
+    toAddrArg: string,
+  ) {
+    if (Number(buyValue) === 0) {
+      setErrorTip("Input A Amount");
+      return false;
+    }
+
+    if (Number(payValue) === 0) {
+      setErrorTip("Input A Amount");
+      return false;
+    }
+
+    if (payBalance < Number(payValue)) {
+      setErrorTip("Insufficient Balance");
+      return false;
+    }
+
+    if (toOtherArg && !toAddrArg) {
+      setErrorTip("Input Recipient");
+      return false;
+    }
+
+    if (toOtherArg && toAddrArg && !isAddress(toAddrArg, { strict: false })) {
+      setErrorTip("Invalid Recipient");
+      return false;
+    }
+
+    setErrorTip("");
+    return true;
   }
 
   function handleConfirm() {
     if (isShouldApprove) {
       approveAction();
+      return;
+    }
+
+    if (!checkError(buyAmount, payAmount, toOther, toAddr)) {
       return;
     }
 
@@ -280,14 +293,17 @@ export default function Page() {
                 className="mr-2 mt-[10px] h-[50px] w-full text-left text-3xl text-white bg-transparent placeholder:opacity-50 placeholder:text-2xl"
                 placeholder="0"
                 value={payAmount}
-                onUserInput={handlePayChange}
+                onUserInput={handlePayInput}
               />
             )}
             <div className="text-xl text-white opacity-60 mt-2">
               ${formatNumber(sellPrice)}
             </div>
           </div>
-          <div className="flex items-end">
+          <div className="flex flex-col justify-between items-end">
+            <span className="text-base text-white opacity-60">
+              Balance: {formatNumber(payBalance)}
+            </span>
             <TokenSelect token={payToken} setToken={handlePayTokenChange} />
           </div>
         </div>
@@ -327,18 +343,25 @@ export default function Page() {
 
         <ToOtherAddr
           toOther={toOther}
-          setToOther={setToOther}
+          setToOther={handleOtherChange}
           addr={toAddr}
-          setAddr={setToAddr}
+          setAddr={handleOtherAddrChange}
         />
 
-        <ShouldConnectBtn
-          disabled={btnProp.disabled}
-          className="w-full mt-5"
-          onClick={handleConfirm}
-        >
-          {btnProp.text}
-        </ShouldConnectBtn>
+        <div className="mt-5 relative">
+          <ErrorMessage
+            className="w-full text-center mb-1 absolute -top-[30px]"
+            error={errorTip}
+          />
+
+          <ShouldConnectBtn
+            disabled={btnProp.disabled}
+            className="w-full"
+            onClick={handleConfirm}
+          >
+            {btnProp.text}
+          </ShouldConnectBtn>
+        </div>
 
         <div className="flex justify-between items-center mt-[15px]">
           <SwapPriceDisplay
