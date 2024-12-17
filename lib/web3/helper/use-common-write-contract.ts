@@ -15,8 +15,8 @@ export function useCommonWriteContract() {
   const { switchToTargetChain } = useCorrectChain();
   const { getGasParams } = useGasCalc();
 
-  const successFnRef = useRef<() => void | undefined>(() => {});
-  const errorFnRef = useRef<(_e: any) => void | undefined>(() => {});
+  const successFnRef = useRef<(() => void) | undefined>(() => {});
+  const errorFnRef = useRef<((_e: any) => void) | undefined>(() => {});
 
   const {
     isLoading: isConfirming,
