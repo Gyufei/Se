@@ -5,12 +5,12 @@ export function formatNumber(value: number | string | undefined): string {
 
   if (Number(value) === 0) return "0";
 
-  if (Number(value) < 0.01) {
+  if (Number(value) < 1) {
     const [integer, decimal] = String(value).split(".");
     const nonZeroDecimalIndex = decimal.split("").findIndex((d) => d !== "0");
     const nonZeroDecimal = decimal.slice(
       0,
-      nonZeroDecimalIndex < 6 ? 6 : nonZeroDecimalIndex,
+      nonZeroDecimalIndex < 6 ? 6 : nonZeroDecimalIndex + 1,
     );
 
     return `${integer}.${nonZeroDecimal}`;
@@ -55,5 +55,5 @@ export function maybeSmallNumber(
     return `<${limit.toString()}`;
   }
 
-  return formatPercent(value);
+  return formatNumber(value);
 }

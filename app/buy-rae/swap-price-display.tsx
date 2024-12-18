@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { IToken } from "@/lib/types/token";
+import { formatNumber } from "@/lib/utils/number";
 import { useMemo } from "react";
 import { divide } from "safebase";
 
@@ -22,7 +23,8 @@ export default function SwapPriceDisplay({
     if (!buyPrice || !Number(payPrice)) return "0";
 
     if (isNative) {
-      return divide(buyPrice, payPrice);
+      const price = divide(buyPrice, payPrice);
+      return formatNumber(price);
     } else {
       return buyPrice;
     }

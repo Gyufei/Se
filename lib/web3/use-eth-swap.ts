@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTokens } from "../api/use-tokens";
 import useGetAmountInOut from "./helper/use-get-amount-in-out";
 import { useRaePrice } from "../api/use-rae-price";
@@ -78,6 +78,10 @@ export function useEthSwap() {
     },
     [raePrice, isRaePricePending, EthToken, USDTToken, getAmountIn],
   );
+
+  useEffect(() => {
+    ethOutTo("1");
+  }, [ethOutTo]);
 
   return {
     ethPrice,
