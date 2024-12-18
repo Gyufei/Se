@@ -156,7 +156,9 @@ export default function Page() {
 
   async function handlePayTokenChange(t: IToken) {
     setPayToken(t);
-    await calcPayToAmount(payAmount, checkIsNative(t));
+    if (Number(payAmount) !== 0) {
+      await calcPayToAmount(payAmount, checkIsNative(t));
+    }
   }
 
   async function handlePayInput(value: string) {
