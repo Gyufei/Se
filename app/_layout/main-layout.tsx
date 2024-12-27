@@ -10,7 +10,6 @@ export default function MainLayout({
     <main>
       <HeaderBar />
       {children}
-
       <GlobalMessageTip />
     </main>
   );

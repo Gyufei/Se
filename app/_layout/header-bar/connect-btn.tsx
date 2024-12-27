@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { cn } from "@/lib/utils/common";
 import { truncateAddr } from "@/lib/utils/web3";
 import SignInPop from "./sign-in-pop";
@@ -8,13 +9,10 @@ import { useAccount, useAccountEffect } from "wagmi";
 import { AccessTokenAtom } from "@/lib/state/user";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { AddressImg } from "@/app/_common/address-img";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
 import { DisconnectBtn } from "./disconnect-btn";
+import { useDeviceSize } from "@/lib/common/use-device-size";
 
 const ConnectBtnText = "h-10 px-5 flex items-center text-[14px] font-bold";
 
@@ -22,6 +20,8 @@ export default function ConnectBtn() {
   const uuid = useAtomValue(AccessTokenAtom);
   const { openConnectModal } = useConnectModal();
   const { address, isConnected } = useAccount();
+  const { isMobileSize } = useDeviceSize();
+
   const [popOpen, setPopOpen] = useState(false);
 
   useAccountEffect({
@@ -42,11 +42,16 @@ export default function ConnectBtn() {
   }
 
   if (!isConnected) {
+    if (isMobileSize) {
+      return (
+        <div className="mr-4 flex h-10 w-10 items-center justify-center">
+          <Image onClick={handleConnect} src="/icons/wallet-border.svg" width={20} height={20} alt="wallet" />
+        </div>
+      );
+    }
+
     return (
-      <button
-        onClick={handleConnect}
-        className={cn(ConnectBtnText, "bg-green text-[#12021d]")}
-      >
+      <button onClick={handleConnect} className={cn(ConnectBtnText, "bg-green text-[#12021d]")}>
         Connect Wallet
       </button>
     );
@@ -56,17 +61,19 @@ export default function ConnectBtn() {
     <div className="relative">
       <Popover open={popOpen} onOpenChange={(isOpen) => setPopOpen(isOpen)}>
         <PopoverTrigger
-          className={cn(ConnectBtnText, "bg-[#2A1C34] space-x-[10px]")}
+          className={cn(
+            ConnectBtnText,
+            `${isMobileSize ? "mr-4 bg-transparent px-[10px]" : "space-x-[10px] bg-[#2A1C34]"}`,
+          )}
         >
-          <AddressImg
-            className="rounded-full"
-            address={address}
-            width={20}
-            height={20}
-          />
-          <div className="text-white opacity-60 hover:opacity-100">
-            {truncateAddr(address, [7, 4])}
-          </div>
+          {isMobileSize ? (
+            <Image src="/icons/wallet-border.svg" width={20} height={20} alt="wallet" />
+          ) : (
+            <>
+              <AddressImg className="rounded-full" address={address} width={20} height={20} />
+              <div className="text-white opacity-60 hover:opacity-100">{truncateAddr(address, [7, 4])}</div>
+            </>
+          )}
         </PopoverTrigger>
         <PopoverContent
           align="end"
