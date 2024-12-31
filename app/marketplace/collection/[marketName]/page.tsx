@@ -6,7 +6,7 @@ export default function Page() {
   // const marketName = pageParams.marketName;
 
   return (
-    <div className="flex min-w-[1440px] max-w-[1920px] mx-auto">
+    <div className="px-4 flex w-screen flex-col md:mx-auto md:min-w-[1440px] md:max-w-[1920px] md:flex-row">
       <CollectionDisplay />
       <BuyBag />
     </div>

@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils/common";
 import { INFT } from "@/lib/api/use-market-nfts";
 import { removeQueryParams } from "@/lib/utils/url";
@@ -46,9 +42,7 @@ export default function FilterTypeSelect({
   const currentLabel = useMemo(() => {
     if (isAllChecked) return "All";
 
-    const labels = filterTypes.map(
-      (type) => filterOptions.find((option) => option.value === type)?.label,
-    );
+    const labels = filterTypes.map((type) => filterOptions.find((option) => option.value === type)?.label);
 
     if (labels.length > 1) {
       return `${labels[0]} (+${labels.length - 1})`;
@@ -86,9 +80,7 @@ export default function FilterTypeSelect({
     setFilterTypes(newFilterTypes);
     setOpen(false);
 
-    const typeLabel = newFilterTypes.map(
-      (type) => filterOptions.find((option) => option.value === type)?.label,
-    );
+    const typeLabel = newFilterTypes.map((type) => filterOptions.find((option) => option.value === type)?.label);
     changeCurrentSearchParams("type", typeLabel.join(","));
   }
 
@@ -101,11 +93,7 @@ export default function FilterTypeSelect({
       searchParams.delete(key);
     }
 
-    window.history.pushState(
-      {},
-      "",
-      window.location.pathname + "?" + searchParams.toString(),
-    );
+    window.history.pushState({}, "", window.location.pathname + "?" + searchParams.toString());
   }
 
   useEffect(() => {
@@ -114,11 +102,7 @@ export default function FilterTypeSelect({
     if (!typeLabel) return;
 
     const types = typeLabel?.split(",");
-    const fValue = compact(
-      (types || [])?.map(
-        (type) => filterOptions.find((option) => option.label === type)?.value,
-      ),
-    );
+    const fValue = compact((types || [])?.map((type) => filterOptions.find((option) => option.label === type)?.value));
 
     if (fValue.length) {
       setFilterTypes(fValue as any[]);
@@ -128,34 +112,21 @@ export default function FilterTypeSelect({
   return (
     <Popover open={open} onOpenChange={(o) => setOpen(o)}>
       <PopoverTrigger asChild>
-        <div className="w-[147px] bg-[#281A31] flex items-center px-5 h-12 space-x-[5px] cursor-pointer">
-          <div className="w-[85px]">{currentLabel}</div>
-          <Image
-            src="/icons/bracket-up.svg"
-            width={16}
-            height={16}
-            alt="arrow"
-            className={cn(!open && "rotate-180")}
-          />
+        <div className="flex h-12 flex-1 cursor-pointer items-center space-x-[5px] bg-[#281A31] px-5 md:w-[155px]">
+          <div className="w-fit break-keep">{currentLabel}</div>
+          <Image src="/icons/bracket-up.svg" width={16} height={16} alt="arrow" className={cn(!open && "rotate-180")} />
         </div>
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="flex w-[147px] flex-col items-stretch rounded-none border-0 bg-[#382743] space-y-[5px] p-[5px]"
+        className="flex w-[147px] flex-col items-stretch space-y-[5px] rounded-none border-0 bg-[#382743] p-[5px]"
       >
         <div
           className="flex h-10 cursor-pointer items-center justify-between rounded-none px-4 text-sm text-white hover:bg-[#281A31]"
           onClick={() => handleAllChecked()}
         >
           <span>All</span>
-          {isAllChecked && (
-            <Image
-              src="/icons/green-check.svg"
-              width={16}
-              height={16}
-              alt="check"
-            />
-          )}
+          {isAllChecked && <Image src="/icons/green-check.svg" width={16} height={16} alt="check" />}
         </div>
         {filterOptions.map((option) => (
           <div
@@ -165,12 +136,7 @@ export default function FilterTypeSelect({
           >
             <span>{option.label}</span>
             {filterTypes.includes(option.value) && (
-              <Image
-                src="/icons/green-check.svg"
-                width={16}
-                height={16}
-                alt="check"
-              />
+              <Image src="/icons/green-check.svg" width={16} height={16} alt="check" />
             )}
           </div>
         ))}

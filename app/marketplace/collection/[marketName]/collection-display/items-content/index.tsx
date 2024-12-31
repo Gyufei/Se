@@ -14,9 +14,9 @@ export default function ItemsContent() {
   const [sortName, setSortName] = useState<ISortType>("price");
   const [sortDirection, setSortDirection] = useState<ISortDirection>("asc");
   const [searchText, setSearchText] = useState("");
-  const [filterTypes, setFilterTypes] = useState<Array<INFT["status"] | null>>(
-    [],
-  );
+  const [filterTypes, setFilterTypes] = useState<Array<INFT["status"] | null>>([]);
+
+  const [showMbFilter, setShowMbFilter] = useState(false);
 
   const displayNfts = useMemo(() => {
     if (!marketNfts) return [];
@@ -52,27 +52,30 @@ export default function ItemsContent() {
 
   return (
     <>
-      <div className="flex justify-between mt-10">
-        <SortSelect
-          name={sortName}
-          setName={setSortName}
-          dir={sortDirection}
-          setDir={setSortDirection}
-        />
+      <div className="mt-[30px] flex justify-between space-x-4 md:mt-10 md:space-x-0">
+        <SortSelect name={sortName} setName={setSortName} dir={sortDirection} setDir={setSortDirection} />
 
-        <div className="flex items-center space-x-5">
-          <FilterTypeSelect
-            filterTypes={filterTypes}
-            setFilterTypes={setFilterTypes}
-          />
+        <div
+          className="flex h-12 w-12 items-center justify-center bg-[#382743]"
+          onClick={() => setShowMbFilter(!showMbFilter)}
+        >
+          {showMbFilter ? <span className="text-[18px]">⬇️</span> : <span className="text-[18px]">🔍</span>}
+        </div>
+
+        <div className="hidden items-center space-x-5 md:flex">
+          <FilterTypeSelect filterTypes={filterTypes} setFilterTypes={setFilterTypes} />
           <SearchInput value={searchText} onChange={setSearchText} />
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-5 mt-5 min-h-[270px] max-h-[600px] overflow-y-auto no-scroll-bar overflow-x-hidden">
+      {showMbFilter && (
+        <div className="mt-4 flex items-center justify-between space-x-5 md:hidden">
+          <FilterTypeSelect filterTypes={filterTypes} setFilterTypes={setFilterTypes} />
+          <SearchInput value={searchText} onChange={setSearchText} />
+        </div>
+      )}
+      <div className="no-scroll-bar mt-5 grid max-h-[600px] min-h-[270px] grid-cols-2 gap-5 overflow-y-auto overflow-x-hidden md:grid-cols-4">
         {isNftsPending
-          ? range(8).map((i) => (
-              <Skeleton key={i} className="w-[200px] h-[260px]" />
-            ))
+          ? range(8).map((i) => <Skeleton key={i} className="h-[260px] w-[200px]" />)
           : displayNfts.map((nft) => <NFTCard key={nft.token_id} nft={nft} />)}
       </div>
     </>

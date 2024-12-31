@@ -7,11 +7,13 @@ import { useCartContext } from "../../cart-context";
 import { checkIsExist } from "../../cart-reducer";
 import { useNftStatus } from "@/lib/common/use-nft-status";
 import { useNftAuction } from "@/lib/api/use-nft-auction";
-import NftFallbackImage  from "@/app/_common/nft-fallback-image";
+import NftFallbackImage from "@/app/_common/nft-fallback-image";
+import { useDeviceSize } from "@/lib/common/use-device-size";
 
 export default function NFTCard({ nft }: { nft: INFT }) {
   const router = useRouter();
   const { isListed, isVault, isPerson, isCanBuy } = useNftStatus(nft);
+  const { isMobileSize } = useDeviceSize();
 
   const [isHover, setIsHover] = useState(false);
   const { data: auctionInfo } = useNftAuction(nft);
@@ -34,25 +36,22 @@ export default function NFTCard({ nft }: { nft: INFT }) {
     <div
       onMouseEnter={() => handleHover(true)}
       onMouseLeave={() => handleHover(false)}
-      className="cursor-pointer w-[200px] h-[260px] overflow-hidden bg-[#1D0E27] border-2 border-transparent hover:border-green relative"
+      className="relative h-[252px] w-[168px] cursor-pointer overflow-hidden border-2 border-transparent bg-[#1D0E27] hover:border-green md:h-[260px] md:w-[200px]"
       onClick={() => {
         handleGoDetail(nft);
       }}
     >
       <NftFallbackImage
         src={nft.token_uri}
-        width={200}
-        height={200}
+        width={isMobileSize ? 164 : 200}
+        height={isMobileSize ? 252 : 260}
         alt="nft"
-        className={cn(
-          "transition-all duration-500 ease-in-out",
-          isHover && "scale-[1.15]",
-        )}
+        className={cn("transition-all duration-500 ease-in-out", isHover && "scale-[1.15]")}
       />
       {(isListed || isVault) && (
         <div
           className={cn(
-            "absolute top-[10px] right-[10px] h-5 flex px-2 items-center text-white text-xs",
+            "absolute right-[10px] top-[10px] flex h-5 items-center px-2 text-xs text-white",
             isListed && "bg-[#71458E]",
             isVault && "bg-[#DB734A]",
           )}
@@ -62,18 +61,16 @@ export default function NFTCard({ nft }: { nft: INFT }) {
       )}
       <div
         className={cn(
-          "h-[88px] pt-5 px-[15px] bg-[#1D0E27] pb-[15px] absolute w-full bottom-0 transition-all duration-500 ease-in-out",
+          "absolute bottom-0 h-[88px] w-full bg-[#1D0E27] px-[15px] pb-[15px] pt-5 transition-all duration-500 ease-in-out",
           isHover && "h-[130px]",
         )}
       >
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col text-white ">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col text-white">
             <span className="text-sm">
               {nft.name} #{nft.token_id}
             </span>
-            <span className="text-base font-medium mt-[10px]">
-              {nftPrice} RAE
-            </span>
+            <span className="mt-[10px] text-base font-medium">{nftPrice} RAE</span>
           </div>
         </div>
         <>
@@ -90,8 +87,7 @@ export default function NFTCard({ nft }: { nft: INFT }) {
   );
 }
 
-const BtnClx =
-  "bg-green w-full flex items-center justify-center h-8 text-[#12021D] mt-[10px] text-xs font-bold";
+const BtnClx = "bg-green w-full flex items-center justify-center h-8 text-[#12021D] mt-[10px] text-xs font-bold";
 
 function AddToBagBtn({ nft }: { nft: INFT }) {
   const { cartItems, addProduct, removeProduct } = useCartContext() || {};
@@ -109,10 +105,7 @@ function AddToBagBtn({ nft }: { nft: INFT }) {
 
   return (
     <button
-      className={cn(
-        BtnClx,
-        isExist ? "bg-[rgb(255,95,82)] text-white" : "bg-green",
-      )}
+      className={cn(BtnClx, isExist ? "bg-[rgb(255,95,82)] text-white" : "bg-green")}
       onClick={(e) => handleAddToBag(e)}
     >
       {isExist ? "Remove from Quick Bag" : "Add to Quick Bag"}
@@ -122,7 +115,7 @@ function AddToBagBtn({ nft }: { nft: INFT }) {
 
 function NoListBtn() {
   return (
-    <div className="w-full flex items-center justify-center h-8 bg-[rgba(255,255,255,0.3)] text-black mt-[10px] text-xs font-bold">
+    <div className="mt-[10px] flex h-8 w-full items-center justify-center bg-[rgba(255,255,255,0.3)] text-xs font-bold text-black">
       Not Listed
     </div>
   );
@@ -133,9 +126,7 @@ function ViewVaultBtn({ nft }: { nft: INFT }) {
 
   function handleViewVault(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
-    router.push(
-      `/marketplace/collection/${nft.market_name}/vault/${nft.token_id}`,
-    );
+    router.push(`/marketplace/collection/${nft.market_name}/vault/${nft.token_id}`);
   }
 
   return (

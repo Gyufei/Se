@@ -1,10 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { capitalize } from "lodash";
 import { cn } from "@/lib/utils/common";
 
@@ -41,22 +37,16 @@ export default function SortSelect({
   return (
     <Popover open={open} onOpenChange={(o) => setOpen(o)}>
       <PopoverTrigger asChild>
-        <div className="bg-[#281A31] flex items-center px-5 h-12 space-x-[5px] cursor-pointer">
+        <div className="flex h-12 flex-1 cursor-pointer items-center space-x-[5px] bg-[#281A31] px-5">
           <span>⬆️</span>
           <span>{capitalize(name)}:</span>
           <span>{sortTextObj[name][dir]}</span>
-          <Image
-            src="/icons/bracket-up.svg"
-            width={16}
-            height={16}
-            alt="arrow"
-            className={cn(!open && "rotate-180")}
-          />
+          <Image src="/icons/bracket-up.svg" width={16} height={16} alt="arrow" className={cn(!open && "rotate-180")} />
         </div>
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="flex w-[220px] flex-col items-stretch rounded-none border-0 bg-[#382743] space-y-[5px] p-[5px]"
+        className="flex w-[220px] flex-col items-stretch space-y-[5px] rounded-none border-0 bg-[#382743] p-[5px]"
       >
         {sortNames.map((name) => {
           // TODO: add rarity sort

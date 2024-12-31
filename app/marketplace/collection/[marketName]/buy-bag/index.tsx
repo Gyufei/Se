@@ -23,11 +23,9 @@ export default function BuyBag() {
   const queryClient = useQueryClient();
   const { marketName } = useCollectionPageContext();
 
-  const { cartItems, count, total, removeProduct, clearCart } =
-    useCartContext() || {};
+  const { cartItems, count, total, removeProduct, clearCart } = useCartContext() || {};
 
-  const { isShouldApprove, isApproving, approveAction, approveBtnText } =
-    useApprove(RAE.address, RAE.symbol);
+  const { isShouldApprove, isApproving, approveAction, approveBtnText } = useApprove(RAE.address, RAE.symbol);
 
   const {
     data: rae,
@@ -38,8 +36,7 @@ export default function BuyBag() {
   });
   const { data: raePrice, isPending: isRaePricePending } = useRaePrice();
 
-  const { data: activities, isPending: isActivitiesPending } =
-    useMarketActivity(marketName);
+  const { data: activities, isPending: isActivitiesPending } = useMarketActivity(marketName);
 
   const { writeContract, isPending: isBuying } = useBatchBuy();
 
@@ -52,9 +49,7 @@ export default function BuyBag() {
   const orderIds: string[] = useMemo(() => {
     const ids: string[] = [];
     for (const nft of cartItems || []) {
-      const activity = activities?.find(
-        (activity) => activity.token_id === nft.token_id,
-      );
+      const activity = activities?.find((activity) => activity.token_id === nft.token_id);
 
       if (activity && activity.order_id && activity.event === "LISTED") {
         ids.push(activity.order_id);
@@ -142,88 +137,53 @@ export default function BuyBag() {
       text: "Pay",
       disabled: false,
     };
-  }, [
-    isShouldApprove,
-    isApproving,
-    approveBtnText,
-    isBuying,
-    isPending,
-    raeDisplay,
-    count,
-    total,
-  ]);
+  }, [isShouldApprove, isApproving, approveBtnText, isBuying, isPending, raeDisplay, count, total]);
 
   return (
-    <div className="w-[400px] bg-[#1D0E27] min-h-[calc(100vh-64px)]">
-      <div className="flex justify-between items-center pt-12 px-6 pb-5 border-b-2 border-[#ffffff10]">
+    <div className="min-h-[calc(100vh-64px)] w-full bg-[#1D0E27] md:w-[400px]">
+      <div className="flex items-center justify-between border-b-2 border-[#ffffff10] px-6 pb-5 pt-12">
         <div className="flex items-center text-[30px] text-white">
           <span>Bag</span>
           <span>{count ? `(${count})` : ""}</span>
         </div>
         {Boolean(count) && (
-          <span
-            onClick={handleClear}
-            className="cursor-pointer text-base text-white opacity-60 hover:opacity-100"
-          >
+          <span onClick={handleClear} className="cursor-pointer text-base text-white opacity-60 hover:opacity-100">
             Clear all
           </span>
         )}
       </div>
-      <div className="pt-5 px-3">
+      <div className="px-3 pt-5">
         {count ? (
-          (cartItems || []).map((nft) => (
-            <BagItem
-              key={nft.token_id}
-              nft={nft}
-              onRemove={() => removeProduct?.(nft)}
-            />
-          ))
+          (cartItems || []).map((nft) => <BagItem key={nft.token_id} nft={nft} onRemove={() => removeProduct?.(nft)} />)
         ) : (
-          <div className="flex items-center justify-center mt-[68px] flex-col gap-4">
-            <Image
-              src="/icons/empty-bag.svg"
-              width={96}
-              height={96}
-              alt="empty"
-            />
-            <div className="text-white text-base leading-6">
-              Your bag is empty
-            </div>
-            <div className="text-xs text-[#ffffff80]">
-              Selected NFTs will appear here
-            </div>
+          <div className="mt-[68px] flex flex-col items-center justify-center gap-4">
+            <Image src="/icons/empty-bag.svg" width={96} height={96} alt="empty" />
+            <div className="text-base leading-6 text-white">Your bag is empty</div>
+            <div className="text-xs text-[#ffffff80]">Selected NFTs will appear here</div>
           </div>
         )}
       </div>
 
       {Boolean(count) && (
-        <div className="bg-[#281A31] p-5 mx-6 mt-5">
+        <div className="mx-6 mt-5 bg-[#281A31] p-5">
           <div className="text-base text-[#B8B3B6]">Total</div>
           <div className="flex justify-between">
             <div>
               {isPending ? (
                 <>
-                  <Skeleton className="w-40 h-10 my-[10px]" />
-                  <Skeleton className="w-20 h-5 my-2" />
+                  <Skeleton className="my-[10px] h-10 w-40" />
+                  <Skeleton className="my-2 h-5 w-20" />
                 </>
               ) : (
                 <>
-                  <div className="text-[40px] text-white font-medium">
-                    {total}
-                  </div>
-                  <div className="text-white opacity-60 text-xl">
-                    ${formatNumber(totalPriceValue || "0")}
-                  </div>
+                  <div className="text-[40px] font-medium text-white">{total}</div>
+                  <div className="text-xl text-white opacity-60">${formatNumber(totalPriceValue || "0")}</div>
                 </>
               )}
             </div>
             <RaeToken className="self-end" />
           </div>
-          <ShouldConnectBtn
-            disabled={btnProps.disabled}
-            className="mt-5 w-full"
-            onClick={handleBuy}
-          >
+          <ShouldConnectBtn disabled={btnProps.disabled} className="mt-5 w-full" onClick={handleBuy}>
             {btnProps.text}
           </ShouldConnectBtn>
           <MsgTip className="mt-[15px]" msgPayload={msg} />
