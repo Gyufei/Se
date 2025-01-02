@@ -66,8 +66,7 @@ export default function Page() {
     return divide(String(balance), String(10 ** payToken.decimals));
   }, [balance, payToken.decimals]);
 
-  const { isShouldApprove, isApproving, approveAction, approveBtnText } =
-    useApprove(payToken.address, payToken.symbol);
+  const { isShouldApprove, isApproving, approveAction, approveBtnText } = useApprove(payToken.address, payToken.symbol);
 
   const buyToken = RAE;
   const [buyAmount, setBuyAmount] = useState("");
@@ -80,10 +79,7 @@ export default function Page() {
   const [gas, setGas] = useState(0.05);
   const [errorTip, setErrorTip] = useState("");
 
-  const isNativePayToken = useMemo(
-    () => checkIsNative(payToken),
-    [payToken, checkIsNative],
-  );
+  const isNativePayToken = useMemo(() => checkIsNative(payToken), [payToken, checkIsNative]);
 
   const sellPrice = useMemo(() => {
     if (isNativePayToken) {
@@ -144,15 +140,9 @@ export default function Page() {
     [raePrice, raeInTo],
   );
 
-  const debounceCalcPayToAmount = useMemo(
-    () => debounce(calcPayToAmount, 1000),
-    [calcPayToAmount],
-  );
+  const debounceCalcPayToAmount = useMemo(() => debounce(calcPayToAmount, 1000), [calcPayToAmount]);
 
-  const debounceCalcShouldPay = useMemo(
-    () => debounce(calcShouldPay, 1000),
-    [calcShouldPay],
-  );
+  const debounceCalcShouldPay = useMemo(() => debounce(calcShouldPay, 1000), [calcShouldPay]);
 
   async function handlePayTokenChange(t: IToken) {
     setPayToken(t);
@@ -201,12 +191,7 @@ export default function Page() {
     checkError(buyAmount, payAmount, toOther, value);
   }
 
-  function checkError(
-    buyValue: string,
-    payValue: string,
-    toOtherArg: boolean,
-    toAddrArg: string,
-  ) {
+  function checkError(buyValue: string, payValue: string, toOtherArg: boolean, toAddrArg: string) {
     if (Number(buyValue) === 0) {
       setErrorTip("Input A Amount");
       return false;
@@ -281,54 +266,50 @@ export default function Page() {
   }, [tokens]);
 
   return (
-    <div className="flex flex-col items-center pt-[100px]">
-      <div className="text-[40px] font-medium text-white">Buy RAE</div>
+    <div className="flex flex-col items-center px-4 pt-4 md:px-0 md:pt-[100px]">
+      <div className="text-[28px] font-medium text-white md:text-[40px]">Buy RAE</div>
 
-      <div className="mt-5 bg-[#1D0E27] flex flex-col items-stretch p-6 w-[440px]">
-        <div className="bg-[#281A31] p-5 flex justify-between">
+      <div className="mt-4 flex w-full flex-col items-stretch bg-[#1D0E27] p-4 md:mt-5 md:w-[440px] md:p-6">
+        <div className="flex justify-between bg-[#281A31] p-4 md:p-5">
           <div className="flex-1">
-            <div className="text-base text-white opacity-60">Sell</div>
+            <div className="text-sm text-white opacity-60 md:text-base">Sell</div>
             {isInLoading ? (
-              <Skeleton className="mr-1 mt-[10px] w-[150px] h-[50px]" />
+              <Skeleton className="mr-1 mt-[10px] h-[50px] w-[150px]" />
             ) : (
               <NumericalInput
-                className="mr-2 mt-[10px] h-[50px] w-full text-left text-3xl text-white bg-transparent placeholder:opacity-50 placeholder:text-2xl"
+                className="mr-2 mt-[10px] h-[50px] w-full bg-transparent text-left text-4xl text-white placeholder:text-2xl placeholder:opacity-50"
                 placeholder="0"
                 value={payAmount}
                 onUserInput={handlePayInput}
               />
             )}
-            <div className="text-xl text-white opacity-60 mt-2">
-              ${formatNumber(sellPrice)}
-            </div>
+            <div className="mt-2 text-base text-white opacity-60 md:text-xl">${formatNumber(sellPrice)}</div>
           </div>
-          <div className="flex flex-col justify-between items-end">
-            <span className="text-base text-white opacity-60">
-              Balance: {formatNumber(payBalance)}
-            </span>
+          <div className="flex flex-col items-end justify-between">
+            <span className="text-base text-white opacity-60">Balance: {formatNumber(payBalance)}</span>
             <TokenSelect token={payToken} setToken={handlePayTokenChange} />
           </div>
         </div>
 
         <ArrowBetween className="-my-4 self-center" />
 
-        <div className="bg-[#281A31] p-5 flex justify-between">
+        <div className="flex justify-between bg-[#281A31] p-5">
           <div className="flex-1">
-            <div className="text-base text-white opacity-60">Buy</div>
+            <div className="text-sm text-white opacity-60 md:text-base">Buy</div>
             {isOutLoading ? (
-              <Skeleton className="mr-1 mt-[10px] w-[150px] h-[50px]" />
+              <Skeleton className="mr-1 mt-[10px] h-[50px] w-[150px]" />
             ) : (
               <NumericalInput
-                className="mr-1 mt-[10px] w-full h-[50px] text-left text-3xl text-white bg-transparent placeholder:opacity-50 placeholder:text-2xl"
+                className="mr-1 mt-[10px] h-[50px] w-full bg-transparent text-left text-4xl text-white placeholder:text-2xl placeholder:opacity-50"
                 placeholder="0"
                 value={buyAmount}
                 onUserInput={handleBuyInput}
               />
             )}
-            <div className="text-xl text-white opacity-60 mt-2">-</div>
+            <div className="mt-2 text-xl text-white opacity-60">-</div>
           </div>
           <div className="flex items-end">
-            <div className="h-10 flex w-[112px] cursor-pointer items-center justify-center rounded-none bg-[#382743]">
+            <div className="flex h-10 w-[112px] cursor-pointer items-center justify-center rounded-none bg-[#382743]">
               <Image
                 width={18}
                 height={18}
@@ -336,36 +317,22 @@ export default function Page() {
                 alt="selected token"
                 className="mr-2 rounded-full"
               ></Image>
-              <div className="pr-[4px] text-sm leading-5 text-white">
-                {buyToken.symbol}
-              </div>
+              <div className="pr-[4px] text-sm leading-5 text-white">{buyToken.symbol}</div>
             </div>
           </div>
         </div>
 
-        <ToOtherAddr
-          toOther={toOther}
-          setToOther={handleOtherChange}
-          addr={toAddr}
-          setAddr={handleOtherAddrChange}
-        />
+        <ToOtherAddr toOther={toOther} setToOther={handleOtherChange} addr={toAddr} setAddr={handleOtherAddrChange} />
 
-        <div className="mt-5 relative">
-          <ErrorMessage
-            className="w-full text-center mb-1 absolute -top-[30px]"
-            error={errorTip}
-          />
+        <div className="relative mt-5">
+          <ErrorMessage className="absolute -top-[30px] mb-1 w-full text-center" error={errorTip} />
 
-          <ShouldConnectBtn
-            disabled={btnProp.disabled}
-            className="w-full"
-            onClick={handleConfirm}
-          >
+          <ShouldConnectBtn disabled={btnProp.disabled} className="w-full" onClick={handleConfirm}>
             {btnProp.text}
           </ShouldConnectBtn>
         </div>
 
-        <div className="flex justify-between items-center mt-[15px]">
+        <div className="mt-[15px] flex items-center justify-between">
           <SwapPriceDisplay
             isLoading={isRaePricePending}
             isNative={isNativePayToken}
