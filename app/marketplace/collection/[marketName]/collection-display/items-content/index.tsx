@@ -56,7 +56,7 @@ export default function ItemsContent() {
         <SortSelect name={sortName} setName={setSortName} dir={sortDirection} setDir={setSortDirection} />
 
         <div
-          className="flex h-12 w-12 items-center justify-center bg-[#382743]"
+          className="flex h-12 w-12 items-center justify-center bg-[#382743] md:hidden"
           onClick={() => setShowMbFilter(!showMbFilter)}
         >
           {showMbFilter ? <span className="text-[18px]">⬇️</span> : <span className="text-[18px]">🔍</span>}

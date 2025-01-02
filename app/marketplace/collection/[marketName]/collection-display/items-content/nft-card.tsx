@@ -23,6 +23,8 @@ export default function NFTCard({ nft }: { nft: INFT }) {
     return nft.price;
   }, [auctionInfo, nft.price, isVault]);
 
+  const showBtn = (isCanBuy || isVault || isPerson) && (isHover || isMobileSize);
+
   function handleHover(hover: boolean) {
     if (!isCanBuy && !isVault && !isPerson) return;
     setIsHover(hover);
@@ -61,8 +63,8 @@ export default function NFTCard({ nft }: { nft: INFT }) {
       )}
       <div
         className={cn(
-          "absolute bottom-0 h-[88px] w-full bg-[#1D0E27] px-[15px] pb-[15px] pt-5 transition-all duration-500 ease-in-out",
-          isHover && "h-[130px]",
+          "absolute bottom-0 h-[116px] w-full bg-[#1D0E27] p-3 transition-all duration-500 ease-in-out md:h-[88px] md:px-[15px] md:pb-[15px] md:pt-5",
+          isHover && "md:h-[130px]",
         )}
       >
         <div className="flex items-center justify-between">
@@ -74,7 +76,7 @@ export default function NFTCard({ nft }: { nft: INFT }) {
           </div>
         </div>
         <>
-          {isHover && (
+          {showBtn && (
             <>
               {isPerson && <NoListBtn />}
               {isCanBuy && <AddToBagBtn nft={nft} />}

@@ -119,7 +119,7 @@ export default function FilterTypeSelect({
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="flex w-[147px] flex-col items-stretch space-y-[5px] rounded-none border-0 bg-[#382743] p-[5px]"
+        className="flex w-[155px] flex-col items-stretch space-y-[5px] rounded-none border-0 bg-[#382743] p-[5px]"
       >
         <div
           className="flex h-10 cursor-pointer items-center justify-between rounded-none px-4 text-sm text-white hover:bg-[#281A31]"

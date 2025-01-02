@@ -55,7 +55,7 @@ export default function CloseCountdown() {
             ) : (
               <div className="text-[40px] font-bold">{hours}</div>
             )}
-            <div className="text-[20px] font-medium">
+            <div className="text-xl font-medium">
               Hour{hours > 1 ? "s" : ""}
             </div>
           </div>
@@ -66,7 +66,7 @@ export default function CloseCountdown() {
           ) : (
             <div className="text-[40px] font-bold">{minutes}</div>
           )}
-          <div className="text-[20px] font-medium">
+          <div className="text-xl font-medium">
             minute{minutes > 1 ? "s" : ""}
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function CloseCountdown() {
             ) : (
               <div className="text-[40px] font-bold">{seconds}</div>
             )}
-            <div className="text-[20px] font-medium">
+            <div className="text-xl font-medium">
               second{seconds > 1 ? "s" : ""}
             </div>
           </div>

@@ -37,7 +37,7 @@ export default function SortSelect({
   return (
     <Popover open={open} onOpenChange={(o) => setOpen(o)}>
       <PopoverTrigger asChild>
-        <div className="flex h-12 flex-1 cursor-pointer items-center space-x-[5px] bg-[#281A31] px-5">
+        <div className="flex h-12 flex-1 cursor-pointer items-center space-x-[5px] bg-[#281A31] px-5 md:flex-grow-0 md:basis-[230px]">
           <span>⬆️</span>
           <span>{capitalize(name)}:</span>
           <span>{sortTextObj[name][dir]}</span>
@@ -46,7 +46,7 @@ export default function SortSelect({
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="flex w-[220px] flex-col items-stretch space-y-[5px] rounded-none border-0 bg-[#382743] p-[5px]"
+        className="flex w-[230px] flex-col items-stretch space-y-[5px] rounded-none border-0 bg-[#382743] p-[5px]"
       >
         {sortNames.map((name) => {
           // TODO: add rarity sort
