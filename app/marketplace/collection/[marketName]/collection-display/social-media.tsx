@@ -31,14 +31,8 @@ export function SocialMedia({ isPending, marketInfo }: { isPending: boolean; mar
 
     return (
       <Popover open={mbPopOpen} onOpenChange={(isOpen) => setMbPopOpen(isOpen)}>
-        <PopoverTrigger className="flex items-center">
-          <Image
-            className="absolute right-0 top-1 cursor-pointer"
-            src="/icons/more.svg"
-            width={28}
-            height={28}
-            alt="social"
-          />
+        <PopoverTrigger className="absolute right-0 top-1 flex items-center">
+          <Image className="cursor-pointer" src="/icons/more.svg" width={28} height={28} alt="social" />
         </PopoverTrigger>
         <PopoverContent
           align="end"

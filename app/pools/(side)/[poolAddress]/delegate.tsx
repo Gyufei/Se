@@ -31,8 +31,7 @@ export default function Delegate({
   const queryClient = useQueryClient();
   const setGlobalMsg = useSetAtom(GlobalMessageAtom);
 
-  const { isShouldApprove, isApproving, approveAction, approveBtnText } =
-    useApprove(RAE.address, RAE.symbol);
+  const { isShouldApprove, isApproving, approveAction, approveBtnText } = useApprove(RAE.address, RAE.symbol);
 
   const { writeContract, isPending: isDelegatePending } = usePoolDelegate();
 
@@ -121,37 +120,30 @@ export default function Delegate({
   }, [isShouldApprove, isApproving, approveBtnText, isDelegatePending]);
 
   return (
-    <div className="px-5 pb-5 border-b-2 border-[#ffffff10]">
-      <div className="flex justify-between mb-[15px]">
-        <div className="text-white text-base opacity-60">Delegate</div>
-        <div className="flex items-center text-white text-xs font-medium">
+    <div className="border-b-2 border-[#ffffff10] px-5 pb-5">
+      <div className="mb-[15px] flex justify-between">
+        <div className="text-sm text-white opacity-60 md:text-base">Delegate</div>
+        <div className="flex items-center text-xs font-medium text-white">
           <span className="opacity-60">Balance:</span>
           {raeBalance.isPending ? (
-            <Skeleton className="w-12 h-4" />
+            <Skeleton className="h-4 w-12" />
           ) : (
             <span>&nbsp;{formatNumber(raeBalance.value || 0)} RAE</span>
           )}
         </div>
       </div>
-      <div className="flex justify-between relative">
+      <div className="relative flex justify-between">
         <NumericalInput
-          className="bg-[#1D0E27] text-base leading-5 text-white h-12 px-4 py-3"
+          className="h-12 bg-[#1D0E27] px-4 py-3 text-base leading-5 text-white"
           value={depositNum}
           onUserInput={handleInputNum}
           placeholder="0"
         />
         <RaeToken />
-        <ErrorMessage
-          className="ml-0 absolute -bottom-[18px]"
-          error={numError}
-        />
+        <ErrorMessage className="absolute -bottom-[18px] ml-0" error={numError} />
       </div>
 
-      <ShouldConnectBtn
-        disabled={btnProps.disabled}
-        className="mt-[15px] w-full"
-        onClick={handleDelegate}
-      >
+      <ShouldConnectBtn disabled={btnProps.disabled} className="mt-[15px] w-full" onClick={handleDelegate}>
         {btnProps.text}
       </ShouldConnectBtn>
     </div>

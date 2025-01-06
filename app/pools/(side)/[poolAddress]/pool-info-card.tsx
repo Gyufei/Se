@@ -11,13 +11,9 @@ import { RAE } from "@/lib/const/platform";
 export default function PoolInfoCard({ poolAddress }: { poolAddress: string }) {
   const { data: pool, isPending: isPoolInfoPending } = usePoolInfo(poolAddress);
 
-  const { data: poolRae, isPending: isPoolRaePending } = usePoolRae(
-    pool?.base.address,
-  );
+  const { data: poolRae, isPending: isPoolRaePending } = usePoolRae(pool?.base.address);
 
-  const poolRaeDisplay = poolRae
-    ? divide(String(poolRae), String(10 ** RAE.decimals))
-    : "0";
+  const poolRaeDisplay = poolRae ? divide(String(poolRae), String(10 ** RAE.decimals)) : "0";
 
   const myProfit = useMemo(() => {
     if (isPoolRaePending) return "0";
@@ -37,33 +33,29 @@ export default function PoolInfoCard({ poolAddress }: { poolAddress: string }) {
   }, [poolRaeDisplay, pool]);
 
   return (
-    <div className="bg-[#281A31] mx-6 mt-6 p-5">
+    <div className="mx-0 mt-4 bg-[#281A31] p-5 md:mx-6 md:mt-6">
       <div className="flex justify-between">
         <div>
-          <div className="text-white opacity-60 text-base font-medium">
-            Creator
-          </div>
+          <div className="text-sm font-medium text-white opacity-60 md:text-base">Creator</div>
           {isPoolInfoPending ? (
-            <Skeleton className="w-[100px] h-6 my-2 mt-[10px]" />
+            <Skeleton className="my-2 mt-[10px] h-6 w-[100px]" />
           ) : (
-            <div className="text-2xl mt-[10px] text-white font-medium">
+            <div className="mt-[10px] text-xl font-medium text-white md:text-2xl">
               {truncateAddr(pool?.base.creator)}
             </div>
           )}
         </div>
 
         <div>
-          <div className="text-white opacity-60 text-base font-medium">
-            Capacity Saturation
-          </div>
+          <div className="text-sm font-medium text-white opacity-60 md:text-base">Capacity Saturation</div>
           {isPoolInfoPending || !pool ? (
             <div className="flex items-center">
-              <Skeleton className="w-[60px] h-6 my-2 mr-1" />
+              <Skeleton className="my-2 mr-1 h-6 w-[60px]" />
               /
-              <Skeleton className="w-[80px] h-6 my-2 ml-1" />
+              <Skeleton className="my-2 ml-1 h-6 w-[80px]" />
             </div>
           ) : (
-            <div className="text-2xl text-right mt-[10px] text-white font-medium">
+            <div className="mt-[10px] text-right text-xl font-medium text-white md:text-2xl">
               <span>N/A</span>
               {/* <span>
                 {formatNumber(
@@ -78,31 +70,25 @@ export default function PoolInfoCard({ poolAddress }: { poolAddress: string }) {
         </div>
       </div>
 
-      <div className="flex mt-[27px] justify-between">
+      <div className="mt-[27px] flex justify-between">
         <div>
-          <div className="text-white opacity-60 text-base font-medium">
-            My Acc. Profit
-          </div>
+          <div className="text-sm font-medium text-white opacity-60 md:text-base">My Acc. Profit</div>
           {isPoolInfoPending || isPoolRaePending ? (
-            <Skeleton className="w-[100px] h-6 my-2 mt-[10px]" />
+            <Skeleton className="my-2 mt-[10px] h-6 w-[100px]" />
           ) : (
-            <div className="text-2xl mt-[10px] text-white font-medium">
-              {myProfit} RAE
-            </div>
+            <div className="mt-[10px] text-xl font-medium text-white md:text-2xl">{myProfit} RAE</div>
           )}
         </div>
 
         <div className="flex flex-col items-end">
-          <div className="text-white opacity-60 text-base font-medium">
-            My Delegated
-          </div>
+          <div className="text-sm font-medium text-white opacity-60 md:text-base">My Delegated</div>
           {isPoolInfoPending || isPoolRaePending ? (
             <div className="flex items-center">
-              <Skeleton className="w-[60px] h-6 my-2 mr-1" />
-              &nbsp; (<Skeleton className="w-[30px] h-6 my-2 ml-1" />)
+              <Skeleton className="my-2 mr-1 h-6 w-[60px]" />
+              &nbsp; (<Skeleton className="my-2 ml-1 h-6 w-[30px]" />)
             </div>
           ) : (
-            <div className="text-2xl text-right mt-[10px] text-white font-medium">
+            <div className="mt-[10px] text-right text-xl font-medium text-white md:text-2xl">
               <span>{formatNumber(poolRaeDisplay)} RAE&nbsp;</span>
               <span>({formatPercent(poolStakePercent)})</span>
             </div>

@@ -7,11 +7,7 @@ import Undelegate from "./undelegate";
 import { RAE } from "@/lib/const/platform";
 import { usePoolRae } from "@/lib/web3/use-pool-rae";
 
-export default function PoolAction({
-  poolAddress: poolAddr,
-}: {
-  poolAddress: string;
-}) {
+export default function PoolAction({ poolAddress: poolAddr }: { poolAddress: string }) {
   const {
     data: rae,
     isPending,
@@ -22,18 +18,12 @@ export default function PoolAction({
 
   const raeDisplay = rae ? divide(String(rae), String(10 ** RAE.decimals)) : 0;
 
-  const {
-    data: poolRae,
-    isPending: isPoolRaePending,
-    queryKey: poolRaeQueryKey,
-  } = usePoolRae(poolAddr);
+  const { data: poolRae, isPending: isPoolRaePending, queryKey: poolRaeQueryKey } = usePoolRae(poolAddr);
 
-  const poolRaeDisplay = poolRae
-    ? divide(String(poolRae), String(10 ** RAE.decimals))
-    : 0;
+  const poolRaeDisplay = poolRae ? divide(String(poolRae), String(10 ** RAE.decimals)) : 0;
 
   return (
-    <div className="bg-[#281A31] mx-6 mt-5 py-5">
+    <div className="mx-0 mt-4 bg-[#281A31] py-5 md:mx-6 md:mt-5">
       <Delegate
         poolId={poolAddr}
         rae={{

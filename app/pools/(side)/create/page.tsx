@@ -122,43 +122,32 @@ export default function Page() {
 
   return (
     <>
-      <div className="text-[30px] font-medium text-white pb-5 px-6 border-b-2 border-[#ffffff10]">
+      <div className="flex h-14 items-center justify-center border-b-0 text-[18px] font-bold text-white md:h-auto md:justify-start md:border-b-2 md:border-[#ffffff10] md:px-6 md:pb-5 md:text-[30px] md:font-medium">
         Create Pool
       </div>
-      <div className="bg-[#281A31] mx-6 mt-6 p-5 relative">
-        <div className="mb-[15px] text-white opacity-60 text-base font-medium">
-          Name
-        </div>
+      <div className="relative mx-0 mt-4 bg-[#281A31] p-5 md:mx-6 md:mt-6">
+        <div className="mb-[15px] text-base font-medium text-white opacity-60">Name</div>
         <input
           value={poolName}
           onChange={(e) => handlePoolNameInput(e.target.value)}
-          className="w-full h-12 text-base leading-5 bg-[#1D0E27] rounded-md px-4 py-3"
+          className="h-12 w-full rounded-md bg-[#1D0E27] px-4 py-3 text-base leading-5"
           placeholder="Name"
           maxLength={30}
           minLength={3}
         />
-        <ErrorMessage className="ml-0 absolute top-[98px]" error={poolError} />
-        <div className="mt-[23px] mb-[15px] text-white opacity-60 text-base font-medium">
-          Creator Bonus
-        </div>
+        <ErrorMessage className="absolute top-[98px] ml-0" error={poolError} />
+        <div className="mb-[15px] mt-[23px] text-base font-medium text-white opacity-60">Creator Bonus</div>
         <div className="relative">
           <NumericalInput
-            className="bg-[#1D0E27] w-full text-base leading-5 text-white h-12 pl-4 py-3 pr-6"
+            className="h-12 w-full bg-[#1D0E27] py-3 pl-4 pr-6 text-base leading-5 text-white"
             value={bonus}
             onUserInput={(v) => handleBonusInput(v)}
             placeholder="0"
           />
-          <span className="absolute text-base opacity-40 right-4 top-3">%</span>
+          <span className="absolute right-4 top-3 text-base opacity-40">%</span>
         </div>
-        <ErrorMessage
-          className="ml-0 absolute -bottom-[94px]"
-          error={bonusError}
-        />
-        <ShouldConnectBtn
-          disabled={btnProps?.disabled}
-          className="mt-5 mb-[25px] w-full"
-          onClick={handleCreatePool}
-        >
+        <ErrorMessage className="absolute -bottom-[94px] ml-0" error={bonusError} />
+        <ShouldConnectBtn disabled={btnProps?.disabled} className="mb-[25px] mt-5 w-full" onClick={handleCreatePool}>
           {btnProps?.text}
         </ShouldConnectBtn>
       </div>

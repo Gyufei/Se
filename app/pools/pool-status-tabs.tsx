@@ -15,7 +15,7 @@ export default function PoolStatusTabs({
   setStatus: (v: IPoolStatus) => void;
 }) {
   return (
-    <div className="w-full flex justify-between items-end p-0 space-x-3 -pb-1 border-b-[2px] rounded-none border-[#382544]">
+    <div className="flex w-full items-end justify-between space-x-0 rounded-none border-b-[2px] border-[#382544] p-0 md:space-x-3">
       <div className="flex">
         <div
           data-state={status === tabs[0] ? "active" : "inactive"}
@@ -32,11 +32,13 @@ export default function PoolStatusTabs({
           {capitalize(tabs[1])}
         </div>
       </div>
-      <Link href="/pools/create">
-        <button className="mb-[15px] flex items-center justify-center h-10 px-5 bg-green text-sm text-[#12021D] rounded-none font-bold">
-          Create Pool +
-        </button>
-      </Link>
+      <div className="fixed bottom-0 left-0 right-0 z-10 h-[56px] w-screen bg-[#281A31] px-4 md:static md:z-0 md:h-auto md:w-auto md:bg-transparent md:px-0">
+        <Link href="/pools/create" className="flex h-full items-center justify-end">
+          <button className="mb-0 flex h-10 items-center justify-center rounded-none bg-green px-5 text-sm font-bold text-[#12021D] md:mb-[15px]">
+            Create Pool +
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }
